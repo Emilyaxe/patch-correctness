@@ -59,6 +59,7 @@ public class Constant {
     public static String patchesICSE = HOME + "/Patches/Patches_ICSE";
     public static String patchesOther = HOME + "/Patches/Patches_others";
     public static String methodResult = HOME + "/result/static";
+    public static String dynamicResult = HOME + "/result/dynamic";
 
 
     public static String FIXED = ".fixed";

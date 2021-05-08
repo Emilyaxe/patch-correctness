@@ -138,21 +138,13 @@ public class Patch {
 
             String name = entry.getKey().split("-")[0];
             String id = entry.getKey().split("-")[1];
-            int bugid = 0;
-            if (name.equals("Closure") && (id.equals("63") || id.equals("93"))) {
-                // patchid = patchid + entry.getValue().size();
-                bugid = Integer.parseInt(id) - 1;
-            } else {
-                bugid = Integer.parseInt(id);
-            }
-
-            Subject subject = new Subject(name, bugid);
-            String subjectPath = Constant.PROJECT_HOME + "/" + name + "/" + name + bugid;
+            Subject subject = new Subject(name, Integer.parseInt(id));
+            String subjectPath = Constant.PROJECT_HOME + "/" + name + "/" + name + id;
 
             for (Patch patch : entry.getValue()) {
                 patchid++;
                 //log.info("{} Process patch {}", patchid, patch.getPatchPath());
-//                if(! patch.getBugid().equals("Closure-28")){
+//                if(! patch.getPatchName().equals("Chart25b_Patch92")){
 //                    continue;
 //                }
 
@@ -163,12 +155,6 @@ public class Patch {
                     tmpList.add(patch.getLable());
                     tmpList.add(patch.getCombinedMethod());
                     nameValueMap.put(patch.getPatchName(), tmpList);
-//                    JSONObject patchMethodJson =
-//                            (JSONObject) JSON.toJSON(Patch.builder().patchName(patch.getPatchName()).lable(patch.getLable())
-//                                    .combinedMethod(patch.getCombinedMethod()).build());
-//                    JSONObject patchMethodJson = new JSONObject();
-//                    patchMethodJson.put(patch.getPatchName(), patch.getCombinedMethod());
-                    //resultList.add(patchMethodJson);
                     continue;
                 }
 
@@ -290,6 +276,10 @@ public class Patch {
         String[] content = result.toString().split("\n");
         for (int i = startLine; i <= endLine; i++) {
             method.append(content[i - 1]).append("\n");
+        }
+        // corner case: add } in last line
+        if(content[endLine].startsWith("+")){
+            method.append(content[endLine]).append("\n");
         }
         return method.toString();
     }
