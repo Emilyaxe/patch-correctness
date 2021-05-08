@@ -58,6 +58,26 @@ public class Executor {
         return message;
     }
 
+    public static List<String> asyExecute(String[] command) {
+        Process process = null;
+        final List<String> message = new ArrayList<>();
+        try {
+            ProcessBuilder builder = getProcessBuilder(command);
+            builder.redirectErrorStream(true);
+            process = builder.start();
+            process.waitFor();
+        } catch (IOException ignored) {
+        } catch (InterruptedException e) {
+            log.error("process wait failed", e);
+        }finally {
+            if (process != null) {
+                process.destroy();
+            }
+        }
+        //log.info(message.toString());
+        return message;
+    }
+
     private static ProcessBuilder getProcessBuilder(String[] command) {
         ProcessBuilder builder = new ProcessBuilder(command);
         Map<String, String> evn = builder.environment();

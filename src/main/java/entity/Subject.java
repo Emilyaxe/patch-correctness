@@ -141,7 +141,6 @@ public class Subject {
 
         failingTests = new ArrayList<>();
         String[] stringArray = _triggerTestInfo.split("--- ");
-        List<String> testMethodList = new ArrayList<>(stringArray.length);
         for (String line : stringArray) {
             if (StringUtils.isEmpty(line)) {
                 continue;
@@ -149,7 +148,6 @@ public class Subject {
             String[] stackArray = line.replaceAll("\n\t", "\n").split("\n");
             failingTests.add(stackArray[0]);
         }
-
     }
 
     private void setSrcPath() {

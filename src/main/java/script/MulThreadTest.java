@@ -39,7 +39,7 @@ public class MulThreadTest {
                 CompletableFuture.runAsync(() -> {
                     Subject subject = new Subject(name, index);
                     // todo  写入subject之后的逻辑
-                }, EXECUTOR).join();
+                }, EXECUTOR);
             }
             log.info("finish subject {}", entry.getKey());
         }

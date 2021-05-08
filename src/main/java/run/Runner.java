@@ -2,16 +2,15 @@ package run;
 
 
 import static config.Constant.ANT_BUILD_FAILED;
-import static config.Constant.COMMAND_GENTEST;
 import static config.Constant.HOME;
 import static config.Constant.JUNIT_RUN_MAIN;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -87,20 +86,15 @@ public class Runner {
     public static boolean downloadSubject(Subject subject) {
         log.info("Downloading {} ...", subject.toString());
         File file = new File(subject.getHome());
-        List<String> message = null;
+        List<String> message = Collections.emptyList();
         try {
             message = Executor.execute(CmdFactory.createCheckOutCmd(subject));
         } catch (Exception e) {
             // LevelLogger.fatal(__name__ + "#buildSubject run build subject failed !", e);
         }
         log.info(String.join("\n", message));
-        if (CollectionUtils.isNotEmpty(message) || message.stream().filter(Objects::nonNull)
-                .noneMatch(element -> element.contains("Version id does not exist:"))) {
-            return true;
-        } else {
-            return false;
-        }
-
+        return CollectionUtils.isNotEmpty(message) || message.stream().filter(Objects::nonNull)
+                .noneMatch(element -> element.contains("Version id does not exist:"));
     }
 
     public static boolean compileSubject(Subject subject) {
@@ -111,7 +105,7 @@ public class Runner {
             return true;
         }*/
         log.info("Compile " + subject.toString());
-        List<String> message = null;
+        List<String> message = Collections.emptyList();
         try {
             message = Executor.execute(CmdFactory.createBuildSubjectCmd(subject));
         } catch (Exception e) {
@@ -135,14 +129,14 @@ public class Runner {
             message = Executor.execute(CmdFactory.createBTraceCmd(subject, arg, 90));
         } catch (Exception e) {
             // LevelLogger.fatal(__name__ + "#buildSubject run build subject failed !", e);
-            System.out.println(e);
+            log.error("trace subject failed", e);
         }
         return true;
     }
 
     public static String JUnitTestSubject(Subject subject, String failingTest) {
         log.info("----- Begin Run Failing Test And Get Trace ----- " + failingTest);
-        List<String> message = null;
+        List<String> message = Collections.emptyList();
         try {
             StringBuilder junitArg = new StringBuilder(Constant.COMMAND_CD + subject.getHome() + " && ");
             junitArg.append(Constant.COMMAND_JAVA_HOME).append("/bin/java -Xms4g -Xmx8g -cp \"")
@@ -262,7 +256,7 @@ public class Runner {
                 .append("\" daikon.PrintInvariants " +
                         "MultipleTestRunner.inv.gz");
         log.info(stringBuilder.toString());
-        List<String> message = null;
+        List<String> message = Collections.emptyList();
         try {
             message = Executor.execute(new String[] {"/bin/bash", "-c", stringBuilder.toString()});
         } catch (Exception e) {
@@ -320,14 +314,13 @@ public class Runner {
                 .append(failingTest);
 
         log.info(stringBuilder.toString());
-        List<String> message = null;
+        List<String> message = Collections.emptyList();
         try {
             message = Executor.execute(new String[] {"/bin/bash", "-c", stringBuilder.toString()});
         } catch (Exception e) {
             log.error(__name__ + " Tracer failed !", e);
         }
-        if (message.toString().contains("Exception in thread \"main\" java.lang.OutOfMemoryError: GC overhead limit "
-                + "exceeded")) {
+        if (message.toString().contains("Exception in thread \"main\" java.lang.OutOfMemoryError: GC overhead limit exceeded")) {
             log.warn("Daikon's error: OutOfMemoryError");
             return false;
         }
@@ -345,10 +338,9 @@ public class Runner {
         StringBuilder stringBuilder = new StringBuilder(
                 Constant.COMMAND_CD + subject.getHome() + " && ");
         stringBuilder.append("java -cp \"").append(subject.get_dependency()).append(":")
-                .append("\" daikon.PrintInvariants " +
-                        invFile);
+                .append("\" daikon.PrintInvariants ").append(invFile);
         log.info(stringBuilder.toString());
-        List<String> message = null;
+        List<String> message = Collections.emptyList();
         try {
             message = Executor.execute(new String[] {"/bin/bash", "-c", stringBuilder.toString()});
         } catch (Exception e) {
@@ -363,7 +355,7 @@ public class Runner {
                 new StringBuilder("java -cp $DAIKONDIR/daikon.jar daikon.diff.Diff ").append(file1).append(file2);
 
         log.info(stringBuilder.toString());
-        List<String> message = null;
+        List<String> message = Collections.emptyList();
         try {
             message = Executor.execute(new String[] {"/bin/bash", "-c", stringBuilder.toString()});
         } catch (Exception e) {
@@ -384,7 +376,7 @@ public class Runner {
                 .append(subject.get_name()).append(" ").append(subject.get_id()).append(" ")
                 .append(failingTest);
         //log.info(stringBuilder.toString());
-        List<String> message = null;
+        List<String> message = Collections.emptyList();
         try {
             message = Executor.execute(new String[] {"/bin/bash", "-c", stringBuilder.toString()});
         } catch (Exception e) {
@@ -447,21 +439,21 @@ public class Runner {
     public static void unZipTest(String filePath) {
         log.info("Unzip {}", filePath);
         StringBuilder stringBuilder = new StringBuilder("tar -xjvf ").append(filePath);
-        List<String> message = null;
+        List<String> message = Collections.emptyList();
         try {
             message = Executor.execute(new String[] {"/bin/bash", "-c", stringBuilder.toString()});
         } catch (Exception e) {
             log.error(__name__ + " unzip failed !", e);
         }
         log.info(stringBuilder.toString());
-        log.info(message.stream().collect(Collectors.joining(" ")));
+        log.info(String.join(" ", message));
     }
 
     /*
     run randoop test
      */
     public static void runTestSuite(Subject subject, String testSuite) {
-        List<String> message = null;
+        List<String> message = Collections.emptyList();
         try {
             log.info("TESTING : " + subject.get_name() + "_" + subject.get_id());
             message = Executor.execute(CmdFactory.createTestSuiteCmd(subject, testSuite));
@@ -469,7 +461,7 @@ public class Runner {
         } catch (Exception e) {
             // LevelLogger.fatal(__name__ + "#buildSubject run test single test case failed !", e);
         }
-        log.info(message.stream().collect(Collectors.joining(" ")));
+        log.info(String.join(" ", message));
         /*if(CollectionUtils.isNotEmpty(message)
                 && message.stream().filter(Objects::nonNull).anyMatch(element -> element.contains(SUCCESSTEST))) {
                 // true
@@ -481,12 +473,12 @@ public class Runner {
     }
 
     public static void runSootJimple(String classPath, Subject subject) {
-        List<String> message = null;
+        List<String> message = Collections.emptyList();
         try {
             message = Executor.execute(CmdFactory.createSootJimple(classPath, subject));
         } catch (Exception e) {
             log.info(classPath);
-            log.info(message.stream().collect(Collectors.joining(" ")));
+            log.info(String.join(" ", message));
         }
     }
 
