@@ -33,8 +33,9 @@ public class MulThreadTest {
             String name = entry.getKey();
             Integer end = entry.getValue();
             for (int i = 1; i <= end; i++) {
-                Subject subject = new Subject(name, i);
+                int index = i;
                 CompletableFuture.runAsync(() -> {
+                    Subject subject = new Subject(name, index);
                     // todo  写入subject之后的逻辑
                 }, EXECUTOR).join();
             }
