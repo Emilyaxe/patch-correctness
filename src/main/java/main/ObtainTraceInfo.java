@@ -86,7 +86,7 @@ public class ObtainTraceInfo {
 
     }
     public static void main(String[] args) {
-        obtainTrace(ObtainMethods4All.readCorrectPatch4Wen());
+        obtainTrace(ObtainMethods4All.readCorrectPatch4Wen(), false);
 
     }
 }

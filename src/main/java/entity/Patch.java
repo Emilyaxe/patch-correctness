@@ -116,11 +116,11 @@ public class Patch {
                 StringBuilder result = new StringBuilder();
                 for (String patchLine : patchArray) {
                     if (patchLine.startsWith("-")) {
-                        result.append("+").append(patchLine.substring(1));
+                        result.append("+").append(patchLine.substring(1)).append("\n");
                     } else if (patchLine.startsWith("+")) {
-                        result.append("-").append(patchLine.substring(1));
+                        result.append("-").append(patchLine.substring(1)).append("\n");
                     } else {
-                        result.append(patchLine);
+                        result.append(patchLine).append("\n");
                     }
                 }
                 patchInfo = result.toString();
@@ -144,7 +144,7 @@ public class Patch {
             for (Patch patch : entry.getValue()) {
                 patchid++;
                 //log.info("{} Process patch {}", patchid, patch.getPatchPath());
-//                if(! patch.getPatchName().equals("Chart25b_Patch92")){
+//                if(! patch.getPatchName().equals("Closure_11.src.patch")){
 //                    continue;
 //                }
 
@@ -184,7 +184,11 @@ public class Patch {
                         || (patch.getPatchName().equals("Math_12.src.patch") )){
                     patch.setCombinedMethod(constructMethod("fixedField"));
                 }else if((patch.getPatchName().equals("Lang_56.src.patch") )
-                        || (patch.getPatchName().equals("Closure_28.src.patch") )){
+                        || (patch.getPatchName().equals("Closure_28.src.patch")
+            || patch.getPatchName().equals("Lang_23.src.patch")
+                || patch.getPatchName().equals("Time_26.src.patch")
+                || patch.getPatchName().equals("Chart_23.src.patch")
+                || patch.getPatchName().equals("Time_11.src.patch"))){
                     patch.setCombinedMethod(constructMethod("addAMethod"));
                 }
                 if (!StringUtils.isEmpty(patch.getCombinedMethod())) {
