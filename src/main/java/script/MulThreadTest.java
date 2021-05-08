@@ -15,8 +15,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MulThreadTest {
 
-    public static final ExecutorService EXECUTOR = new ThreadPoolExecutor(10,
-            2 * Runtime.getRuntime().availableProcessors(), 10, TimeUnit.SECONDS,
+    public static final int THREAD_NUM = 2 * Runtime.getRuntime().availableProcessors();
+
+    public static final ExecutorService EXECUTOR = new ThreadPoolExecutor(THREAD_NUM,
+            THREAD_NUM, 10, TimeUnit.SECONDS,
             new LinkedBlockingQueue<>(1000),
             (runnable, currentExecutor) -> log.warn(
                     "rejectedExecution mul thread Task {} rejected from {}", runnable.toString(),
