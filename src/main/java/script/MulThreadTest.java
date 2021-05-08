@@ -41,6 +41,7 @@ public class MulThreadTest {
                     // todo  写入subject之后的逻辑
                 }, EXECUTOR).join();
             }
+            log.info("finish subject {}", entry.getKey());
         }
     }
 
