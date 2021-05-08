@@ -64,6 +64,7 @@ public class Subject {
 
         //this.setSrcPath();
         //this.setDependency();
+        this.setFailingTest();
         download();
     }
 
@@ -135,6 +136,9 @@ public class Subject {
     }
 
     private void setFailingTest() {
+        String fileName = Constant.PROJ_INFO + "/trigger_tests/" + _name + "/" + _id;
+        _triggerTestInfo = FileIO.readFileToString(fileName);
+
         failingTests = new ArrayList<>();
         String[] stringArray = _triggerTestInfo.split("--- ");
         List<String> testMethodList = new ArrayList<>(stringArray.length);

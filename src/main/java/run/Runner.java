@@ -5,8 +5,6 @@ import static config.Constant.ANT_BUILD_FAILED;
 import static config.Constant.COMMAND_GENTEST;
 import static config.Constant.HOME;
 import static config.Constant.JUNIT_RUN_MAIN;
-import static config.Constant.PATCH_SUCCESS;
-import static config.Constant.testDir;
 
 import java.io.File;
 import java.util.List;
@@ -442,40 +440,6 @@ public class Runner {
 
     }
 
-    /*
-    generate tests for fixed class file on buggy version
-    generator: evosuite or randoop
-    testid: related to seed
-    timeout: second
-    errorReveal: whether generating errorReveal test
-     */
-    public static void generateTest(String generator, String name, String id, String timeout,
-            boolean errorReveal, boolean isBuggy) {
-        log.info("Generating test with {} for {}...", generator, name + id);
-        String errorRe = "";
-        String isBug = "f";
-        if (errorReveal) {
-            errorRe = " -E";
-        }
-        if (isBuggy) {
-            isBug = "b";
-        }
-
-        StringBuilder stringBuilder = new StringBuilder(COMMAND_GENTEST).append(" -g ")
-                .append(generator)
-                .append(" -p ").append(name).append(" -v ").append(id).append(isBug).append(" -n ")
-                .append(id).append(" -o ")
-                .append(testDir).append(" -b ").append(timeout).append(errorRe);
-
-        log.info(stringBuilder.toString());
-        List<String> message = null;
-        try {
-            message = Executor.execute(new String[] {"/bin/bash", "-c", stringBuilder.toString()});
-        } catch (Exception e) {
-            log.error(__name__ + " Generated failed !", e);
-        }
-        log.info(message.stream().collect(Collectors.joining(" ")));
-    }
 
     /*
     tar.bz2 unzip
@@ -526,20 +490,6 @@ public class Runner {
         }
     }
 
-    public static void jdCallGraph(Subject subject, String mainTest) {
-        StringBuilder stringBuilder = new StringBuilder(
-                Constant.COMMAND_CD + subject.getHome() + " && ");
-        stringBuilder.append(Constant.COMMAND_JAVA_HOME).append("/bin/java -Xms4g -Xmx8g -javaagent:")
-                .append(Constant.jdCallGraphDir).append("/jdcallgraph-0.2-agent.jar=").append(Constant.jdCallGraphDir)
-                .append("/config.ini -cp ").append(subject.getSootDependency()).append(" ").append(mainTest);
-        log.info(stringBuilder.toString());
-        List<String> message = null;
-        try {
-            message = Executor.execute(new String[] {"/bin/bash", "-c", stringBuilder.toString()});
-        } catch (Exception e) {
-            log.info(message.stream().collect(Collectors.joining(" ")));
-        }
-    }
 
     public static void sleepOneMinute() {
         try {

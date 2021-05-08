@@ -6,7 +6,7 @@ public class Constant {
     public static String env = macOs ? "/Users/liangjingjing" : "/home/emily";
     public static String HOME = env + "/WorkSpace/Project/PatchCorrectness/patch-correctness";
     public static String PROJECT_HOME = env + "/WorkSpace/Data/Defects4J/projects_buggy";
-    public static String D4J_HOME = env + "/WorkSpace/defects4j";
+    public static String D4J_HOME = env + (macOs ? "/WorkSpace/defects4j" : "/defects4j");
 
 
     public static String PROJ_INFO = HOME + "/d4j-info";
@@ -52,34 +52,13 @@ public class Constant {
     public static final String METHOD_SEGMENT = ".";
     public static final String LINENUMBER_SEGMENT = "#";
 
-    // result file
-    public static String tracerResult = HOME + "/result/tracer";
-    public static String traceFile = "tracer";
-    public static String sliceResult = HOME + "/result/slicer";
-    public static String sliceFile = "slicer";
-    public static String testDir = HOME + "/result/test";
-    public static String dependencyDir = HOME + "/result/dependency";
 
-    //daikon file
-    public static String daikonResult = HOME + "/result/daikon";
-    public static String fixedDaikonFile = "fixed_daikon";
-    public static String buggyDaikonFile = "buggy_daikon";
-
-    public static String varResult = HOME + "/result/var";
-    public static String fixedVarFile = "fixed_var";
-    public static String buggyVarFile = "buggy_var";
-    public static String allFixedVarFile = "fixed_var_all";
-    public static String allBuggyVarFile = "buggy_var_all";
-
-    // jdcallgraph
-    public static String jdCallGraphDir = HOME_LIB + "/jdcallgraph";
-    public static String jdCallGraphReFile = HOME + "/result/callgraph/cg";
 
 
     // patches dir
     public static String patchesICSE = HOME + "/Patches/Patches_ICSE";
     public static String patchesOther = HOME + "/Patches/Patches_others";
-    public static String methodResult = HOME + "/result/methods";
+    public static String methodResult = HOME + "/result/static";
 
 
     public static String FIXED = ".fixed";

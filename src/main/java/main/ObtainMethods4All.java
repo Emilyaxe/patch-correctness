@@ -1,222 +1,162 @@
 package main;
 
 
+import static entity.Patch.findMethods;
+
 import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.jdt.core.dom.CompilationUnit;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-
-import config.Constant;
-import entity.Method;
-import entity.Patch4Train;
-import entity.Subject;
-import instrument.MethodLinesVisitor;
+import entity.Patch;
 import lombok.extern.slf4j.Slf4j;
-import util.BuildPath;
 import util.FileIO;
 
 @Slf4j
 public class ObtainMethods4All {
 
-    public static Map<String, List<Patch4Train>> readPatches(File patchDir) {
+    public static Map<String, List<Patch>> readTrainPatches() {
 
-        Map<String, List<Patch4Train>> subjectPatchMap = new LinkedHashMap<>();
+        String filePath = "/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/Patches"
+                + "/experiment3/kui_data_for_cc2v.txt";
 
-        for (File patchFile : patchDir.listFiles()) {
-            if (!patchFile.getName().endsWith(".txt")) {
-                log.info("ignore file {}", patchFile.getName());
-                continue;
-            }
-            String[] name = patchFile.getName().split("_");
-            String subStr = name[1];
-            Patch4Train patch = new Patch4Train(patchFile.getAbsolutePath(), patchFile.getName());
+        String patchDir =  "/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/Patches/experiment3/TrainingSet";
 
-            if (subjectPatchMap.containsKey(subStr)) {
-                subjectPatchMap.get(subStr).add(patch);
-            } else {
-                List<Patch4Train> list = new LinkedList<>();
-                list.add(patch);
-                subjectPatchMap.put(subStr, list);
-            }
+
+        String[] content = FileIO.readFileToString(filePath).split("\n");
+        List<Patch> patches = new LinkedList<>();
+        for(int i = 130; i < 662; i++){
+
+            String[] line = content[i].split("<ml>");
+            String label = line[0];
+            String info = line[1];
+            String[] infoArray = info.split("_");
+
+            String bugId = infoArray[1];
+            patches.add(Patch.builder().lable(label).patchName(info)
+                    .bugid(bugId).patchPath(patchDir + "/" + info).id(i)
+                    .build());
         }
 
+        Map<String, List<Patch>> subjectPatchMap =
+                patches.stream().collect(Collectors.groupingBy(Patch::getBugid));
         log.info("Totol Subject {}", subjectPatchMap.size());
-        int size = 0;
-        for (List<Patch4Train> patches : subjectPatchMap.values()) {
-            size = size + patches.size();
-        }
-        log.info("Total Patches {}", size);
+        log.info("Total Patches {}", subjectPatchMap.values().stream().mapToLong(List::size).sum());
         return subjectPatchMap;
     }
 
-    public static void findMethods(Map<String, List<Patch4Train>> subjectPatchMap, String label) {
-        List<JSONObject> resultList = new LinkedList<>();
-        int patchid = 0;
-        for (Entry<String, List<Patch4Train>> entry : subjectPatchMap.entrySet()) {
 
-            String name = entry.getKey().split("-")[0];
-            String id = entry.getKey().split("-")[1];
+    public static Map<String, List<Patch>> readTestPatches() {
+        List<Patch> patches = new LinkedList<>();
+        String filePath = "/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/Patches"
+                + "/experiment3/kui_data_for_cc2v.txt";
+        String patchDir =
+                "/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/Patches/experiment3/TestSet";
+        String[] content = FileIO.readFileToString(filePath).split("\n");
+        for (int i = 0; i <= 129; i++) {
+            String line = content[i];
+            String label = String.valueOf(line.charAt(0));
+            String info = line.split("ppp")[1].trim().split(" ")[0];
+            String[] infoArray = info.split("_");
 
-            if (name.equals("Lang") && id.equals("2")) {
-                patchid = patchid + entry.getValue().size();
-                log.warn("patch -- {}", entry.getValue().size());
-                continue;
-            }
-            if (name.equals("Time") && id.equals("21")) {
-                patchid = patchid + entry.getValue().size();
-                log.warn("patch -- {}", entry.getValue().size());
-                continue;
-            }
-            int bugid = 0;
-            if (name.equals("Closure") && (id.equals("63") || id.equals("93"))) {
-                // patchid = patchid + entry.getValue().size();
-                bugid = Integer.parseInt(id) - 1;
-            } else {
-                bugid = Integer.parseInt(id);
-            }
+            String id = StringUtils.getDigits(infoArray[0]);
+            String name = infoArray[0].split(id)[0];
 
-            Subject subject = new Subject(name, bugid);
-            String subjectPath = Constant.PROJECT_HOME + "/" + name + "/" + name + bugid;
-
-            for (Patch4Train patch : entry.getValue()) {
-                patchid++;
-                //log.info("{} Process patch {}", patchid, patch.getPatchPath());
-                if (!patch.getPatchName().equals("ACS_Math-3_C_Patch_1_1.txt")) {
-                    continue;
-                }
-
-                patch.initFixedFileAndChanges();
-                if (patch.isDeleteAll()) {
-                    patch.setCombinedMethod("deleteAllFile");
-                    JSONObject patchMethodJson = new JSONObject();
-                    patchMethodJson.put(patch.getPatchName(), patch.getCombinedMethod());
-                    resultList.add(patchMethodJson);
-                    continue;
-                }
-
-                String fixedFile = subjectPath + patch.getFixedFile().trim();
-                FileIO.backupFile(fixedFile);
-
-                createCombinedBuggyFiles(fixedFile, patch);
-
-                List<Method> methodList = getMethodInfoByraverse(fixedFile, subject);
-                for (Integer lnumber : patch.getChangeLines()) {
-                    Method findMethod = methodList.stream().filter(Objects::nonNull).filter(method ->
-                            lnumber >= method.get_startLine() && lnumber <= method.get_endLine()).findAny()
-                            .orElse(null);
-
-                    if (Objects.isNull(findMethod)) {
-                        //log.error("Patch {} obtain methods failed", patch.getPatchName());
-                        continue;
-                    }
-                    String combinedMethod =
-                            getMethodContent(fixedFile, findMethod.get_startLine(), findMethod.get_endLine(), patch);
-                    patch.setCombinedMethod(findMethod.get_startLine() == lnumber ? "deleteAllMethod" : combinedMethod);
-                    break;
-                }
-                if (!StringUtils.isEmpty(patch.getCombinedMethod())) {
-                    JSONObject patchMethodJson = new JSONObject();
-                    patchMethodJson.put(patch.getPatchName(), patch.getCombinedMethod());
-                    resultList.add(patchMethodJson);
-                } else {
-                    log.error("Patch {} obtain method failed ", patch.getPatchPath());
-                }
-            }
-        }
-        log.info("JsonList size: {}", resultList.size());
-        FileIO.writeStringToFile(BuildPath.buildMethodReFile(label), JSON.toJSONString(resultList));
-
-    }
-
-    public static List<Method> getMethodInfoByraverse(String fixedFile, Subject subject) {
-        MethodLinesVisitor methodVisitor = new MethodLinesVisitor();
-        CompilationUnit compilationUnit = FileIO.genASTFromSource(FileIO.readFileToString(fixedFile),
-                ASTParser.K_COMPILATION_UNIT);
-        compilationUnit.accept(methodVisitor);
-        return methodVisitor.getMethodList();
-    }
-
-    public static String getMethodContent(String fixedFile, Integer startLine, Integer endLine,
-            Patch4Train patch4Train) {
-        StringBuilder method = new StringBuilder();
-
-        FileIO.backupFile(fixedFile);
-        String fixedContent = FileIO.readFileToString(fixedFile);
-        Map<Integer, String> patchMap = patch4Train.recordChanges();
-        String[] contentArray = fixedContent.split("\n");
-        StringBuilder result = new StringBuilder();
-        int index = 0;
-        while (index < contentArray.length) {
-            if (!patchMap.containsKey(index + 1)) {
-                result.append(contentArray[index]).append("\n");
-                ++index;
-                continue;
-            }
-            String patchContent = patchMap.get(index + 1);
-            String[] patchArray = patchContent.split("\n");
-            for (String patch : patchArray) {
-                if (patch.startsWith("+")) {
-                    result.append(patch).append("\n");
-                } else if (patch.startsWith("-")) {
-                    result.append(patch).append("\n");
-                    ++index;
-                } else {
-                    result.append(contentArray[index]).append("\n");
-                    ++index;
-                }
-            }
+            patches.add(Patch.builder().lable(label).patchName(info)
+                    .bugid(name + "-" + id).patchPath(patchDir + "/" + infoArray[1]).id(i)
+                    .build());
         }
 
-        String[] content = result.toString().split("\n");
-
-        for (int i = startLine; i <= endLine; i++) {
-            method.append(content[i - 1]).append("\n");
-        }
-        return method.toString();
+        Map<String, List<Patch>> subjectPatchMap =
+                patches.stream().collect(Collectors.groupingBy(Patch::getBugid));
+        log.info("Totol Subject {}", subjectPatchMap.size());
+        log.info("Total Patches {}", subjectPatchMap.values().stream().mapToLong(List::size).sum());
+        return subjectPatchMap;
     }
 
-    public static void createCombinedBuggyFiles(String fixedFile, Patch4Train patch4Train) {
-        String fixedContent = FileIO.readFileToString(fixedFile);
-        Map<Integer, String> patchMap = patch4Train.recordChanges();
-        String[] contentArray = fixedContent.split("\n");
-        StringBuilder result = new StringBuilder();
-        int index = 0;
-        while (index < contentArray.length) {
-            if (!patchMap.containsKey(index + 1)) {
-                result.append(contentArray[index]).append("\n");
-                ++index;
+    public static Map<String, List<Patch>> readCorrectPatches() {
+        List<Patch> patches = new LinkedList<>();
+        String filePath = "/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/Patches"
+                + "/experiment3/kui_data_for_cc2v.txt";
+        String correctDir = "/Users/liangjingjing/WorkSpace/defects4j/framework/projects";
+        String[] content = FileIO.readFileToString(filePath).split("\n");
+        for(int i = 662; i < 998; i++){
+            String[] line = content[i].split("<ml>");
+            String label = line[0];
+            String info = line[1];
+            String[] infoArray = info.split("_");
+
+            String id = infoArray[1].split("\\.")[0];
+            String name = infoArray[0];
+
+            patches.add(Patch.builder().lable(label).patchName(info)
+                    .bugid(name + "-" + id).patchPath(correctDir + "/" + name +  "/patches/"  + id + ".src.patch")
+                    .id(i)
+                    .build());
+        }
+
+        Map<String, List<Patch>> subjectPatchMap =
+                patches.stream().collect(Collectors.groupingBy(Patch::getBugid));
+        log.info("Totol Subject {}", subjectPatchMap.size());
+        log.info("Total Patches {}", subjectPatchMap.values().stream().mapToLong(List::size).sum());
+        return subjectPatchMap;
+    }
+
+
+    public static Map<String, List<Patch>> readCorrectPatch4Wen(){
+        List<Patch> patches = new LinkedList<>();
+        String Dir = "/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/Patches/ASE20/Correct";
+        for(File f: new File(Dir).listFiles()){
+            if(!f.getName().endsWith(".patch")){
                 continue;
             }
-            String patchContent = patchMap.get(index + 1);
-            String[] patchArray = patchContent.split("\n");
-            for (String patch : patchArray) {
-                if (patch.startsWith("+")) {
-                    result.append("//").append(patch).append("\n");
-                } else {
-                    result.append(contentArray[index]).append("\n");
-                    ++index;
-                }
-            }
+            String[] name = f.getName().split(".patch")[0].split("-");
+            patches.add(Patch.builder().lable("1").patchName(f.getName())
+                    .bugid(name[1] + "-" + name[2]).patchPath(f.getAbsolutePath()).tool(name[3])
+                    .id(0)
+                    .build());
         }
-        FileIO.writeStringToFile(fixedFile, result.toString());
+        Map<String, List<Patch>> subjectPatchMap =
+                patches.stream().collect(Collectors.groupingBy(Patch::getBugid));
+        log.info("Totol Subject {}", subjectPatchMap.size());
+        log.info("Total Patches {}", subjectPatchMap.values().stream().mapToLong(List::size).sum());
+        return subjectPatchMap;
     }
-
+    public static Map<String, List<Patch>> readInCorrectPatch4Wen(){
+        List<Patch> patches = new LinkedList<>();
+        String Dir = "/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/Patches/ASE20/Overfitting";
+        for(File f: new File(Dir).listFiles()){
+            if(!f.getName().endsWith(".patch")){
+                continue;
+            }
+            String[] name = f.getName().split(".patch")[0].split("-");
+            patches.add(Patch.builder().lable("0").patchName(f.getName())
+                    .bugid(name[1] + "-" + name[2]).patchPath(f.getAbsolutePath()).tool(name[3])
+                    .id(0)
+                    .build());
+        }
+        Map<String, List<Patch>> subjectPatchMap =
+                patches.stream().collect(Collectors.groupingBy(Patch::getBugid));
+        log.info("Totol Subject {}", subjectPatchMap.size());
+        log.info("Total Patches {}", subjectPatchMap.values().stream().mapToLong(List::size).sum());
+        return subjectPatchMap;
+    }
 
     public static void main(String[] args) {
-        String patchDir =
-                "/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/Patches/experiment3"
-                        + "/TrainingSet";
-        Map<String, List<Patch4Train>> subjectPatchMap = readPatches(new File(patchDir));
-        findMethods(subjectPatchMap, "trainingSet");
+
+        Map<String, List<Patch>> testsubjectPatchMap = readTestPatches();
+        findMethods(testsubjectPatchMap, "testSet4kui", false);
+        Map<String, List<Patch>> corsubjectPatchMap = readCorrectPatches();
+        findMethods(corsubjectPatchMap, "correctSet4kui", true);
+        Map<String, List<Patch>> trainsubjectPatchMap = readTrainPatches();
+        findMethods(trainsubjectPatchMap, "TrainSet4kui", false);
+        Map<String, List<Patch>>  cor4wensubjectPatchMap = readCorrectPatch4Wen();
+        findMethods(cor4wensubjectPatchMap, "Correct4Wen", false);
+        Map<String, List<Patch>>  incor4wensubjectPatchMap = readInCorrectPatch4Wen();
+        findMethods(incor4wensubjectPatchMap, "Overfitting4Wen", false);
     }
 }
