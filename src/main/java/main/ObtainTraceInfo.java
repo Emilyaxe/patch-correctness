@@ -56,9 +56,9 @@ public class ObtainTraceInfo {
     private static void processTrace(boolean reverse, String reDir, Entry<String, List<Patch>> entry, String[] sub) {
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
         for(Patch patch: entry.getValue()){
-            if(! patch.getPatchName().equals("patch1-Lang-7-AVATAR.patch")){
-                continue;
-            }
+//            if(! patch.getPatchName().equals("patch1-Lang-7-AVATAR.patch")){
+//                continue;
+//            }
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
             // apply patches in all fixed files, and obtain buggy & fixed version
             ProcessPatch.createCombinedBuggy4AllFiles(patch, reverse);

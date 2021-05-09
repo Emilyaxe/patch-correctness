@@ -52,7 +52,7 @@ public class ObtainMethods4All {
 
     public static Map<String, List<Patch>> readTestPatches() {
         List<Patch> patches = new LinkedList<>();
-        String filePath =  Constant.HOME+  "/patch-correctness/Patches"
+        String filePath =  Constant.HOME+  "/Patches"
                 + "/experiment3/kui_data_for_cc2v.txt";
         String patchDir =
                 Constant.HOME+ "/Patches/experiment3/TestSet";
