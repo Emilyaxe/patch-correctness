@@ -24,7 +24,6 @@ import util.FileIO;
 public class ObtainTraceInfo {
 
     public static void compileAndRun(Subject subject, String oneTest) {
-        log.info("Running Tests .....");
         String srcPath = subject.getHome() + subject.get_ssrc();
         try {
             FileUtils.copyDirectory(new File(Constant.DUMPER_HOME), new File(srcPath + "/auxiliary"));
@@ -35,16 +34,16 @@ public class ObtainTraceInfo {
         if (Runner.compileSubject(subject)) {
             Runner.JUnitTestSubject(subject, oneTest);
         }
-
     }
 
-    public static void obtainTrace(Map<String, List<Patch>> subjectPatchMap, boolean reverse){
+    public static void obtainTrace(Map<String, List<Patch>> subjectPatchMap, boolean reverse, String reDir){
        // Map<String, List<Patch>> subjectPatchMap =
         for(Entry<String, List<Patch>> entry :subjectPatchMap.entrySet()){
             String[] sub = entry.getKey().split("-");
             Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
 
             for(Patch patch: entry.getValue()){
+                log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
                 // apply patches in all fixed files, and obtain buggy & fixed version
                 ProcessPatch.createCombinedBuggy4AllFiles(patch, reverse);
                 // obtain the instrumented fixed file and changes lines
@@ -55,7 +54,7 @@ public class ObtainTraceInfo {
                 }
                 // run failing tests on buggy version
                 for(String test: subject.getFailingTests()){
-                    String writeFile = BuildPath.buildDymicFile(patch.getPatchName(), test, true);
+                    String writeFile = BuildPath.buildDymicFile(reDir, patch.getPatchName(), test, true);
                     IntruMethodsVisitors visitor  = new IntruMethodsVisitors();
                     visitor.setWriteFile(writeFile);
                     visitor.setFixedMethodStartLine(fixedLine);
@@ -70,7 +69,7 @@ public class ObtainTraceInfo {
 
                 // change to fixed version run failing tests on fixed version
                 for(String test: subject.getFailingTests()){
-                    String writeFile = BuildPath.buildDymicFile(patch.getPatchName(), test, false);
+                    String writeFile = BuildPath.buildDymicFile(reDir, patch.getPatchName(), test, false);
                     IntruMethodsVisitors visitor  = new IntruMethodsVisitors();
                     visitor.setWriteFile(writeFile);
                     visitor.setFixedMethodStartLine(fixedLine);
@@ -86,7 +85,11 @@ public class ObtainTraceInfo {
 
     }
     public static void main(String[] args) {
-        obtainTrace(ObtainMethods4All.readCorrectPatch4Wen(), false);
+        obtainTrace(ObtainMethods4All.readCorrectPatch4Wen(), false, "Correct4Wen");
+        obtainTrace(ObtainMethods4All.readInCorrectPatch4Wen(), false, "Overfitting4Wen");
+        obtainTrace(ObtainMethods4All.readTrainPatches(), false, "TrainSet4Kui");
+        obtainTrace(ObtainMethods4All.readTestPatches(), false, "testSet4Kui");
+        obtainTrace(ObtainMethods4All.readCorrectPatches(), true, "correctSet4Kui");
 
     }
 }

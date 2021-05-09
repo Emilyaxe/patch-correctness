@@ -4,7 +4,6 @@ package main;
 import static entity.Patch.findMethods;
 
 import java.io.File;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +11,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
+import config.Constant;
 import entity.Patch;
 import lombok.extern.slf4j.Slf4j;
 import util.FileIO;
@@ -21,10 +21,10 @@ public class ObtainMethods4All {
 
     public static Map<String, List<Patch>> readTrainPatches() {
 
-        String filePath = "/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/Patches"
+        String filePath =  Constant.HOME+ "/Patches"
                 + "/experiment3/kui_data_for_cc2v.txt";
 
-        String patchDir =  "/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/Patches/experiment3/TrainingSet";
+        String patchDir =   Constant.HOME+  "/Patches/experiment3/TrainingSet";
 
 
         String[] content = FileIO.readFileToString(filePath).split("\n");
@@ -52,10 +52,10 @@ public class ObtainMethods4All {
 
     public static Map<String, List<Patch>> readTestPatches() {
         List<Patch> patches = new LinkedList<>();
-        String filePath = "/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/Patches"
+        String filePath =  Constant.HOME+  "/patch-correctness/Patches"
                 + "/experiment3/kui_data_for_cc2v.txt";
         String patchDir =
-                "/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/Patches/experiment3/TestSet";
+                Constant.HOME+ "/Patches/experiment3/TestSet";
         String[] content = FileIO.readFileToString(filePath).split("\n");
         for (int i = 0; i <= 129; i++) {
             String line = content[i];
@@ -80,9 +80,8 @@ public class ObtainMethods4All {
 
     public static Map<String, List<Patch>> readCorrectPatches() {
         List<Patch> patches = new LinkedList<>();
-        String filePath = "/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/Patches"
-                + "/experiment3/kui_data_for_cc2v.txt";
-        String correctDir = "/Users/liangjingjing/WorkSpace/defects4j/framework/projects";
+        String filePath =  Constant.HOME+ "/Patches/experiment3/kui_data_for_cc2v.txt";
+        String correctDir = Constant.D4J_HOME +  "/framework/projects";
         String[] content = FileIO.readFileToString(filePath).split("\n");
         for(int i = 662; i < 998; i++){
             String[] line = content[i].split("<ml>");
@@ -109,7 +108,7 @@ public class ObtainMethods4All {
 
     public static Map<String, List<Patch>> readCorrectPatch4Wen(){
         List<Patch> patches = new LinkedList<>();
-        String Dir = "/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/Patches/ASE20/Correct";
+        String Dir = Constant.HOME+ "/Patches/ASE20/Correct";
         for(File f: new File(Dir).listFiles()){
             if(!f.getName().endsWith(".patch")){
                 continue;
@@ -128,7 +127,7 @@ public class ObtainMethods4All {
     }
     public static Map<String, List<Patch>> readInCorrectPatch4Wen(){
         List<Patch> patches = new LinkedList<>();
-        String Dir = "/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/Patches/ASE20/Overfitting";
+        String Dir =  Constant.HOME+ "/Patches/ASE20/Overfitting";
         for(File f: new File(Dir).listFiles()){
             if(!f.getName().endsWith(".patch")){
                 continue;
