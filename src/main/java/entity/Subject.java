@@ -62,8 +62,8 @@ public class Subject {
         _name = name;
         _id = id;
 
-        //this.setSrcPath();
-        //this.setDependency();
+        this.setSrcPath();
+        this.setDependency();
         this.setFailingTest();
         download();
     }
@@ -248,7 +248,6 @@ public class Subject {
         //List<String> classpath = new LinkedList<>();
         String classpath =
                 Constant.HOME_LIB + "/junit-4.11.jar:"    // remove when running daikon
-                        //Constant.HOME_LIB + "/daikon5.8.6/daikon.jar:"      //  for daikon 5.8.6
                         + Constant.DUMPER_HOME + "/lib/*";      // for instrumentation
         switch (_name) {
             case "Math":

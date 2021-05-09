@@ -11,8 +11,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.alibaba.fastjson.JSONObject;
-
 import config.Constant;
 import entity.Method;
 import entity.Patch;
@@ -57,11 +55,11 @@ public class ProcessPatch {
                     StringBuilder result = new StringBuilder();
                     for (String patchLine : patchArray) {
                         if (patchLine.startsWith("-")) {
-                            result.append("+").append(patchLine.substring(1));
+                            result.append("+").append(patchLine.substring(1)).append("\n");
                         } else if (patchLine.startsWith("+")) {
-                            result.append("-").append(patchLine.substring(1));
+                            result.append("-").append(patchLine.substring(1)).append("\n");
                         } else {
-                            result.append(patchLine);
+                            result.append(patchLine).append("\nß");
                         }
                     }
                     patchInfo = result.toString();
@@ -74,12 +72,13 @@ public class ProcessPatch {
 
     public static void createCombinedBuggy4AllFiles( Patch patch, boolean reverse) {
         Map<String, String> patchMap = recordChanges4AllFiles(patch, reverse);
+        String[] subject = patch.getBugid().split("-");
 
         Map<String, Set<Integer>> fileLineMap = patchMap.keySet().stream().filter(Objects::nonNull)
                 .collect(Collectors.groupingBy(line->line.split("#")[0],
                         Collectors.mapping(line-> Integer.parseInt(line.split("#")[1]), Collectors.toSet())));
         for(Entry<String, Set<Integer>> entry : fileLineMap.entrySet()) {
-            String fixedFile = Constant.PROJECT_HOME + entry.getKey();
+            String fixedFile = Constant.PROJECT_HOME + "/" + subject[0]  + "/" + subject[0] + subject [1] + entry.getKey();
             FileIO.backupFile(fixedFile);
 
             String fixedContent = FileIO.readFileToString(fixedFile);
@@ -99,7 +98,8 @@ public class ProcessPatch {
                 for (String patchLine : patchArray) {
                     if (patchLine.startsWith("+")) {
                         result.append("//").append(patchLine).append("\n");
-                    } else {
+                    }
+                    else {
                         result.append(contentArray[index]).append("\n");
                         ++index;
                     }
@@ -111,20 +111,15 @@ public class ProcessPatch {
     }
     public static int getOneChangeLine(Subject subject, Patch patch, boolean reverse){
 
+        String[] specialPatches = {"Math_104.src.patch", "Math_12.src.patch", "Lang_56.src.patch","Closure_28.src.patch",
+                "Lang_23.src.patch","Time_26.src.patch", "Chart_23.src.patch", "Time_11.src.patch" };
+
         int result = 0;
-        int bugid = 0;
             String name = subject.get_name();
             String id = String.valueOf(subject.get_id());
-            if (name.equals("Closure") && (id.equals("63") || id.equals("93"))) {
-                // patchid = patchid + entry.getValue().size();
-                bugid = Integer.parseInt(id) - 1;
-            } else {
-                bugid = Integer.parseInt(id);
-            }
-
-            String subjectPath = Constant.PROJECT_HOME + "/" + name + "/" + name + bugid;
+            String subjectPath = Constant.PROJECT_HOME + "/" + name + "/" + name + id;
                 Patch.initFixedFileAndChanges(patch);
-                if (patch.isDeleteAll()) {
+                if (patch.isDeleteAll() || Arrays.asList(specialPatches).contains(patch.getPatchName())) {
                     return result;
                 }
 
@@ -141,27 +136,19 @@ public class ProcessPatch {
                     }
                      return lnumber;
                 }
-                if((patch.getPatchName().equals("Math_104.src.patch") )
-                        || (patch.getPatchName().equals("Math_12.src.patch") )){
-                    return result;
-                }else if((patch.getPatchName().equals("Lang_56.src.patch")  )
-                        || (patch.getPatchName().equals("Closure_28.src.patch") )){
-                    return result;
-                }
-                if (StringUtils.isEmpty(patch.getCombinedMethod())) {
-                    log.error("Patch {} obtain method failed ", patch.getPatchPath());
-                }
+                log.error("Patch {} obtain method failed ", patch.getPatchPath());
                 return result;
     }
 
     public static void createCombinedFixed4AllFiles( Patch patch, boolean reverse) {
         Map<String, String> patchMap = recordChanges4AllFiles(patch, reverse);
+        String[] subject = patch.getBugid().split("-");
 
         Map<String, Set<Integer>> fileLineMap = patchMap.keySet().stream().filter(Objects::nonNull)
                 .collect(Collectors.groupingBy(line->line.split("#")[0],
                         Collectors.mapping(line-> Integer.parseInt(line.split("#")[1]), Collectors.toSet())));
         for(Entry<String, Set<Integer>> entry : fileLineMap.entrySet()) {
-            String fixedFile = Constant.PROJECT_HOME + entry.getKey();
+            String fixedFile = Constant.PROJECT_HOME + "/" + subject[0]  + "/" + subject[0] + subject [1] + entry.getKey();
             FileIO.backupFile(fixedFile);
 
             String fixedContent = FileIO.readFileToString(fixedFile);

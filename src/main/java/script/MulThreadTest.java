@@ -1,6 +1,8 @@
 package script;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
@@ -31,18 +33,21 @@ public class MulThreadTest {
         map.put("Math", 106);
         map.put("Lang", 65);
         map.put("Time", 27);
+        List<CompletableFuture<Void>> futureList = new LinkedList<>();
         for (Entry<String, Integer> entry : map.entrySet()) {
             String name = entry.getKey();
             Integer end = entry.getValue();
             for (int i = 1; i <= end; i++) {
                 int index = i;
-                CompletableFuture.runAsync(() -> {
+                futureList.add(CompletableFuture.runAsync(() -> {
                     Subject subject = new Subject(name, index);
                     // todo  写入subject之后的逻辑
-                }, EXECUTOR);
+                }, EXECUTOR));
             }
             log.info("finish subject {}", entry.getKey());
         }
+        CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0])).join();
+        log.info("finish all subject!");
     }
 
 }
