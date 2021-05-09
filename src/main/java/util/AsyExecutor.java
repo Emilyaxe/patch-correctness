@@ -16,7 +16,7 @@ public class AsyExecutor {
 
     public static final ExecutorService EXECUTOR = new ThreadPoolExecutor(THREAD_NUM, THREAD_NUM,
             10, TimeUnit.SECONDS, new LinkedBlockingQueue<>(1000),
-            new ThreadFactoryBuilder().setNameFormat("patch-correct-%d").build(),
+            new ThreadFactoryBuilder().setNameFormat("patch-correct-%d").setDaemon(true).build(),
             (runnable, currentExecutor) -> log.warn(
                     "rejectedExecution mul thread Task {} rejected from {}", runnable.toString(),
                     currentExecutor.toString()));
