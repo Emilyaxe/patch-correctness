@@ -61,6 +61,7 @@ public class ObtainTraceInfo {
             //            if(! patch.getPatchName().equals("patch1-Lang-7-AVATAR.patch")){
             //                continue;
             //            }
+
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
             // apply patches in all fixed files, and obtain buggy & fixed version
             ProcessPatch.createCombinedBuggy4AllFiles(patch, reverse);
