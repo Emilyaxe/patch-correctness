@@ -2,9 +2,11 @@ package main;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.CompletableFuture;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -38,49 +40,53 @@ public class ObtainTraceInfo {
 
     public static void obtainTrace(Map<String, List<Patch>> subjectPatchMap, boolean reverse, String reDir){
        // Map<String, List<Patch>> subjectPatchMap =
+        List<CompletableFuture<Void>> futureList = new LinkedList<>();
         for(Entry<String, List<Patch>> entry :subjectPatchMap.entrySet()){
             String[] sub = entry.getKey().split("-");
-            Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
+            futureList.add(CompletableFuture.runAsync(() -> {
+                Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
+                for(Patch patch: entry.getValue()){
+                    log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
+                    // apply patches in all fixed files, and obtain buggy & fixed version
+                    ProcessPatch.createCombinedBuggy4AllFiles(patch, reverse);
+                    // obtain the instrumented fixed file and changes lines
+                    int fixedLine = ProcessPatch.getOneChangeLine(subject, patch, reverse);
 
-            for(Patch patch: entry.getValue()){
-                log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
-                // apply patches in all fixed files, and obtain buggy & fixed version
-                ProcessPatch.createCombinedBuggy4AllFiles(patch, reverse);
-                // obtain the instrumented fixed file and changes lines
-                int fixedLine = ProcessPatch.getOneChangeLine(subject, patch, reverse);
+                    if(fixedLine == 0 ){
+                        continue;
+                    }
+                    // run failing tests on buggy version
+                    for(String test: subject.getFailingTests()){
+                        String writeFile = BuildPath.buildDymicFile(reDir, patch.getPatchName(), test, true);
+                        IntruMethodsVisitors visitor  = new IntruMethodsVisitors();
+                        visitor.setWriteFile(writeFile);
+                        visitor.setFixedMethodStartLine(fixedLine);
+                        String oneFixedFile = Constant.PROJECT_HOME + "/" + subject.get_name() + "/" + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
+                        CompilationUnit compilationUnit = FileIO.genASTFromSource(FileIO.readFileToString(oneFixedFile),
+                                ASTParser.K_COMPILATION_UNIT);
+                        compilationUnit.accept(visitor);
+                        FileIO.writeStringToFile(oneFixedFile, compilationUnit.toString());
+                        compileAndRun(subject, test);
+                    }
+                    ProcessPatch.createCombinedFixed4AllFiles(patch, reverse);
 
-                if(fixedLine == 0 ){
-                    continue;
+                    // change to fixed version run failing tests on fixed version
+                    for(String test: subject.getFailingTests()){
+                        String writeFile = BuildPath.buildDymicFile(reDir, patch.getPatchName(), test, false);
+                        IntruMethodsVisitors visitor  = new IntruMethodsVisitors();
+                        visitor.setWriteFile(writeFile);
+                        visitor.setFixedMethodStartLine(fixedLine);
+                        String oneFixedFile = Constant.PROJECT_HOME + "/" + subject.get_name() + "/" + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
+                        CompilationUnit compilationUnit = FileIO.genASTFromSource(FileIO.readFileToString(oneFixedFile),
+                                ASTParser.K_COMPILATION_UNIT);
+                        compilationUnit.accept(visitor);
+                        FileIO.writeStringToFile(oneFixedFile, compilationUnit.toString());
+                        compileAndRun(subject, test);
+                    }
                 }
-                // run failing tests on buggy version
-                for(String test: subject.getFailingTests()){
-                    String writeFile = BuildPath.buildDymicFile(reDir, patch.getPatchName(), test, true);
-                    IntruMethodsVisitors visitor  = new IntruMethodsVisitors();
-                    visitor.setWriteFile(writeFile);
-                    visitor.setFixedMethodStartLine(fixedLine);
-                    String oneFixedFile = Constant.PROJECT_HOME + "/" + subject.get_name() + "/" + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
-                    CompilationUnit compilationUnit = FileIO.genASTFromSource(FileIO.readFileToString(oneFixedFile),
-                            ASTParser.K_COMPILATION_UNIT);
-                    compilationUnit.accept(visitor);
-                    FileIO.writeStringToFile(oneFixedFile, compilationUnit.toString());
-                    compileAndRun(subject, test);
-                }
-                ProcessPatch.createCombinedFixed4AllFiles(patch, reverse);
-
-                // change to fixed version run failing tests on fixed version
-                for(String test: subject.getFailingTests()){
-                    String writeFile = BuildPath.buildDymicFile(reDir, patch.getPatchName(), test, false);
-                    IntruMethodsVisitors visitor  = new IntruMethodsVisitors();
-                    visitor.setWriteFile(writeFile);
-                    visitor.setFixedMethodStartLine(fixedLine);
-                    String oneFixedFile = Constant.PROJECT_HOME + "/" + subject.get_name() + "/" + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
-                    CompilationUnit compilationUnit = FileIO.genASTFromSource(FileIO.readFileToString(oneFixedFile),
-                            ASTParser.K_COMPILATION_UNIT);
-                    compilationUnit.accept(visitor);
-                    FileIO.writeStringToFile(oneFixedFile, compilationUnit.toString());
-                    compileAndRun(subject, test);
-                }
-            }
+            }));
+            CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0])).join();
+            log.info("finish obtain trace!");
         }
 
     }
