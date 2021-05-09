@@ -134,11 +134,15 @@ public class Runner {
         return true;
     }
 
-    public static String JUnitTestSubject(Subject subject, String failingTest) {
+    public static String JUnitTestSubject(Subject subject, String failingTest, boolean isTimeout) {
         log.info("----- Begin Run Failing Test And Get Trace ----- " + failingTest);
         List<String> message = Collections.emptyList();
         try {
-            StringBuilder junitArg = new StringBuilder(Constant.COMMAND_CD + subject.getHome() + " && ");
+            StringBuilder junitArg = new StringBuilder();
+          if(isTimeout){
+              junitArg.append(Constant.COMMAND_TIMEOUT).append(Constant.TEST_TIMEOUT).append(" ");
+        }
+          junitArg.append(Constant.COMMAND_CD + subject.getHome() + " && ");
             junitArg.append(Constant.COMMAND_JAVA_HOME).append("/bin/java -Xms4g -Xmx8g -cp \"")
                     // .append(subject.get_dependency()).append(":").append(HOME).append("/lib\" JUnitTestRunner ")
                     .append(subject.get_dependency()).append(":").append(HOME).append("/lib\" ")
@@ -172,13 +176,13 @@ public class Runner {
                 .noneMatch(element -> element.contains("FAILED"));
     }
 
-    public static void diff2File(String sourceFile, String targetFile, String patchFile) {
-        List<String> message = null;
-        try {
-            message = Executor.execute(CmdFactory.createDiffCmd(sourceFile, targetFile, patchFile));
-        } catch (Exception e) {
-            log.error(__name__ + "#diff2File run build subject failed !", e);
-        }
+//    public static void diff2File(String sourceFile, String targetFile, String patchFile) {
+//        List<String> message = null;
+//        try {
+//            message = Executor.execute(CmdFactory.createDiffCmd(sourceFile, targetFile, patchFile));
+//        } catch (Exception e) {
+//            log.error(__name__ + "#diff2File run build subject failed !", e);
+//        }
         //return  message.get(0);
 /*        for(int i = message.size() - 1; i >= 0; i--){
             if (message.get(i).contains(Constant.ANT_BUILD_FAILED)) {
@@ -186,7 +190,7 @@ public class Runner {
                 break;
             }
         }*/
-    }
+//    }
 
     // the depedency must be this
     public static boolean dynComp(String failingTestPath, Subject subject) {

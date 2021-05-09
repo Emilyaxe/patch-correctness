@@ -25,12 +25,12 @@ public class Constant {
 
     public static final String COMMAND_D4J = D4J_HOME + "/framework/bin/defects4j ";
 
-    public static final String COMMAND_GENTEST = D4J_HOME + "/framework/bin/gen_tests.pl";
-    public static final String COMMAND_DIFF = "";
+
 
     public static final String COMMAND_PATCH = "patch -u -p0 ";
-
+    public  static final String COMMAND_TIMEOUT = "timeout ";
     public static final int COMPILE_TIMEOUT = 100;
+    public static final int TEST_TIMEOUT = 1800;
     public static final int DAIKON_TIMEOUT = 3600;
 
 

@@ -92,13 +92,13 @@ public class CmdFactory {
 
     }
 
-    public static String[] createDiffCmd(String sourceFile, String targetFile, String patchFile) {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(Constant.COMMAND_DIFF).append(sourceFile).append(" ")
-                .append(targetFile).append(">").append(patchFile);
-        log.info(stringBuilder.toString());
-        return new String[] {"/bin/bash", "-c", stringBuilder.toString()};
-    }
+//    public static String[] createDiffCmd(String sourceFile, String targetFile, String patchFile) {
+//        StringBuilder stringBuilder = new StringBuilder();
+//        stringBuilder.append(Constant.COMMAND_DIFF).append(sourceFile).append(" ")
+//                .append(targetFile).append(">").append(patchFile);
+//        log.info(stringBuilder.toString());
+//        return new String[] {"/bin/bash", "-c", stringBuilder.toString()};
+//    }
 
     public static String[] createPatchCmd(String targetFile, String patchFile) {
         StringBuilder stringBuilder = new StringBuilder();
