@@ -48,7 +48,6 @@ public class MulThreadTest {
                     // todo  写入subject之后的逻辑
                 }, EXECUTOR));
             }
-            log.info("finish subject {}", entry.getKey());
         }
         CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0])).join();
         log.info("finish all subject!");
