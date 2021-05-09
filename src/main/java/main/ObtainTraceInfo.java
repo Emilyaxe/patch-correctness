@@ -26,6 +26,7 @@ import util.FileIO;
 
 @Slf4j
 public class ObtainTraceInfo {
+    public static  int illeglePatch = 0;
 
     public static void compileAndRun(Subject subject, String oneTest) {
         String srcPath = subject.getHome() + subject.get_ssrc();
@@ -47,20 +48,22 @@ public class ObtainTraceInfo {
         List<CompletableFuture<Void>> futureList = new LinkedList<>();
         for (Entry<String, List<Patch>> entry : subjectPatchMap.entrySet()) {
             String[] sub = entry.getKey().split("-");
-            futureList.add(CompletableFuture
-                    .runAsync(() -> processTrace(reverse, reDir, entry, sub), EXECUTOR));
+            CompletableFuture
+                    .runAsync(() -> processTrace(reverse, reDir, entry, sub), EXECUTOR).join();
         }
         CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0])).join();
+        log.info("Illegle Patches: {}", illeglePatch);
         log.info("finish obtain trace!");
     }
 
     private static void processTrace(boolean reverse, String reDir,
             Entry<String, List<Patch>> entry, String[] sub) {
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
+
         for (Patch patch : entry.getValue()) {
-            //            if(! patch.getPatchName().equals("patch1-Lang-7-AVATAR.patch")){
-            //                continue;
-            //            }
+//                        if(! patch.getPatchName().equals("Math71b_Patch53")){
+//                            continue;
+//                        }
 
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
             // apply patches in all fixed files, and obtain buggy & fixed version
@@ -69,6 +72,7 @@ public class ObtainTraceInfo {
             int fixedLine = ProcessPatch.getOneChangeLine(subject, patch, reverse);
 
             if (fixedLine == 0) {
+                illeglePatch++;
                 continue;
             }
             // run failing tests on buggy version
