@@ -170,7 +170,7 @@ public class ProcessPatch {
                         result.append("//").append(contentArray[index]).append("\n");
                         ++index;
                     }else if (patchLine.startsWith("+")) {
-                        result.append(patchLine.split("\\+")[1]).append("\n");
+                        result.append(patchLine.split("\\+", 2)[1]).append("\n");
                     } else {
                         result.append(contentArray[index]).append("\n");
                         ++index;
