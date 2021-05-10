@@ -51,7 +51,8 @@ public class ObtainTraceInfo {
         List<CompletableFuture<Void>> futureList = new LinkedList<>();
         for (Entry<String, List<Patch>> entry : subjectPatchMap.entrySet()) {
             String[] sub = entry.getKey().split("-");
-            CompletableFuture.runAsync(() -> processTrace(reverse, reDir, entry, sub), EXECUTOR);
+            futureList.add(CompletableFuture
+                    .runAsync(() -> processTrace(reverse, reDir, entry, sub), EXECUTOR));
         }
         CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0])).join();
         log.info("Illegle Patches: {}", illeglePatch);
