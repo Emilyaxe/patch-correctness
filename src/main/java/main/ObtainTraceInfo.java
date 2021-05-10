@@ -85,6 +85,9 @@ public class ObtainTraceInfo {
             Entry<String, List<Patch>> entry) {
         String[] sub = entry.getKey().split("-");
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
+//        if(! (subject.get_name().equals("Chart") && subject.get_id() == 26)){
+//            return;
+//        }
         for (Patch patch : entry.getValue()) {
             cleanSubject(subject.getHome() + subject.get_ssrc());
             //            if (!patch.getPatchName().equals("Math41b_Patch162")) {
@@ -128,7 +131,7 @@ public class ObtainTraceInfo {
 
             // change to fixed version run failing tests on fixed version
             for (String test : subject.getFailingTests()) {
-
+                try {
                 String writeFile = BuildPath.buildDymicFile(reDir, patch.getPatchName(), test,
                         false);
                 IntruMethodsVisitors visitor = new IntruMethodsVisitors();
@@ -143,6 +146,10 @@ public class ObtainTraceInfo {
                 FileIO.writeStringToFile(oneFixedFile, compilationUnit.toString());
                 if (!compileAndRun(subject, test)) {
                     log.error("Patch {}, Should Pass!", patch.getPatchName());
+                }
+                } catch (Exception e) {
+                    log.error("process trace failed! subject {} patch {} test {}",
+                            subject.get_name() + subject.get_id(), patch.getPatchName(), test);
                 }
             }
             // obtain the instrumented fixed file and changes lines
