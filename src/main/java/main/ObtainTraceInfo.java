@@ -38,7 +38,8 @@ public class ObtainTraceInfo {
         }
 
         if (Runner.compileSubject(subject)) {
-            Runner.JUnitTestSubject(subject, oneTest, true);
+            Runner.testSingleTest(subject, oneTest);
+            //Runner.JUnitTestSubject(subject, oneTest, true);
         }
     }
 

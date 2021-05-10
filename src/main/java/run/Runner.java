@@ -42,7 +42,7 @@ public class Runner {
                 break;
             }
         }
-
+        log.info(String.join("\n", message));
         return success;
     }
 
