@@ -163,8 +163,8 @@ public class ObtainTraceInfo {
     public static void main(String[] args) {
         //        obtainTrace(ObtainMethods4All.readCorrectPatch4Wen(), false, "Correct4Wen");
         //        obtainTrace(ObtainMethods4All.readInCorrectPatch4Wen(), false, "Overfitting4Wen");
-        //        obtainTrace(ObtainMethods4All.readTrainPatches(), false, "TrainSet4Kui");
-        obtainTrace(ObtainMethods4All.readTestPatches(), false, "testSet4Kui");
+                obtainTrace(ObtainMethods4All.readTrainPatches(), false, "TrainSet4Kui");
+       // obtainTrace(ObtainMethods4All.readTestPatches(), false, "testSet4Kui");
         //       obtainTrace(ObtainMethods4All.readCorrectPatches(), true, "correctSet4Kui");
     }
 }
