@@ -114,10 +114,15 @@ public class ObtainTraceInfo {
                 String oneFixedFile = Constant.PROJECT_HOME + "/" + subject.get_name() + "/"
                         + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
                 ProcessPatch.createCombinedBuggy4AllFiles(patch, reverse);
-                CompilationUnit compilationUnit = FileIO.genASTFromSource(
-                        FileIO.readFileToString(oneFixedFile), ASTParser.K_COMPILATION_UNIT);
-                compilationUnit.accept(visitor);
-                FileIO.writeStringToFile(oneFixedFile, compilationUnit.toString());
+                try{
+                    CompilationUnit compilationUnit = FileIO.genASTFromSource(
+                            FileIO.readFileToString(oneFixedFile), ASTParser.K_COMPILATION_UNIT);
+                    compilationUnit.accept(visitor);
+                    FileIO.writeStringToFile(oneFixedFile, compilationUnit.toString());
+                }catch (Exception e){
+                    e.printStackTrace();
+                    log.error("Patch {} instrument error", patch.getPatchName());
+                }
                 if (compileAndRun(subject, test)) {
                     log.error("Patch {}, Should Fail!", patch.getPatchName());
                 }
