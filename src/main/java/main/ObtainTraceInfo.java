@@ -2,6 +2,7 @@ package main;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -60,15 +61,26 @@ public class ObtainTraceInfo {
             processTrace(reverse, reDir, entry, sub);
         }
     }
+    private static void cleanSubject(String srcPath){
+        log.info("Clean subject ....");
+        List<File> list = new LinkedList<>();
+        FileIO.getAllFile(new File(srcPath), list);
+        for(File f: list){
+            if(new File(f.getAbsolutePath()+".bak").exists()){
+                try {
+                    FileUtils.copyFile(new File(f.getAbsolutePath()+".bak"), f);
+                } catch (IOException exception) {
+                    exception.printStackTrace();
+                }
+            }
+        }
+    }
 
     private static void processTrace(boolean reverse, String reDir,
             Entry<String, List<Patch>> entry, String[] sub) {
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
-
+        cleanSubject(subject.getHome() + subject.get_ssrc());
         for (Patch patch : entry.getValue()) {
-//                        if(! patch.getPatchName().equals("Math71b_Patch53")){
-//                            continue;
-//                        }
 
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
             // apply patches in all fixed files, and obtain buggy & fixed version
