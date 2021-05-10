@@ -86,19 +86,26 @@ public class ObtainTraceInfo {
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
         for (Patch patch : entry.getValue()) {
             cleanSubject(subject.getHome() + subject.get_ssrc());
+
             //            if(!patch.getPatchName().equals("Chart25b_Patch17")) {
             //                            continue;
             //                        }
+
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
             // obtain the instrumented fixed file and changes lines
             int fixedLine = ProcessPatch.getOneChangeLine(subject, patch, reverse);
             if (fixedLine == 0) {
                 illeglePatches.add(patch.getPatchName());
-                //illeglePatch++;
                 continue;
             }
             // run failing tests on buggy version
             for (String test : subject.getFailingTests()) {
+
+                if(new File(BuildPath.buildDymicFile(reDir, patch.getPatchName(), test,
+                        true)).exists()){
+                    break;
+                }
+
                 String writeFile = BuildPath.buildDymicFile(reDir, patch.getPatchName(), test,
                         true);
                 IntruMethodsVisitors visitor = new IntruMethodsVisitors();
@@ -118,6 +125,11 @@ public class ObtainTraceInfo {
 
             // change to fixed version run failing tests on fixed version
             for (String test : subject.getFailingTests()) {
+                if(new File(BuildPath.buildDymicFile(reDir, patch.getPatchName(), test,
+                        true)).exists()){
+                    break;
+                }
+
                 String writeFile = BuildPath.buildDymicFile(reDir, patch.getPatchName(), test,
                         false);
                 IntruMethodsVisitors visitor = new IntruMethodsVisitors();
