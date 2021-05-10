@@ -95,9 +95,9 @@ public class ObtainTraceInfo {
 
         for (Patch patch : entry.getValue()) {
             cleanSubject(subject.getHome() + subject.get_ssrc());
-//                        if (!patch.getPatchName().equals("Math42b_Patch163")) {
-//                            continue;
-//                        }
+            //                        if (!patch.getPatchName().equals("Math42b_Patch163")) {
+            //                            continue;
+            //                        }
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
             int fixedLine = ProcessPatch.getOneChangeLine(subject, patch, reverse);
             if (fixedLine == 0) {
@@ -144,7 +144,9 @@ public class ObtainTraceInfo {
                     ProcessPatch.createCombinedFixed4AllFiles(patch, reverse);
                     CompilationUnit compilationUnit = FileIO.genASTFromSource(
                             FileIO.readFileToString(oneFixedFile), ASTParser.K_COMPILATION_UNIT);
-                    compilationUnit.accept(visitor);
+                    synchronized (lock) {
+                        compilationUnit.accept(visitor);
+                    }
                     FileIO.writeStringToFile(oneFixedFile, compilationUnit.toString());
                     if (!compileAndRun(subject, test)) {
                         log.error("Patch {}, Should Pass!", patch.getPatchName());
@@ -163,8 +165,8 @@ public class ObtainTraceInfo {
     public static void main(String[] args) {
         //        obtainTrace(ObtainMethods4All.readCorrectPatch4Wen(), false, "Correct4Wen");
         //        obtainTrace(ObtainMethods4All.readInCorrectPatch4Wen(), false, "Overfitting4Wen");
-                obtainTrace(ObtainMethods4All.readTrainPatches(), false, "TrainSet4Kui");
-       // obtainTrace(ObtainMethods4All.readTestPatches(), false, "testSet4Kui");
+        obtainTrace(ObtainMethods4All.readTrainPatches(), false, "TrainSet4Kui");
+        // obtainTrace(ObtainMethods4All.readTestPatches(), false, "testSet4Kui");
         //       obtainTrace(ObtainMethods4All.readCorrectPatches(), true, "correctSet4Kui");
     }
 }
