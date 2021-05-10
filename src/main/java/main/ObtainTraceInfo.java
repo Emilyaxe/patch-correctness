@@ -1,14 +1,10 @@
 package main;
 
-import static util.AsyExecutor.EXECUTOR;
-
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.CompletableFuture;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -44,18 +40,25 @@ public class ObtainTraceInfo {
         return false;
     }
 
+//    public static void obtainTrace(Map<String, List<Patch>> subjectPatchMap, boolean reverse,
+//            String reDir) {
+//        // Map<String, List<Patch>> subjectPatchMap =
+//        List<CompletableFuture<Void>> futureList = new LinkedList<>();
+//        for (Entry<String, List<Patch>> entry : subjectPatchMap.entrySet()) {
+//            String[] sub = entry.getKey().split("-");
+//            CompletableFuture
+//                    .runAsync(() -> processTrace(reverse, reDir, entry, sub), EXECUTOR).join();
+//        }
+//        CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0])).join();
+//        log.info("Illegle Patches: {}", illeglePatch);
+//        log.info("finish obtain trace!");
+//    }
     public static void obtainTrace(Map<String, List<Patch>> subjectPatchMap, boolean reverse,
-            String reDir) {
-        // Map<String, List<Patch>> subjectPatchMap =
-        List<CompletableFuture<Void>> futureList = new LinkedList<>();
+                     String reDir){
         for (Entry<String, List<Patch>> entry : subjectPatchMap.entrySet()) {
             String[] sub = entry.getKey().split("-");
-            CompletableFuture
-                    .runAsync(() -> processTrace(reverse, reDir, entry, sub), EXECUTOR).join();
+            processTrace(reverse, reDir, entry, sub);
         }
-        CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0])).join();
-        log.info("Illegle Patches: {}", illeglePatch);
-        log.info("finish obtain trace!");
     }
 
     private static void processTrace(boolean reverse, String reDir,
@@ -63,9 +66,9 @@ public class ObtainTraceInfo {
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
 
         for (Patch patch : entry.getValue()) {
-                        if(! patch.getPatchName().equals("Math71b_Patch53")){
-                            continue;
-                        }
+//                        if(! patch.getPatchName().equals("Math71b_Patch53")){
+//                            continue;
+//                        }
 
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
             // apply patches in all fixed files, and obtain buggy & fixed version
