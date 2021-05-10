@@ -4,13 +4,10 @@
              if (h == LengthConstraintType.NONE) {
                  contentSize = arrangeFN(container, g2, constraint.getWidth());
              }
--           else if (h == LengthConstraintType.FIXED) {
-+           else{
-+                 this.rightBlock = null;
-+                 else if (h == LengthConstraintType.FIXED) {
-                      contentSize = arrangeFF(container, g2, constraint);
-                  }
-                  else if (h == LengthConstraintType.RANGE) {
+           else if (h == LengthConstraintType.FIXED) {
++                this.rightBlock = null;
+                 contentSize = arrangeFF(container, g2, constraint);
+            }
+            else if (h == LengthConstraintType.RANGE) {
                       contentSize = arrangeFR(container, g2, constraint);
-                  }
-+           }
+            }
