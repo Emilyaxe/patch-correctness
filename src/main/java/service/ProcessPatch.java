@@ -112,9 +112,9 @@ public class ProcessPatch {
     }
     public static int getOneChangeLine(Subject subject, Patch patch, boolean reverse){
 
+        ProcessPatch.createCombinedBuggy4AllFiles(patch, reverse);
         String[] specialPatches = {"Math_104.src.patch", "Math_12.src.patch", "Lang_56.src.patch","Closure_28.src.patch",
                 "Lang_23.src.patch","Time_26.src.patch", "Chart_23.src.patch", "Time_11.src.patch" };
-
         int result = 0;
             String name = subject.get_name();
             String id = String.valueOf(subject.get_id());

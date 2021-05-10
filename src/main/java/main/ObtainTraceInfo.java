@@ -61,9 +61,9 @@ public class ObtainTraceInfo {
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
 
         for (Patch patch : entry.getValue()) {
-                        if(! patch.getPatchName().equals("Chart26b_Patch18")){
-                            continue;
-                        }
+//                        if(! patch.getPatchName().equals("Chart26b_Patch18")){
+//                            continue;
+//                        }
 
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
             // apply patches in all fixed files, and obtain buggy & fixed version
