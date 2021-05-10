@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -27,7 +28,7 @@ import util.FileIO;
 @Slf4j
 public class ObtainTraceInfo {
 
-    public static int illeglePatch = 0;
+    public static List<String> illeglePatches = new LinkedList<>();
 
     public static boolean compileAndRun(Subject subject, String oneTest) {
         String srcPath = subject.getHome() + subject.get_ssrc();
@@ -55,7 +56,7 @@ public class ObtainTraceInfo {
                     .runAsync(() -> processTrace(reverse, reDir, entry, sub), EXECUTOR));
         }
         CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0])).join();
-        log.info("Illegle Patches: {}", illeglePatch);
+        log.info("Illegle Patches: {}",illeglePatches.stream().collect(Collectors.joining(",")));
         log.info("finish obtain trace!");
     }
 
@@ -84,16 +85,17 @@ public class ObtainTraceInfo {
     private static void processTrace(boolean reverse, String reDir,
             Entry<String, List<Patch>> entry, String[] sub) {
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
-        cleanSubject(subject.getHome() + subject.get_ssrc());
         for (Patch patch : entry.getValue()) {
-            //            if(!patch.getPatchName().equals("Time4b_Patch180")) {
-            //                continue;
-            //            }
+            cleanSubject(subject.getHome() + subject.get_ssrc());
+//            if(!patch.getPatchName().equals("Chart25b_Patch17")) {
+//                            continue;
+//                        }
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
             // obtain the instrumented fixed file and changes lines
             int fixedLine = ProcessPatch.getOneChangeLine(subject, patch, reverse);
             if (fixedLine == 0) {
-                illeglePatch++;
+                illeglePatches.add(patch.getPatchName());
+                //illeglePatch++;
                 continue;
             }
             // run failing tests on buggy version
