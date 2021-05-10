@@ -85,9 +85,11 @@ public class CmdFactory {
      */
     private static String[] createD4JCmd(Subject subject, String args, int timeout) {
         //System.out.println(stringBuilder.toString() );
-        String stringBuilder =
-                "echo $JAVA_HOME" + " && " + Constant.COMMAND_CD + subject.getHome() + " && "
-                        + Constant.COMMAND_D4J + args;
+//        String stringBuilder =
+//                "echo $JAVA_HOME" + " && " + Constant.COMMAND_CD + subject.getHome() + " && "
+//                        + Constant.COMMAND_D4J + args;
+                String stringBuilder = Constant.COMMAND_CD + subject.getHome() + " && "
+                                + Constant.COMMAND_D4J + args;
         return new String[] {"/bin/bash", "-c", stringBuilder};
 
     }
