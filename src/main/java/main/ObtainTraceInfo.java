@@ -92,7 +92,6 @@ public class ObtainTraceInfo {
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
             // obtain the instrumented fixed file and changes lines
             int fixedLine = ProcessPatch.getOneChangeLine(subject, patch, reverse);
-
             if (fixedLine == 0) {
                 illeglePatch++;
                 continue;

@@ -34,7 +34,6 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
 
-
 import instrument.gen.GenStatement;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -126,7 +125,7 @@ public class IntruMethodsVisitors extends TraversalVisitor{
                 ASTNode astNode = (ASTNode) methodBody.statements().get(i);
                 if (astNode instanceof Statement) {
                     blockStatement
-                            .addAll(processMethodBody((Statement) astNode, node.getReturnType2()));
+                            .addAll(processMethodBody((Statement) astNode, node.getReturnType2(), lineStartNumber));
                 } else {
                     blockStatement.add(ASTNode.copySubtree(ast, astNode));
                 }
@@ -139,10 +138,10 @@ public class IntruMethodsVisitors extends TraversalVisitor{
         return true;
     }
 
-    public List<Statement> processMethodBody(Statement statement, Type reType) {
+    public List<Statement> processMethodBody(Statement statement, Type reType, int lineStartNumber) {
         String message = _clazzFileName;
         List<Statement> result = new ArrayList<>();
-        int lineNumber = _cu.getLineNumber(statement.getStartPosition());
+        int lineNumber = _cu.getLineNumber(statement.getStartPosition()) - lineStartNumber;
         if (statement instanceof IfStatement) {
             IfStatement ifStatement = (IfStatement) statement;
 
@@ -166,7 +165,7 @@ public class IntruMethodsVisitors extends TraversalVisitor{
                     thenBlock.statements().add(ASTNode.copySubtree(thenBlock.getAST(), thenBody));
                 }
 
-                Block newThenBlock = processBlock(thenBlock, null, reType);
+                Block newThenBlock = processBlock(thenBlock, null, reType, lineStartNumber);
                 ifStatement
                         .setThenStatement((Statement) ASTNode.copySubtree(ifStatement.getAST(), newThenBlock));
             }
@@ -180,7 +179,7 @@ public class IntruMethodsVisitors extends TraversalVisitor{
                     elseBlock = ast.newBlock();
                     elseBlock.statements().add(ASTNode.copySubtree(elseBlock.getAST(), elseBody));
                 }
-                Block newElseBlock = processBlock(elseBlock,null, reType);
+                Block newElseBlock = processBlock(elseBlock,null, reType, lineStartNumber);
                 ifStatement
                         .setElseStatement((Statement) ASTNode.copySubtree(ifStatement.getAST(), newElseBlock));
             }
@@ -200,7 +199,7 @@ public class IntruMethodsVisitors extends TraversalVisitor{
                 }
                 Statement insert = GenStatement.genDumpLine(writeFile, message, lineNumber);
 
-                Block newWhileBlock = processBlock(whileBlock,insert, reType);
+                Block newWhileBlock = processBlock(whileBlock,insert, reType, lineStartNumber);
                 whileStatement
                         .setBody((Statement) ASTNode.copySubtree(whileStatement.getAST(), newWhileBlock));
             }
@@ -220,7 +219,7 @@ public class IntruMethodsVisitors extends TraversalVisitor{
                     forBlock.statements().add(ASTNode.copySubtree(forBlock.getAST(), forBody));
                 }
                 Statement insert = GenStatement.genDumpLine(writeFile, message, lineNumber);
-                Block newForBlock = processBlock(forBlock, insert, reType);
+                Block newForBlock = processBlock(forBlock, insert, reType, lineStartNumber);
                 forStatement.setBody((Statement) ASTNode.copySubtree(forStatement.getAST(), newForBlock));
             }
 
@@ -239,14 +238,14 @@ public class IntruMethodsVisitors extends TraversalVisitor{
                     doBlock.statements().add(ASTNode.copySubtree(doBlock.getAST(), doBody));
                 }
                 Statement insert = GenStatement.genDumpLine(writeFile, message, lineNumber);
-                Block newDoBlock = processBlock(doBlock,insert, reType);
+                Block newDoBlock = processBlock(doBlock,insert, reType, lineStartNumber);
                 doStatement.setBody((Statement) ASTNode.copySubtree(doStatement.getAST(), newDoBlock));
             }
 
             result.add(doStatement);
         } else if (statement instanceof Block) {
             Block block = (Block) statement;
-            Block newBlock = processBlock(block, null, reType);
+            Block newBlock = processBlock(block, null, reType, lineStartNumber);
             result.add(newBlock);
         } else if (statement instanceof EnhancedForStatement) {
 
@@ -262,7 +261,7 @@ public class IntruMethodsVisitors extends TraversalVisitor{
                     enhancedBlock.statements().add(ASTNode.copySubtree(enhancedBlock.getAST(), enhancedBody));
                 }
                 Statement insert = GenStatement.genDumpLine(writeFile, message, lineNumber);
-                Block newEnhancedBlock = processBlock(enhancedBlock, insert, reType);
+                Block newEnhancedBlock = processBlock(enhancedBlock, insert, reType, lineStartNumber);
                 enhancedForStatement
                         .setBody(
                                 (Statement) ASTNode.copySubtree(enhancedForStatement.getAST(), newEnhancedBlock));
@@ -284,7 +283,7 @@ public class IntruMethodsVisitors extends TraversalVisitor{
             for (ASTNode astNode : statements) {
                 if (astNode instanceof Statement) {
                     Statement s = (Statement) astNode;
-                    for (Statement statement2 : processMethodBody(s, reType)) {
+                    for (Statement statement2 : processMethodBody(s, reType, lineStartNumber)) {
                         switchStatement.statements()
                                 .add(ASTNode.copySubtree(switchStatement.getAST(), statement2));
                     }
@@ -301,7 +300,7 @@ public class IntruMethodsVisitors extends TraversalVisitor{
 
             Block tryBlock = tryStatement.getBody();
             if (tryBlock != null) {
-                Block newTryBlock = processBlock(tryBlock, null, reType);
+                Block newTryBlock = processBlock(tryBlock, null, reType, lineStartNumber);
                 tryStatement.setBody((Block) ASTNode.copySubtree(tryStatement.getAST(), newTryBlock));
             }
 
@@ -312,14 +311,14 @@ public class IntruMethodsVisitors extends TraversalVisitor{
                         CatchClause catchClause = (CatchClause) object;
                         Block catchBlock = catchClause.getBody();
                         Block newCatchBlock =
-                                processBlock(catchBlock, null, reType);
+                                processBlock(catchBlock, null, reType, lineStartNumber);
                         catchClause.setBody((Block) ASTNode.copySubtree(catchClause.getAST(), newCatchBlock));
                     }
                 }
             }
             Block finallyBlock = tryStatement.getFinally();
             if (finallyBlock != null) {
-                Block newFinallyBlock = processBlock(finallyBlock, null, reType);
+                Block newFinallyBlock = processBlock(finallyBlock, null, reType, lineStartNumber);
                 tryStatement
                         .setFinally((Block) ASTNode.copySubtree(tryStatement.getAST(), newFinallyBlock));
             }
@@ -351,7 +350,7 @@ public class IntruMethodsVisitors extends TraversalVisitor{
         return result;
     }
 
-    private Block processBlock(Block block, Statement insert, Type reType) {
+    private Block processBlock(Block block, Statement insert, Type reType, int lineStartNumber) {
         Block newBlock = AST.newAST(AST.JLS8).newBlock();
         if (block == null) {
             return newBlock;
@@ -362,7 +361,7 @@ public class IntruMethodsVisitors extends TraversalVisitor{
         for (Object object : block.statements()) {
             if (object instanceof Statement) {
                 Statement statement = (Statement) object;
-                List<Statement> newStatements = processMethodBody(statement, reType);
+                List<Statement> newStatements = processMethodBody(statement, reType, lineStartNumber);
                 for (Statement newStatement : newStatements) {
                     newBlock.statements().add(ASTNode.copySubtree(newBlock.getAST(), newStatement));
                 }
