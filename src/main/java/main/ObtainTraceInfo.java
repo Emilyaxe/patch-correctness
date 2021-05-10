@@ -51,8 +51,13 @@ public class ObtainTraceInfo {
         // Map<String, List<Patch>> subjectPatchMap =
         List<CompletableFuture<Void>> futureList = new LinkedList<>();
         for (Entry<String, List<Patch>> entry : subjectPatchMap.entrySet()) {
-            futureList.add(CompletableFuture.runAsync(() -> processTrace(reverse, reDir, entry),
-                    EXECUTOR));
+            futureList.add(CompletableFuture.runAsync(() -> {
+                try {
+                    processTrace(reverse, reDir, entry);
+                } catch (Exception e) {
+                    log.error("obtain trace failed! subject {}", entry.getKey(), e);
+                }
+            }, EXECUTOR));
         }
         CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0])).join();
         log.info("Illegle Patches: {}", String.join(",", illeglePatches));
@@ -85,9 +90,9 @@ public class ObtainTraceInfo {
             Entry<String, List<Patch>> entry) {
         String[] sub = entry.getKey().split("-");
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
-//        if(! (subject.get_name().equals("Chart") && subject.get_id() == 26)){
-//            return;
-//        }
+        //        if(! (subject.get_name().equals("Chart") && subject.get_id() == 26)){
+        //            return;
+        //        }
         for (Patch patch : entry.getValue()) {
             cleanSubject(subject.getHome() + subject.get_ssrc());
             //            if (!patch.getPatchName().equals("Math41b_Patch162")) {
@@ -110,46 +115,42 @@ public class ObtainTraceInfo {
                     String oneFixedFile = Constant.PROJECT_HOME + "/" + subject.get_name() + "/"
                             + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
                     ProcessPatch.createCombinedBuggy4AllFiles(patch, reverse);
-                    //try{
                     CompilationUnit compilationUnit = FileIO.genASTFromSource(
                             FileIO.readFileToString(oneFixedFile), ASTParser.K_COMPILATION_UNIT);
                     compilationUnit.accept(visitor);
                     FileIO.writeStringToFile(oneFixedFile, compilationUnit.toString());
-                    //                }catch (Exception e){
-                    //                    e.printStackTrace();
-                    //                    log.error("Patch {} instrument error", patch.getPatchName());
-                    //                }
                     if (compileAndRun(subject, test)) {
-                        log.error("Patch {}, Should Fail!", patch.getPatchName());
+                        log.error("compile Patch {}, Should Fail!", patch.getPatchName());
                     }
-
                 } catch (Exception e) {
-                    log.error("process trace failed! subject {} patch {} test {}",
-                            subject.get_name() + subject.get_id(), patch.getPatchName(), test);
+                    log.error(
+                            "process failing test on buggy version failed! subject {} patch {} test {}",
+                            subject.get_name() + subject.get_id(), patch.getPatchName(), test, e);
                 }
             }
 
             // change to fixed version run failing tests on fixed version
             for (String test : subject.getFailingTests()) {
                 try {
-                String writeFile = BuildPath.buildDymicFile(reDir, patch.getPatchName(), test,
-                        false);
-                IntruMethodsVisitors visitor = new IntruMethodsVisitors();
-                visitor.setWriteFile(writeFile);
-                visitor.setFixedMethodStartLine(fixedLine);
-                String oneFixedFile = Constant.PROJECT_HOME + "/" + subject.get_name() + "/"
-                        + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
-                ProcessPatch.createCombinedFixed4AllFiles(patch, reverse);
-                CompilationUnit compilationUnit = FileIO.genASTFromSource(
-                        FileIO.readFileToString(oneFixedFile), ASTParser.K_COMPILATION_UNIT);
-                compilationUnit.accept(visitor);
-                FileIO.writeStringToFile(oneFixedFile, compilationUnit.toString());
-                if (!compileAndRun(subject, test)) {
-                    log.error("Patch {}, Should Pass!", patch.getPatchName());
-                }
+                    String writeFile = BuildPath.buildDymicFile(reDir, patch.getPatchName(), test,
+                            false);
+                    IntruMethodsVisitors visitor = new IntruMethodsVisitors();
+                    visitor.setWriteFile(writeFile);
+                    visitor.setFixedMethodStartLine(fixedLine);
+                    String oneFixedFile = Constant.PROJECT_HOME + "/" + subject.get_name() + "/"
+                            + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
+                    ProcessPatch.createCombinedFixed4AllFiles(patch, reverse);
+                    CompilationUnit compilationUnit = FileIO.genASTFromSource(
+                            FileIO.readFileToString(oneFixedFile), ASTParser.K_COMPILATION_UNIT);
+                    compilationUnit.accept(visitor);
+                    FileIO.writeStringToFile(oneFixedFile, compilationUnit.toString());
+                    if (!compileAndRun(subject, test)) {
+                        log.error("Patch {}, Should Pass!", patch.getPatchName());
+                    }
                 } catch (Exception e) {
-                    log.error("process trace failed! subject {} patch {} test {}",
-                            subject.get_name() + subject.get_id(), patch.getPatchName(), test);
+                    log.error(
+                            "process failing test on fixed version failed! subject {} patch {} test {}",
+                            subject.get_name() + subject.get_id(), patch.getPatchName(), test, e);
                 }
             }
             // obtain the instrumented fixed file and changes lines
