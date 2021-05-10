@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import config.Constant;
 import lombok.extern.slf4j.Slf4j;
@@ -33,22 +33,25 @@ public class Executor {
                         message.add(line);
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.error("consumer process stream failed!", e);
                 }
                 try {
                     reader.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.error("consumer process stream failed!", e);
                 }
             });
             processReader.start();
-            try {
-                processReader.join();
-                process.waitFor();
-            } catch (InterruptedException e) {
-                return new LinkedList<>();
+            processReader.join();
+            boolean result = process.waitFor(29, TimeUnit.MINUTES);
+            if (!result) {
+                log.error("execute process time out! command {}", String.join(",", command));
             }
-        } catch (IOException ignored) {
+        } catch (IOException e) {
+            log.error("execute process failed! command {}", String.join(",", command), e);
+        } catch (InterruptedException e) {
+            log.error("execute process interrupted failed! command {}", String.join(",", command),
+                    e);
         } finally {
             if (process != null) {
                 process.destroy();
@@ -66,10 +69,9 @@ public class Executor {
             builder.redirectErrorStream(true);
             process = builder.start();
             process.waitFor();
-        } catch (IOException ignored) {
-        } catch (InterruptedException e) {
+        } catch (IOException ignored) {} catch (InterruptedException e) {
             log.error("process wait failed", e);
-        }finally {
+        } finally {
             if (process != null) {
                 process.destroy();
             }
