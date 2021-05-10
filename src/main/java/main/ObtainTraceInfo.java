@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -56,7 +55,7 @@ public class ObtainTraceInfo {
                     .runAsync(() -> processTrace(reverse, reDir, entry, sub), EXECUTOR));
         }
         CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0])).join();
-        log.info("Illegle Patches: {}",illeglePatches.stream().collect(Collectors.joining(",")));
+        log.info("Illegle Patches: {}", String.join(",", illeglePatches));
         log.info("finish obtain trace!");
     }
 
@@ -87,9 +86,9 @@ public class ObtainTraceInfo {
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
         for (Patch patch : entry.getValue()) {
             cleanSubject(subject.getHome() + subject.get_ssrc());
-//            if(!patch.getPatchName().equals("Chart25b_Patch17")) {
-//                            continue;
-//                        }
+            //            if(!patch.getPatchName().equals("Chart25b_Patch17")) {
+            //                            continue;
+            //                        }
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
             // obtain the instrumented fixed file and changes lines
             int fixedLine = ProcessPatch.getOneChangeLine(subject, patch, reverse);
