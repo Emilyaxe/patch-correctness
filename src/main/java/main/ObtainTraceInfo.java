@@ -29,6 +29,8 @@ public class ObtainTraceInfo {
 
     public static List<String> illeglePatches = new LinkedList<>();
 
+    public static final Object lock = new Object();
+
     public static boolean compileAndRun(Subject subject, String oneTest) {
         String srcPath = subject.getHome() + subject.get_ssrc();
         try {
@@ -90,14 +92,12 @@ public class ObtainTraceInfo {
             Entry<String, List<Patch>> entry) {
         String[] sub = entry.getKey().split("-");
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
-        //        if(! (subject.get_name().equals("Chart") && subject.get_id() == 26)){
-        //            return;
-        //        }
+
         for (Patch patch : entry.getValue()) {
             cleanSubject(subject.getHome() + subject.get_ssrc());
-            //            if (!patch.getPatchName().equals("Math41b_Patch162")) {
-            //                continue;
-            //            }
+//                        if (!patch.getPatchName().equals("Math42b_Patch163")) {
+//                            continue;
+//                        }
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
             int fixedLine = ProcessPatch.getOneChangeLine(subject, patch, reverse);
             if (fixedLine == 0) {
@@ -117,7 +117,9 @@ public class ObtainTraceInfo {
                     ProcessPatch.createCombinedBuggy4AllFiles(patch, reverse);
                     CompilationUnit compilationUnit = FileIO.genASTFromSource(
                             FileIO.readFileToString(oneFixedFile), ASTParser.K_COMPILATION_UNIT);
-                    compilationUnit.accept(visitor);
+                    synchronized (lock) {
+                        compilationUnit.accept(visitor);
+                    }
                     FileIO.writeStringToFile(oneFixedFile, compilationUnit.toString());
                     if (compileAndRun(subject, test)) {
                         log.error("compile Patch {}, Should Fail!", patch.getPatchName());

@@ -278,7 +278,7 @@ public class FileIO {
      * generate {@code CompilationUnit} from source code based on the specific type (e.g., {@code
      * ASTParser.K_COMPILATION_UNIT})
      */
-    public static synchronized CompilationUnit genASTFromSource(String icu, int type) {
+    public static CompilationUnit genASTFromSource(String icu, int type) {
         ASTParser astParser = ASTParser.newParser(AST.JLS8);
         Map<String, String> options = JavaCore.getOptions();
         JavaCore.setComplianceOptions(JavaCore.VERSION_1_7, options);
