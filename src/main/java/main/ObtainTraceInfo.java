@@ -87,9 +87,9 @@ public class ObtainTraceInfo {
         for (Patch patch : entry.getValue()) {
             cleanSubject(subject.getHome() + subject.get_ssrc());
 
-                        if(!patch.getPatchName().equals("Math41b_Patch162")) {
-                                        continue;
-                                    }
+//                        if(!patch.getPatchName().equals("Math41b_Patch162")) {
+//                                        continue;
+//                                    }
 
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
             // obtain the instrumented fixed file and changes lines
