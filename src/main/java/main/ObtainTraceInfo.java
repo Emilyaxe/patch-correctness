@@ -90,8 +90,6 @@ public class ObtainTraceInfo {
             //                continue;
             //            }
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
-
-            // apply patches in all fixed files, and obtain buggy & fixed version
             // obtain the instrumented fixed file and changes lines
             int fixedLine = ProcessPatch.getOneChangeLine(subject, patch, reverse);
 
