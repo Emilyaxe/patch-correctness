@@ -8,7 +8,8 @@ import entity.Subject;
 public class BuildPath {
 
     public static String buildDymicFile(String dir, String patchName, String test, boolean isBuggy){
-        return Constant.dynamicResult + "/"  + dir + "/" + patchName + "/" + test + "/" + (isBuggy? "buggy": "fixed");
+        String prefix = Constant.macOs ? "/Volumes/My Passport" : "";
+        return prefix + Constant.dynamicResult + "/"  + dir + "/" + patchName + "/" + test + "/" + (isBuggy? "buggy": "fixed");
     }
     public static String buildMethodsFile(Subject subject, boolean isBuggy) {
         return Constant.methodResult + "/" + subject.get_name() + "/" + subject.get_id() +  (isBuggy? ".buggy" : ".fixed");
