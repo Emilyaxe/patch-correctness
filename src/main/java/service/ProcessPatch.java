@@ -71,6 +71,7 @@ public class ProcessPatch {
     }
 
     public static void createCombinedBuggy4AllFiles( Patch patch, boolean reverse) {
+        log.info("Change to buggy version ... ");
         Map<String, String> patchMap = recordChanges4AllFiles(patch, reverse);
         String[] subject = patch.getBugid().split("-");
 
@@ -141,6 +142,7 @@ public class ProcessPatch {
     }
 
     public static void createCombinedFixed4AllFiles( Patch patch, boolean reverse) {
+        log.info("Change to fixed version ... ");
         Map<String, String> patchMap = recordChanges4AllFiles(patch, reverse);
         String[] subject = patch.getBugid().split("-");
 
