@@ -88,9 +88,12 @@ public class CmdFactory {
 //        String stringBuilder =
 //                "echo $JAVA_HOME" + " && " + Constant.COMMAND_CD + subject.getHome() + " && "
 //                        + Constant.COMMAND_D4J + args;
-                String stringBuilder = Constant.COMMAND_CD + subject.getHome() + " && "
-                                + Constant.COMMAND_D4J + args;
-        return new String[] {"/bin/bash", "-c", stringBuilder};
+        StringBuilder stringBuilder = new StringBuilder(Constant.COMMAND_CD).append(subject.getHome()).append(" && ");
+        if (timeout > 0){
+            stringBuilder.append(Constant.COMMAND_TIMEOUT).append(timeout).append(" ");
+        }
+        stringBuilder.append(Constant.COMMAND_D4J).append(args);
+        return new String[] {"/bin/bash", "-c", stringBuilder.toString()};
 
     }
 

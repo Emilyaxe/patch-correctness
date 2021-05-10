@@ -28,7 +28,7 @@ import util.FileIO;
 public class ObtainTraceInfo {
     public static  int illeglePatch = 0;
 
-    public static void compileAndRun(Subject subject, String oneTest) {
+    public static boolean compileAndRun(Subject subject, String oneTest) {
         String srcPath = subject.getHome() + subject.get_ssrc();
         try {
             FileUtils.copyDirectory(new File(Constant.DUMPER_HOME),
@@ -38,9 +38,10 @@ public class ObtainTraceInfo {
         }
 
         if (Runner.compileSubject(subject)) {
-            Runner.testSingleTest(subject, oneTest);
+          return  Runner.testSingleTest(subject, oneTest);
             //Runner.JUnitTestSubject(subject, oneTest, true);
         }
+        return false;
     }
 
     public static void obtainTrace(Map<String, List<Patch>> subjectPatchMap, boolean reverse,
@@ -62,9 +63,9 @@ public class ObtainTraceInfo {
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
 
         for (Patch patch : entry.getValue()) {
-//                        if(! patch.getPatchName().equals("Chart26b_Patch18")){
-//                            continue;
-//                        }
+                        if(! patch.getPatchName().equals("Math71b_Patch53")){
+                            continue;
+                        }
 
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
             // apply patches in all fixed files, and obtain buggy & fixed version
@@ -89,7 +90,9 @@ public class ObtainTraceInfo {
                         FileIO.readFileToString(oneFixedFile), ASTParser.K_COMPILATION_UNIT);
                 compilationUnit.accept(visitor);
                 FileIO.writeStringToFile(oneFixedFile, compilationUnit.toString());
-                compileAndRun(subject, test);
+                if(compileAndRun(subject, test)){
+                    log.error("Should Fail!");
+                }
             }
 
             // change to fixed version run failing tests on fixed version
@@ -106,7 +109,9 @@ public class ObtainTraceInfo {
                         FileIO.readFileToString(oneFixedFile), ASTParser.K_COMPILATION_UNIT);
                 compilationUnit.accept(visitor);
                 FileIO.writeStringToFile(oneFixedFile, compilationUnit.toString());
-                compileAndRun(subject, test);
+                if(! compileAndRun(subject, test)){
+                    log.error("Should Pass!");
+                }
             }
         }
     }

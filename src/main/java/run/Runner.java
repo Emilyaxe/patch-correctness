@@ -29,7 +29,7 @@ public class Runner {
         try {
             log.info("TESTING : " + clazzAndMethod);
             message = Executor
-                    .execute(CmdFactory.createTestSingleTestCaseCmd(subject, 30, clazzAndMethod));
+                    .execute(CmdFactory.createTestSingleTestCaseCmd(subject, Constant.TEST_TIMEOUT, clazzAndMethod));
         } catch (Exception e) {
             // LevelLogger.fatal(__name__ + "#buildSubject run test single test case failed !", e);
         }
