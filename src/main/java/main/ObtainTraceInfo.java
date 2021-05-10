@@ -67,7 +67,6 @@ public class ObtainTraceInfo {
 
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
             // apply patches in all fixed files, and obtain buggy & fixed version
-            ProcessPatch.createCombinedBuggy4AllFiles(patch, reverse);
             // obtain the instrumented fixed file and changes lines
             int fixedLine = ProcessPatch.getOneChangeLine(subject, patch, reverse);
 
@@ -84,14 +83,13 @@ public class ObtainTraceInfo {
                 visitor.setFixedMethodStartLine(fixedLine);
                 String oneFixedFile = Constant.PROJECT_HOME + "/" + subject.get_name() + "/"
                         + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
-                FileIO.backupFile(oneFixedFile);
+                ProcessPatch.createCombinedBuggy4AllFiles(patch, reverse);
                 CompilationUnit compilationUnit = FileIO.genASTFromSource(
                         FileIO.readFileToString(oneFixedFile), ASTParser.K_COMPILATION_UNIT);
                 compilationUnit.accept(visitor);
                 FileIO.writeStringToFile(oneFixedFile, compilationUnit.toString());
                 compileAndRun(subject, test);
             }
-            ProcessPatch.createCombinedFixed4AllFiles(patch, reverse);
 
             // change to fixed version run failing tests on fixed version
             for (String test : subject.getFailingTests()) {
@@ -102,7 +100,7 @@ public class ObtainTraceInfo {
                 visitor.setFixedMethodStartLine(fixedLine);
                 String oneFixedFile = Constant.PROJECT_HOME + "/" + subject.get_name() + "/"
                         + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
-                FileIO.backupFile(oneFixedFile);
+                ProcessPatch.createCombinedFixed4AllFiles(patch, reverse);
                 CompilationUnit compilationUnit = FileIO.genASTFromSource(
                         FileIO.readFileToString(oneFixedFile), ASTParser.K_COMPILATION_UNIT);
                 compilationUnit.accept(visitor);
