@@ -101,10 +101,10 @@ public class ObtainTraceInfo {
             // run failing tests on buggy version
             for (String test : subject.getFailingTests()) {
 
-                if(new File(BuildPath.buildDymicFile(reDir, patch.getPatchName(), test,
-                        true)).exists()){
-                    break;
-                }
+//                if(new File(BuildPath.buildDymicFile(reDir, patch.getPatchName(), test,
+//                        true)).exists()){
+//                    break;
+//                }
 
                 String writeFile = BuildPath.buildDymicFile(reDir, patch.getPatchName(), test,
                         true);
@@ -125,10 +125,10 @@ public class ObtainTraceInfo {
 
             // change to fixed version run failing tests on fixed version
             for (String test : subject.getFailingTests()) {
-                if(new File(BuildPath.buildDymicFile(reDir, patch.getPatchName(), test,
-                        true)).exists()){
-                    break;
-                }
+//                if(new File(BuildPath.buildDymicFile(reDir, patch.getPatchName(), test,
+//                        true)).exists()){
+//                    break;
+//                }
 
                 String writeFile = BuildPath.buildDymicFile(reDir, patch.getPatchName(), test,
                         false);
