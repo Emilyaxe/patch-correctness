@@ -87,9 +87,9 @@ public class ObtainTraceInfo {
         for (Patch patch : entry.getValue()) {
             cleanSubject(subject.getHome() + subject.get_ssrc());
 
-            //            if(!patch.getPatchName().equals("Chart25b_Patch17")) {
-            //                            continue;
-            //                        }
+                        if(!patch.getPatchName().equals("Math41b_Patch162")) {
+                                        continue;
+                                    }
 
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
             // obtain the instrumented fixed file and changes lines
@@ -101,11 +101,6 @@ public class ObtainTraceInfo {
             // run failing tests on buggy version
             for (String test : subject.getFailingTests()) {
 
-//                if(new File(BuildPath.buildDymicFile(reDir, patch.getPatchName(), test,
-//                        true)).exists()){
-//                    break;
-//                }
-
                 String writeFile = BuildPath.buildDymicFile(reDir, patch.getPatchName(), test,
                         true);
                 IntruMethodsVisitors visitor = new IntruMethodsVisitors();
@@ -114,15 +109,15 @@ public class ObtainTraceInfo {
                 String oneFixedFile = Constant.PROJECT_HOME + "/" + subject.get_name() + "/"
                         + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
                 ProcessPatch.createCombinedBuggy4AllFiles(patch, reverse);
-                try{
+                //try{
                     CompilationUnit compilationUnit = FileIO.genASTFromSource(
                             FileIO.readFileToString(oneFixedFile), ASTParser.K_COMPILATION_UNIT);
                     compilationUnit.accept(visitor);
                     FileIO.writeStringToFile(oneFixedFile, compilationUnit.toString());
-                }catch (Exception e){
-                    e.printStackTrace();
-                    log.error("Patch {} instrument error", patch.getPatchName());
-                }
+//                }catch (Exception e){
+//                    e.printStackTrace();
+//                    log.error("Patch {} instrument error", patch.getPatchName());
+//                }
                 if (compileAndRun(subject, test)) {
                     log.error("Patch {}, Should Fail!", patch.getPatchName());
                 }
@@ -130,10 +125,6 @@ public class ObtainTraceInfo {
 
             // change to fixed version run failing tests on fixed version
             for (String test : subject.getFailingTests()) {
-//                if(new File(BuildPath.buildDymicFile(reDir, patch.getPatchName(), test,
-//                        true)).exists()){
-//                    break;
-//                }
 
                 String writeFile = BuildPath.buildDymicFile(reDir, patch.getPatchName(), test,
                         false);
