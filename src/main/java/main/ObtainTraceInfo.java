@@ -26,7 +26,8 @@ import util.FileIO;
 
 @Slf4j
 public class ObtainTraceInfo {
-    public static  int illeglePatch = 0;
+
+    public static int illeglePatch = 0;
 
     public static boolean compileAndRun(Subject subject, String oneTest) {
         String srcPath = subject.getHome() + subject.get_ssrc();
@@ -38,7 +39,7 @@ public class ObtainTraceInfo {
         }
 
         if (Runner.compileSubject(subject)) {
-          return  Runner.testSingleTest(subject, oneTest);
+            return Runner.testSingleTest(subject, oneTest);
             //Runner.JUnitTestSubject(subject, oneTest, true);
         }
         return false;
@@ -50,28 +51,28 @@ public class ObtainTraceInfo {
         List<CompletableFuture<Void>> futureList = new LinkedList<>();
         for (Entry<String, List<Patch>> entry : subjectPatchMap.entrySet()) {
             String[] sub = entry.getKey().split("-");
-            CompletableFuture
-                    .runAsync(() -> processTrace(reverse, reDir, entry, sub), EXECUTOR).join();
+            CompletableFuture.runAsync(() -> processTrace(reverse, reDir, entry, sub), EXECUTOR);
         }
         CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0])).join();
         log.info("Illegle Patches: {}", illeglePatch);
         log.info("finish obtain trace!");
     }
-//    public static void obtainTrace(Map<String, List<Patch>> subjectPatchMap, boolean reverse,
-//                     String reDir){
-//        for (Entry<String, List<Patch>> entry : subjectPatchMap.entrySet()) {
-//            String[] sub = entry.getKey().split("-");
-//            processTrace(reverse, reDir, entry, sub);
-//        }
-//    }
-    private static void cleanSubject(String srcPath){
+
+    //    public static void obtainTrace(Map<String, List<Patch>> subjectPatchMap, boolean reverse,
+    //                     String reDir){
+    //        for (Entry<String, List<Patch>> entry : subjectPatchMap.entrySet()) {
+    //            String[] sub = entry.getKey().split("-");
+    //            processTrace(reverse, reDir, entry, sub);
+    //        }
+    //    }
+    private static void cleanSubject(String srcPath) {
         log.info("Clean subject ....");
         List<File> list = new LinkedList<>();
         FileIO.getAllFile(new File(srcPath), list);
-        for(File f: list){
-            if(new File(f.getAbsolutePath()+".bak").exists()){
+        for (File f : list) {
+            if (new File(f.getAbsolutePath() + ".bak").exists()) {
                 try {
-                    FileUtils.copyFile(new File(f.getAbsolutePath()+".bak"), f);
+                    FileUtils.copyFile(new File(f.getAbsolutePath() + ".bak"), f);
                 } catch (IOException exception) {
                     exception.printStackTrace();
                 }
@@ -84,9 +85,9 @@ public class ObtainTraceInfo {
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
         cleanSubject(subject.getHome() + subject.get_ssrc());
         for (Patch patch : entry.getValue()) {
-//            if(!patch.getPatchName().equals("Time4b_Patch180")) {
-//                continue;
-//            }
+            //            if(!patch.getPatchName().equals("Time4b_Patch180")) {
+            //                continue;
+            //            }
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
 
             // apply patches in all fixed files, and obtain buggy & fixed version
@@ -111,7 +112,7 @@ public class ObtainTraceInfo {
                         FileIO.readFileToString(oneFixedFile), ASTParser.K_COMPILATION_UNIT);
                 compilationUnit.accept(visitor);
                 FileIO.writeStringToFile(oneFixedFile, compilationUnit.toString());
-                if(compileAndRun(subject, test)){
+                if (compileAndRun(subject, test)) {
                     log.error("Patch {}, Should Fail!", patch.getPatchName());
                 }
             }
@@ -130,7 +131,7 @@ public class ObtainTraceInfo {
                         FileIO.readFileToString(oneFixedFile), ASTParser.K_COMPILATION_UNIT);
                 compilationUnit.accept(visitor);
                 FileIO.writeStringToFile(oneFixedFile, compilationUnit.toString());
-                if(! compileAndRun(subject, test)){
+                if (!compileAndRun(subject, test)) {
                     log.error("Patch {}, Should Pass!", patch.getPatchName());
                 }
             }
@@ -138,10 +139,10 @@ public class ObtainTraceInfo {
     }
 
     public static void main(String[] args) {
-//        obtainTrace(ObtainMethods4All.readCorrectPatch4Wen(), false, "Correct4Wen");
-//        obtainTrace(ObtainMethods4All.readInCorrectPatch4Wen(), false, "Overfitting4Wen");
-//        obtainTrace(ObtainMethods4All.readTrainPatches(), false, "TrainSet4Kui");
+        //        obtainTrace(ObtainMethods4All.readCorrectPatch4Wen(), false, "Correct4Wen");
+        //        obtainTrace(ObtainMethods4All.readInCorrectPatch4Wen(), false, "Overfitting4Wen");
+        //        obtainTrace(ObtainMethods4All.readTrainPatches(), false, "TrainSet4Kui");
         obtainTrace(ObtainMethods4All.readTestPatches(), false, "testSet4Kui");
- //       obtainTrace(ObtainMethods4All.readCorrectPatches(), true, "correctSet4Kui");
+        //       obtainTrace(ObtainMethods4All.readCorrectPatches(), true, "correctSet4Kui");
     }
 }
