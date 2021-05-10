@@ -61,9 +61,9 @@ public class ObtainTraceInfo {
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
 
         for (Patch patch : entry.getValue()) {
-//                        if(! patch.getPatchName().equals("Math71b_Patch53")){
-//                            continue;
-//                        }
+                        if(! patch.getPatchName().equals("Chart26b_Patch18")){
+                            continue;
+                        }
 
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
             // apply patches in all fixed files, and obtain buggy & fixed version
@@ -84,6 +84,7 @@ public class ObtainTraceInfo {
                 visitor.setFixedMethodStartLine(fixedLine);
                 String oneFixedFile = Constant.PROJECT_HOME + "/" + subject.get_name() + "/"
                         + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
+                FileIO.backupFile(oneFixedFile);
                 CompilationUnit compilationUnit = FileIO.genASTFromSource(
                         FileIO.readFileToString(oneFixedFile), ASTParser.K_COMPILATION_UNIT);
                 compilationUnit.accept(visitor);
@@ -101,6 +102,7 @@ public class ObtainTraceInfo {
                 visitor.setFixedMethodStartLine(fixedLine);
                 String oneFixedFile = Constant.PROJECT_HOME + "/" + subject.get_name() + "/"
                         + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
+                FileIO.backupFile(oneFixedFile);
                 CompilationUnit compilationUnit = FileIO.genASTFromSource(
                         FileIO.readFileToString(oneFixedFile), ASTParser.K_COMPILATION_UNIT);
                 compilationUnit.accept(visitor);

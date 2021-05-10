@@ -143,13 +143,13 @@ public class Runner {
             if(isTimeout){
                 junitArg.append(Constant.COMMAND_TIMEOUT).append(Constant.TEST_TIMEOUT).append(" ");
             }
-            junitArg.append(Constant.COMMAND_JAVA_HOME).append("/bin/java -Xms4g -Xmx8g -cp \"")
+            junitArg.append(Constant.COMMAND_JAVA_HOME).append("/bin/java -Xms2g -Xmx4g -cp \"")
                     // .append(subject.get_dependency()).append(":").append(HOME).append("/lib\" JUnitTestRunner ")
                     .append(subject.get_dependency()).append(":").append(HOME).append("/lib\" ")
                     .append(JUNIT_RUN_MAIN).append(" ")     // get only trace
                     .append(subject.get_name()).append(" ").append(subject.get_id()).append(" ")
                     .append(failingTest);
-            log.info(junitArg.toString());
+           // log.info(junitArg.toString());
             message = Executor.execute(new String[] {"/bin/bash", "-c", junitArg.toString()});
         } catch (Exception e) {
             log.error(__name__ + "#buildSubject run build subject failed !", e);
