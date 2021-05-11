@@ -95,9 +95,10 @@ public class ObtainTraceInfo {
 
         for (Patch patch : entry.getValue()) {
             cleanSubject(subject.getHome() + subject.get_ssrc());
-            //                                    if (!patch.getPatchName().equals("Closure_76.src.patch")) {
-            //                                        continue;
-            //                                    }
+
+                                    if (!patch.getPatchName().equals("Time_9.src.patch")) {
+                                        continue;
+                                    }
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
             int fixedLine = ProcessPatch.getOneChangeLine(subject, patch, reverse);
             if (fixedLine == 0) {
