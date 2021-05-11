@@ -34,7 +34,7 @@ public class ProcessPatch {
 
     public static Map<String, String> recordChanges4AllFiles(Patch patch, boolean reverse) {
         String constant = FileIO.readFileToString(patch.getPatchPath());
-        String[] diffFiles = constant.split("--- ");
+        String[] diffFiles = constant.split("--- "); // important
         Map<String, String> patchRecord = new LinkedHashMap<>();
 
         for (String diffFile : diffFiles) {
