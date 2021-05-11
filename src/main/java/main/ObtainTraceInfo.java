@@ -95,9 +95,9 @@ public class ObtainTraceInfo {
 
         for (Patch patch : entry.getValue()) {
             cleanSubject(subject.getHome() + subject.get_ssrc());
-//                                    if (!patch.getPatchName().equals("Closure_76.src.patch")) {
-//                                        continue;
-//                                    }
+            //                                    if (!patch.getPatchName().equals("Closure_76.src.patch")) {
+            //                                        continue;
+            //                                    }
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
             int fixedLine = ProcessPatch.getOneChangeLine(subject, patch, reverse);
             if (fixedLine == 0) {
@@ -109,18 +109,10 @@ public class ObtainTraceInfo {
                 try {
                     String writeFile = BuildPath.buildDymicFile(reDir, patch.getPatchName(), test,
                             true);
-                    IntruMethodsVisitors visitor = new IntruMethodsVisitors();
-                    visitor.setWriteFile(writeFile);
-                    visitor.setFixedMethodStartLine(fixedLine);
                     String oneFixedFile = Constant.PROJECT_HOME + "/" + subject.get_name() + "/"
                             + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
                     ProcessPatch.createCombinedBuggy4AllFiles(patch, reverse);
-                    synchronized (lock) {
-                        CompilationUnit compilationUnit = FileIO.genASTFromSource(
-                                FileIO.readFileToString(oneFixedFile), ASTParser.K_COMPILATION_UNIT);
-                        compilationUnit.accept(visitor);
-                        FileIO.writeStringToFile(oneFixedFile, compilationUnit.toString());
-                    }
+                    Instrument(fixedLine, writeFile, oneFixedFile);
                     if (compileAndRun(subject, test)) {
                         log.error("Patch {}, Should Fail!", patch.getPatchName());
                     }
@@ -136,18 +128,10 @@ public class ObtainTraceInfo {
                 try {
                     String writeFile = BuildPath.buildDymicFile(reDir, patch.getPatchName(), test,
                             false);
-                    IntruMethodsVisitors visitor = new IntruMethodsVisitors();
-                    visitor.setWriteFile(writeFile);
-                    visitor.setFixedMethodStartLine(fixedLine);
                     String oneFixedFile = Constant.PROJECT_HOME + "/" + subject.get_name() + "/"
                             + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
                     ProcessPatch.createCombinedFixed4AllFiles(patch, reverse);
-                    synchronized (lock) {
-                        CompilationUnit compilationUnit = FileIO.genASTFromSource(
-                                FileIO.readFileToString(oneFixedFile), ASTParser.K_COMPILATION_UNIT);
-                        compilationUnit.accept(visitor);
-                        FileIO.writeStringToFile(oneFixedFile, compilationUnit.toString());
-                    }
+                    Instrument(fixedLine, writeFile, oneFixedFile);
                     if (!compileAndRun(subject, test)) {
                         log.error("Patch {}, Should Pass!", patch.getPatchName());
                     }
@@ -162,10 +146,22 @@ public class ObtainTraceInfo {
         }
     }
 
+    private static void Instrument(int fixedLine, String writeFile, String oneFixedFile) {
+        synchronized (lock) {
+            IntruMethodsVisitors visitor = new IntruMethodsVisitors();
+            visitor.setWriteFile(writeFile);
+            visitor.setFixedMethodStartLine(fixedLine);
+            CompilationUnit compilationUnit = FileIO.genASTFromSource(
+                    FileIO.readFileToString(oneFixedFile), ASTParser.K_COMPILATION_UNIT);
+            compilationUnit.accept(visitor);
+            FileIO.writeStringToFile(oneFixedFile, compilationUnit.toString());
+        }
+    }
+
     public static void main(String[] args) {
         //        obtainTrace(ObtainMethods4All.readCorrectPatch4Wen(), false, "Correct4Wen");
         //        obtainTrace(ObtainMethods4All.readInCorrectPatch4Wen(), false, "Overfitting4Wen");
-       // obtainTrace(ObtainMethods4All.readTrainPatches(), false, "TrainSet4Kui");
+        // obtainTrace(ObtainMethods4All.readTrainPatches(), false, "TrainSet4Kui");
         // obtainTrace(ObtainMethods4All.readTestPatches(), false, "testSet4Kui");
         obtainTrace(ObtainMethods4All.readCorrectPatches(), true, "correctSet4Kui");
     }
