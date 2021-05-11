@@ -95,10 +95,9 @@ public class ObtainTraceInfo {
 
         for (Patch patch : entry.getValue()) {
             cleanSubject(subject.getHome() + subject.get_ssrc());
-
-//                                    if (!patch.getPatchName().equals("Time_9.src.patch")) {
-//                                        continue;
-//                                    }
+            //            if (!patch.getPatchName().equals("Time_9.src.patch")) {
+            //                continue;
+            //            }
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
             int fixedLine = ProcessPatch.getOneChangeLine(subject, patch, reverse);
             if (fixedLine == 0) {
@@ -113,7 +112,7 @@ public class ObtainTraceInfo {
                     String oneFixedFile = Constant.PROJECT_HOME + "/" + subject.get_name() + "/"
                             + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
                     ProcessPatch.createCombinedBuggy4AllFiles(patch, reverse);
-                    Instrument(fixedLine, writeFile, oneFixedFile);
+                    instrument(fixedLine, writeFile, oneFixedFile);
                     if (compileAndRun(subject, test)) {
                         log.error("Patch {}, Should Fail!", patch.getPatchName());
                     }
@@ -132,7 +131,7 @@ public class ObtainTraceInfo {
                     String oneFixedFile = Constant.PROJECT_HOME + "/" + subject.get_name() + "/"
                             + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
                     ProcessPatch.createCombinedFixed4AllFiles(patch, reverse);
-                    Instrument(fixedLine, writeFile, oneFixedFile);
+                    instrument(fixedLine, writeFile, oneFixedFile);
                     if (!compileAndRun(subject, test)) {
                         log.error("Patch {}, Should Pass!", patch.getPatchName());
                     }
@@ -147,7 +146,7 @@ public class ObtainTraceInfo {
         }
     }
 
-    private static void Instrument(int fixedLine, String writeFile, String oneFixedFile) {
+    private static void instrument(int fixedLine, String writeFile, String oneFixedFile) {
         synchronized (lock) {
             IntruMethodsVisitors visitor = new IntruMethodsVisitors();
             visitor.setWriteFile(writeFile);
