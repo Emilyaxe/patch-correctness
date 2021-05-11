@@ -95,7 +95,7 @@ public class ObtainTraceInfo {
 
         for (Patch patch : entry.getValue()) {
             cleanSubject(subject.getHome() + subject.get_ssrc());
-//                                    if (!patch.getPatchName().equals("jGenProg_Chart-13_P_Patch_2461_1666.txt")) {
+//                                    if (!patch.getPatchName().equals("Closure_76.src.patch")) {
 //                                        continue;
 //                                    }
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
@@ -115,14 +115,14 @@ public class ObtainTraceInfo {
                     String oneFixedFile = Constant.PROJECT_HOME + "/" + subject.get_name() + "/"
                             + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
                     ProcessPatch.createCombinedBuggy4AllFiles(patch, reverse);
-                    CompilationUnit compilationUnit = FileIO.genASTFromSource(
-                            FileIO.readFileToString(oneFixedFile), ASTParser.K_COMPILATION_UNIT);
                     synchronized (lock) {
+                        CompilationUnit compilationUnit = FileIO.genASTFromSource(
+                                FileIO.readFileToString(oneFixedFile), ASTParser.K_COMPILATION_UNIT);
                         compilationUnit.accept(visitor);
+                        FileIO.writeStringToFile(oneFixedFile, compilationUnit.toString());
                     }
-                    FileIO.writeStringToFile(oneFixedFile, compilationUnit.toString());
                     if (compileAndRun(subject, test)) {
-                        log.error("compile Patch {}, Should Fail!", patch.getPatchName());
+                        log.error("Patch {}, Should Fail!", patch.getPatchName());
                     }
                 } catch (Exception e) {
                     log.error(
@@ -142,12 +142,12 @@ public class ObtainTraceInfo {
                     String oneFixedFile = Constant.PROJECT_HOME + "/" + subject.get_name() + "/"
                             + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
                     ProcessPatch.createCombinedFixed4AllFiles(patch, reverse);
-                    CompilationUnit compilationUnit = FileIO.genASTFromSource(
-                            FileIO.readFileToString(oneFixedFile), ASTParser.K_COMPILATION_UNIT);
                     synchronized (lock) {
+                        CompilationUnit compilationUnit = FileIO.genASTFromSource(
+                                FileIO.readFileToString(oneFixedFile), ASTParser.K_COMPILATION_UNIT);
                         compilationUnit.accept(visitor);
+                        FileIO.writeStringToFile(oneFixedFile, compilationUnit.toString());
                     }
-                    FileIO.writeStringToFile(oneFixedFile, compilationUnit.toString());
                     if (!compileAndRun(subject, test)) {
                         log.error("Patch {}, Should Pass!", patch.getPatchName());
                     }

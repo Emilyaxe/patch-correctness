@@ -59,7 +59,7 @@ public class ProcessPatch {
                         } else if (patchLine.startsWith("+")) {
                             result.append("-").append(patchLine.substring(1)).append("\n");
                         } else {
-                            result.append(patchLine).append("\nß");
+                            result.append(patchLine).append("\n");
                         }
                     }
                     patchInfo = result.toString();
