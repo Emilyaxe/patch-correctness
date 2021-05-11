@@ -2,7 +2,6 @@ package service;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -12,28 +11,27 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 import config.Constant;
-import entity.Method;
 import entity.Patch;
-import entity.Subject;
 import lombok.extern.slf4j.Slf4j;
 import util.FileIO;
 
 @Slf4j
 public class ProcessPatch {
 
-    private static String obtainOneFixedFile(String line, String prefix){
+    private static String obtainOneFixedFile(String line, String prefix) {
         String fixedFile = "";
         if (line.trim().startsWith(prefix)) {
             fixedFile = Arrays.stream(line.split("\\.java")[0].split("/"))
                     .filter(StringUtils::isNotBlank).skip(1)
                     .collect(Collectors.joining("/", "/", ".java"));
-        } else if(line.trim().startsWith("a")){
+        } else if (line.trim().startsWith("a")) {
             fixedFile = line.trim().split("\\.java")[0].split("a", 2)[1] + ".java";
         } else {
             fixedFile = line.trim().split("\\.java")[0] + ".java";
         }
         return fixedFile;
     }
+
     public static Map<String, String> recordChanges4AllFiles(Patch patch, boolean reverse) {
         String constant = FileIO.readFileToString(patch.getPatchPath());
         String[] diffFiles = constant.split("---");
@@ -70,16 +68,17 @@ public class ProcessPatch {
         return patchRecord;
     }
 
-    public static void createCombinedBuggy4AllFiles( Patch patch, boolean reverse) {
+    public static void createCombinedBuggy4AllFiles(Patch patch, boolean reverse) {
         log.info("Change to buggy version ... ");
         Map<String, String> patchMap = recordChanges4AllFiles(patch, reverse);
         String[] subject = patch.getBugid().split("-");
 
         Map<String, Set<Integer>> fileLineMap = patchMap.keySet().stream().filter(Objects::nonNull)
-                .collect(Collectors.groupingBy(line->line.split("#")[0],
-                        Collectors.mapping(line-> Integer.parseInt(line.split("#")[1]), Collectors.toSet())));
-        for(Entry<String, Set<Integer>> entry : fileLineMap.entrySet()) {
-            String fixedFile = Constant.PROJECT_HOME + "/" + subject[0]  + "/" + subject[0] + subject [1] + entry.getKey();
+                .collect(Collectors.groupingBy(line -> line.split("#")[0], Collectors.mapping(
+                        line -> Integer.parseInt(line.split("#")[1]), Collectors.toSet())));
+        for (Entry<String, Set<Integer>> entry : fileLineMap.entrySet()) {
+            String fixedFile = Constant.PROJECT_HOME + "/" + subject[0] + "/" + subject[0]
+                    + subject[1] + entry.getKey();
             FileIO.backupFile(fixedFile);
 
             String fixedContent = FileIO.readFileToString(fixedFile);
@@ -87,20 +86,19 @@ public class ProcessPatch {
             StringBuilder result = new StringBuilder();
             int index = 0;
             while (index < contentArray.length) {
-                if(!entry.getValue().contains(index+1)){
+                if (!entry.getValue().contains(index + 1)) {
                     result.append(contentArray[index]).append("\n");
                     ++index;
                     continue;
                 }
-                String line = entry.getKey() + "#" + (index+1);
+                String line = entry.getKey() + "#" + (index + 1);
 
                 String patchContent = patchMap.get(line);
                 String[] patchArray = patchContent.split("\n");
                 for (String patchLine : patchArray) {
                     if (patchLine.startsWith("+")) {
                         result.append("//").append(patchLine).append("\n");
-                    }
-                    else {
+                    } else {
                         result.append(contentArray[index]).append("\n");
                         ++index;
                     }
@@ -110,47 +108,18 @@ public class ProcessPatch {
         }
 
     }
-    public static int getOneChangeLine(Subject subject, Patch patch, boolean reverse){
 
-        ProcessPatch.createCombinedBuggy4AllFiles(patch, reverse);
-        String[] specialPatches = {"Math_104.src.patch", "Math_12.src.patch", "Lang_56.src.patch","Closure_28.src.patch",
-                "Lang_23.src.patch","Time_26.src.patch", "Chart_23.src.patch", "Time_11.src.patch" };
-        int result = 0;
-            String name = subject.get_name();
-            String id = String.valueOf(subject.get_id());
-            String subjectPath = Constant.PROJECT_HOME + "/" + name + "/" + name + id;
-                Patch.initFixedFileAndChanges(patch);
-                if (patch.isDeleteAll() || Arrays.asList(specialPatches).contains(patch.getPatchName())) {
-                    return result;
-                }
-
-                String fixedFile = subjectPath + patch.getFixedFile().trim(); //  already in combined version
-                List<Method> methodList = Patch.getMethodInfoByraverse(fixedFile, subject);
-
-                for (Integer lnumber : patch.getChangeLines()) {
-                    Method findMethod = methodList.stream().filter(Objects::nonNull).filter(method ->
-                            lnumber >= method.get_startLine() && lnumber <= method.get_endLine()).findAny()
-                            .orElse(null);
-
-                    if (Objects.isNull(findMethod)) {
-                        continue;
-                    }
-                     return lnumber;
-                }
-                log.error("Patch {} obtain method failed ", patch.getPatchPath());
-                return result;
-    }
-
-    public static void createCombinedFixed4AllFiles( Patch patch, boolean reverse) {
+    public static void createCombinedFixed4AllFiles(Patch patch, boolean reverse) {
         log.info("Change to fixed version ... ");
         Map<String, String> patchMap = recordChanges4AllFiles(patch, reverse);
         String[] subject = patch.getBugid().split("-");
 
         Map<String, Set<Integer>> fileLineMap = patchMap.keySet().stream().filter(Objects::nonNull)
-                .collect(Collectors.groupingBy(line->line.split("#")[0],
-                        Collectors.mapping(line-> Integer.parseInt(line.split("#")[1]), Collectors.toSet())));
-        for(Entry<String, Set<Integer>> entry : fileLineMap.entrySet()) {
-            String fixedFile = Constant.PROJECT_HOME + "/" + subject[0]  + "/" + subject[0] + subject [1] + entry.getKey();
+                .collect(Collectors.groupingBy(line -> line.split("#")[0], Collectors.mapping(
+                        line -> Integer.parseInt(line.split("#")[1]), Collectors.toSet())));
+        for (Entry<String, Set<Integer>> entry : fileLineMap.entrySet()) {
+            String fixedFile = Constant.PROJECT_HOME + "/" + subject[0] + "/" + subject[0]
+                    + subject[1] + entry.getKey();
             FileIO.backupFile(fixedFile);
 
             String fixedContent = FileIO.readFileToString(fixedFile);
@@ -158,20 +127,20 @@ public class ProcessPatch {
             StringBuilder result = new StringBuilder();
             int index = 0;
             while (index < contentArray.length) {
-                if(!entry.getValue().contains(index+1)){
+                if (!entry.getValue().contains(index + 1)) {
                     result.append(contentArray[index]).append("\n");
                     ++index;
                     continue;
                 }
-                String line = entry.getKey() + "#" + (index+1);
+                String line = entry.getKey() + "#" + (index + 1);
 
                 String patchContent = patchMap.get(line);
                 String[] patchArray = patchContent.split("\n");
                 for (String patchLine : patchArray) {
-                    if(patchLine.startsWith("-")){
+                    if (patchLine.startsWith("-")) {
                         result.append("//").append(contentArray[index]).append("\n");
                         ++index;
-                    }else if (patchLine.startsWith("+")) {
+                    } else if (patchLine.startsWith("+")) {
                         result.append(patchLine.split("\\+", 2)[1]).append("\n");
                     } else {
                         result.append(contentArray[index]).append("\n");

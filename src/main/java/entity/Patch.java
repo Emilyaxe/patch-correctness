@@ -16,7 +16,6 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import config.Constant;
@@ -67,7 +66,7 @@ public class Patch {
                     .filter(StringUtils::isNotBlank).skip(1)
                     .collect(Collectors.joining("/", "/", ".java"));
             patch.setFixedFile(fixedFile);
-        } else if(lines[0].trim().startsWith("a")){
+        } else if (lines[0].trim().startsWith("a")) {
             String fixedfile = lines[0].trim().split("\\.java")[0].split("a", 2)[1] + ".java";
             patch.setFixedFile(fixedfile);
         } else {
@@ -130,7 +129,8 @@ public class Patch {
         return patchRecord;
     }
 
-    public static void findMethods(Map<String, List<Patch>> subjectPatchMap, String methodOutPutDir, boolean reverse) {
+    public static void findMethods(Map<String, List<Patch>> subjectPatchMap, String methodOutPutDir,
+            boolean reverse) {
         List<JSONObject> resultList = new LinkedList<>();
         int patchid = 0;
         Map<String, List<String>> nameValueMap = new LinkedHashMap<>();
@@ -144,9 +144,9 @@ public class Patch {
             for (Patch patch : entry.getValue()) {
                 patchid++;
                 //log.info("{} Process patch {}", patchid, patch.getPatchPath());
-//                if(! patch.getPatchName().equals("Closure_11.src.patch")){
-//                    continue;
-//                }
+                //                if(! patch.getPatchName().equals("Closure_11.src.patch")){
+                //                    continue;
+                //                }
 
                 initFixedFileAndChanges(patch);
                 if (patch.isDeleteAll()) {
@@ -163,60 +163,63 @@ public class Patch {
 
                 createCombinedBuggyFiles(fixedFile, patch, reverse);
 
-                List<Method> methodList = getMethodInfoByraverse(fixedFile, subject);
+                List<Method> methodList = getMethodInfo(fixedFile);
 
                 for (Integer lnumber : patch.getChangeLines()) {
-                    Method findMethod = methodList.stream().filter(Objects::nonNull).filter(method ->
-                            lnumber >= method.get_startLine() && lnumber <= method.get_endLine()).findAny()
-                            .orElse(null);
+                    Method findMethod = methodList.stream().filter(Objects::nonNull)
+                            .filter(method -> lnumber >= method.get_startLine()
+                                    && lnumber <= method.get_endLine())
+                            .findAny().orElse(null);
 
                     if (Objects.isNull(findMethod)) {
                         continue;
                     }
-                    String combinedMethod =
-                            getMethodContent(fixedFile, findMethod.get_startLine(), findMethod.get_endLine(), patch, reverse);
+                    String combinedMethod = getMethodContent(fixedFile, findMethod.get_startLine(),
+                            findMethod.get_endLine(), patch, reverse);
 
                     patch.setFixedMethodStartLine(lnumber);
-                    patch.setCombinedMethod(findMethod.get_startLine() == lnumber ? constructMethod("deleteAllMethod") : combinedMethod);
+                    patch.setCombinedMethod(findMethod.get_startLine() == lnumber ? constructMethod(
+                            "deleteAllMethod") : combinedMethod);
                     break;
                 }
-                if((patch.getPatchName().equals("Math_104.src.patch")  )
-                        || (patch.getPatchName().equals("Math_12.src.patch") )){
+                if ((patch.getPatchName().equals("Math_104.src.patch"))
+                        || (patch.getPatchName().equals("Math_12.src.patch"))) {
                     patch.setCombinedMethod(constructMethod("fixedField"));
-                }else if((patch.getPatchName().equals("Lang_56.src.patch") )
+                } else if ((patch.getPatchName().equals("Lang_56.src.patch"))
                         || (patch.getPatchName().equals("Closure_28.src.patch")
-            || patch.getPatchName().equals("Lang_23.src.patch")
-                || patch.getPatchName().equals("Time_26.src.patch")
-                || patch.getPatchName().equals("Chart_23.src.patch")
-                || patch.getPatchName().equals("Time_11.src.patch"))){
-                    patch.setCombinedMethod(constructMethod("addAMethod"));
-                }
-                if (!StringUtils.isEmpty(patch.getCombinedMethod())) {
+                                || patch.getPatchName().equals("Lang_23.src.patch")
+                                || patch.getPatchName().equals("Time_26.src.patch")
+                                || patch.getPatchName().equals("Chart_23.src.patch")
+                                || patch.getPatchName().equals("Time_11.src.patch"))) {
+                                    patch.setCombinedMethod(constructMethod("addAMethod"));
+                                }
+                if (StringUtils.isNotEmpty(patch.getCombinedMethod())) {
                     List<String> tmpList = new LinkedList<>();
                     tmpList.add(patch.getLable());
                     tmpList.add(patch.getCombinedMethod());
                     nameValueMap.put(patch.getPatchName(), tmpList);
-//                    JSONObject patchMethodJson =
-//                            (JSONObject) JSON.toJSON(Patch.builder().patchName(patch.getPatchName()).lable(patch.getLable())
-//                                    .combinedMethod(patch.getCombinedMethod()).build());
-                            //new JSONObject();
+                    //                    JSONObject patchMethodJson =
+                    //                            (JSONObject) JSON.toJSON(Patch.builder().patchName(patch.getPatchName()).lable(patch.getLable())
+                    //                                    .combinedMethod(patch.getCombinedMethod()).build());
+                    //new JSONObject();
                     //patchMethodJson.put(patch.getPatchName(), patch.getCombinedMethod());
-                   // resultList.add(patchMethodJson);
-                }  else {
+                    // resultList.add(patchMethodJson);
+                } else {
                     log.error("Patch {} obtain method failed ", patch.getPatchPath());
                 }
             }
         }
         log.info("JsonMap size: {}", nameValueMap.size());
-        FileIO.writeStringToFile(BuildPath.buildMethodReFile(methodOutPutDir), JSON.toJSONString(nameValueMap));
-//        log.info("JsonList size: {}", resultList.size());
-//        FileIO.writeStringToFile(BuildPath.buildMethodReFile(methodOutPutDir), JSON.toJSONString(resultList));
+        FileIO.writeStringToFile(BuildPath.buildMethodReFile(methodOutPutDir),
+                JSON.toJSONString(nameValueMap));
+        //        log.info("JsonList size: {}", resultList.size());
+        //        FileIO.writeStringToFile(BuildPath.buildMethodReFile(methodOutPutDir), JSON.toJSONString(resultList));
     }
 
-    public static List<Method> getMethodInfoByraverse(String fixedFile, Subject subject) {
+    public static List<Method> getMethodInfo(String fixedFile) {
         MethodLinesVisitor methodVisitor = new MethodLinesVisitor();
-        CompilationUnit compilationUnit = FileIO.genASTFromSource(FileIO.readFileToString(fixedFile),
-                ASTParser.K_COMPILATION_UNIT);
+        CompilationUnit compilationUnit = FileIO
+                .genASTFromSource(FileIO.readFileToString(fixedFile), ASTParser.K_COMPILATION_UNIT);
         compilationUnit.accept(methodVisitor);
         return methodVisitor.getMethodList();
     }
@@ -282,22 +285,21 @@ public class Patch {
             method.append(content[i - 1]).append("\n");
         }
         // corner case: add } in last line
-        if(content[endLine].startsWith("+")){
+        if (content[endLine].startsWith("+")) {
             method.append(content[endLine]).append("\n");
         }
         return method.toString();
     }
-    private static String constructMethod(String argu){
+
+    private static String constructMethod(String argu) {
         String dummyMethod = "public static void dummyMethod(){\n"
-                + "        String info = \"%s\";\n"
-                + "}";
+                + "        String info = \"%s\";\n" + "}";
         return String.format(dummyMethod, argu);
     }
 
     public static void main(String[] args) {
-        String patchFile =
-                "/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/Patches/experiment3"
-                        + "/TestSet/Patch5";
+        String patchFile = "/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/Patches/experiment3"
+                + "/TestSet/Patch5";
         Patch patch = Patch.builder().patchPath(patchFile).patchName("Chart5").build();
         Map<Integer, String> map = recordChanges(patch, false);
         //patch4Test.recordChangeLines();

@@ -1,13 +1,18 @@
 package main;
 
+import static entity.Patch.getMethodInfo;
 import static util.AsyExecutor.EXECUTOR;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import org.apache.commons.io.FileUtils;
@@ -15,6 +20,7 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import config.Constant;
+import entity.Method;
 import entity.Patch;
 import entity.Subject;
 import instrument.IntruMethodsVisitors;
@@ -30,6 +36,10 @@ public class ObtainTraceInfo {
     public static List<String> illeglePatches = new LinkedList<>();
 
     public static final Object lock = new Object();
+
+    private static final Set<String> specialPatches = new HashSet<>(Arrays.asList(
+            "Math_104.src.patch", "Math_12.src.patch", "Lang_56.src.patch", "Closure_28.src.patch",
+            "Lang_23.src.patch", "Time_26.src.patch", "Chart_23.src.patch", "Time_11.src.patch"));
 
     public static boolean compileAndRun(Subject subject, String oneTest) {
         String srcPath = subject.getHome() + subject.get_ssrc();
@@ -99,7 +109,7 @@ public class ObtainTraceInfo {
             //                continue;
             //            }
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
-            int fixedLine = ProcessPatch.getOneChangeLine(subject, patch, reverse);
+            int fixedLine = getOneChangeLine(subject, patch, reverse);
             if (fixedLine == 0) {
                 illeglePatches.add(patch.getPatchName());
                 continue;
@@ -156,6 +166,37 @@ public class ObtainTraceInfo {
             compilationUnit.accept(visitor);
             FileIO.writeStringToFile(oneFixedFile, compilationUnit.toString());
         }
+    }
+
+    private static int getOneChangeLine(Subject subject, Patch patch, boolean reverse) {
+
+        ProcessPatch.createCombinedBuggy4AllFiles(patch, reverse);
+
+        int result = 0;
+        String name = subject.get_name();
+        String id = String.valueOf(subject.get_id());
+        String subjectPath = Constant.PROJECT_HOME + "/" + name + "/" + name + id;
+        Patch.initFixedFileAndChanges(patch);
+        if (patch.isDeleteAll() || specialPatches.contains(patch.getPatchName())) {
+            return result;
+        }
+        String fixedFile = subjectPath + patch.getFixedFile().trim();//  already in combined version
+        List<Method> methodList;
+        synchronized (lock) {
+            methodList = getMethodInfo(fixedFile);
+        }
+        for (Integer lnumber : patch.getChangeLines()) {
+            Method findMethod = methodList.stream().filter(Objects::nonNull).filter(
+                    method -> lnumber >= method.get_startLine() && lnumber <= method.get_endLine())
+                    .findAny().orElse(null);
+
+            if (Objects.isNull(findMethod)) {
+                continue;
+            }
+            return lnumber;
+        }
+        log.error("Patch {} obtain method failed ", patch.getPatchPath());
+        return result;
     }
 
     public static void main(String[] args) {
