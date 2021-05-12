@@ -1,7 +1,5 @@
 package main;
 
-import static entity.Patch.findMethods;
-
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -17,6 +15,10 @@ public class ObtainMethods4DataSet {
         List<Patch> trainPatch = ObtainPatches.readTrainPatches();
         Map<String, List<Patch>> subjectPatchMap =
                 trainPatch.stream().collect(Collectors.groupingBy(Patch::getBugid));
-        findMethods(subjectPatchMap, "trainSet", false);
+        Patch.findMethods(subjectPatchMap, "trainSet", false);
+        //        List<Patch> testPatches = ObtainPatches.readTestPatches();
+        //        Map<String, List<Patch>> testSubjectPatchMap =
+        //                testPatches.stream().collect(Collectors.groupingBy(Patch::getBugid));
+        //        Patch.findMethods(testSubjectPatchMap, "testSet", false);
     }
 }

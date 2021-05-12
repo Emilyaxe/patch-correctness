@@ -9,9 +9,9 @@ diff -w -u -r Math58b/src/main/java/org/apache/commons/math/analysis/function/Ga
              if (param[2] <= 0) {
                  throw new NotStrictlyPositiveException(param[2]);
              }
-         }
++         }
      }
-+    }
+    }
  
      /**
       * @param xMinusMean {@code x - mean}.

@@ -135,6 +135,7 @@ public class Patch {
 
         List<String> errorPatches = new LinkedList<>();
         Map<String, List<String>> nameValueMap = new LinkedHashMap<>();
+        int patchid = 1;
         for (Entry<String, List<Patch>> entry : subjectPatchMap.entrySet()) {
 
             String name = entry.getKey().split("-")[0];
@@ -143,9 +144,9 @@ public class Patch {
             String subjectPath = Constant.PROJECT_HOME + "/" + name + "/" + name + id;
             cleanSubject(subject.getHome() + subject.get_ssrc());
             for (Patch patch : entry.getValue()) {
-                //patchid++;
-                //log.info("{} Process patch {}", patchid, patch.getPatchPath());
-                //                if(! patch.getPatchName().equals("Closure_11.src.patch")){
+                patchid++;
+                log.info("{} Process patch {}", patchid, patch.getPatchPath());
+                //                if (!patch.getPatchName().equals("Math58b_Patch168")) {
                 //                    continue;
                 //                }
 

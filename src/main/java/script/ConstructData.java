@@ -126,6 +126,89 @@ public class ConstructData {
         log.info("duplicatePatches size: {}", duplicatePatches.size());
     }
 
+    private static void rmInplausible4Wen() {
+        String inplausiblePatches =
+                "patch1-Lang-20-AVATAR-plausible.patch,patch1-Math-57-jMutRepair-plausible.patch,"
+                        + "patch1-Lang-10-SimFix-plausible.patch,patch1-Math-1-SimFix-plausible.patch,"
+                        + "patch1-Lang-20-TBar-plausible.patch,patch1-Lang-10-SimFix-plausible.patch,"
+                        + "patch1-Math-43-SimFix-plausible.patch,patch1-Lang-12-SimFix-plausible.patch,"
+                        + "patch1-Math-43-SimFix-plausible.patch,patch1-Math-22-FixMiner.patch,"
+                        + "patch1-Lang-20-kPAR-plausible.patch,patch1-Math-43-SimFix-plausible.patch,"
+                        + "patch1-Math-103-RSRepair-plausible.patch,patch1-Math-20-Nopol-plausible.patch,"
+                        + "patch1-Math-43-SimFix-plausible.patch,patch1-Lang-41-SimFix-plausible.patch,"
+                        + "patch1-Math-4-Nopol-plausible.patch,patch1-Math-31-Kali-plausible.patch,"
+                        + "patch1-Lang-41-TBar-plausible.patch,patch1-Lang-53-kPAR-plausible.patch,"
+                        + "patch1-Closure-6-SimFix.patch,patch1-Lang-50-SimFix-plausible.patch,"
+                        + "patch1-Math-43-kPAR-plausible.patch,patch1-Math-43-kPAR-plausible.patch,"
+                        + "patch1-Closure-6-SimFix.patch,patch1-Math-43-kPAR-plausible.patch,"
+                        + "patch1-Chart-3-SimFix-plausible.patch,patch1-Math-98-Arja.patch,"
+                        + "patch1-Math-43-kPAR-plausible.patch,patch1-Lang-47-TBar.patch,"
+                        + "patch1-Lang-60-SimFix-plausible.patch,patch1-Math-71-SimFix.patch,"
+                        + "patch1-Math-69-SimFix-plausible.patch,patch1-Math-69-SimFix-plausible.patch,"
+                        + "patch1-Math-71-SimFix.patch,patch1-Math-72-SimFix-plausible.patch,"
+                        + "patch1-Lang-61-SimFix-plausible.patch,patch1-Math-71-DynaMoth-plausible.patch,"
+                        + "patch1-Lang-9-SimFix-plausible.patch,patch1-Lang-1-SimFix-plausible.patch,"
+                        + "patch1-Lang-9-SimFix-plausible.patch,patch1-Math-80-jMutRepair-plausible.patch,"
+                        + "patch1-Closure-109-SimFix-plausible.patch,patch1-Closure-106-SimFix-plausible.patch,"
+                        + "patch1-Closure-106-SimFix-plausible.patch,patch1-Closure-106-SimFix-plausible.patch,"
+                        + "patch1-Chart-25-kPAR-plausible.patch,patch1-Chart-25-kPAR-plausible.patch,"
+                        + "patch1-Chart-20-SimFix.patch,patch1-Chart-25-kPAR-plausible.patch,"
+                        + "patch1-Chart-25-kPAR-plausible.patch,patch1-Chart-22-SimFix-plausible.patch,"
+                        + "patch1-Chart-22-SimFix-plausible.patch,patch1-Chart-22-SimFix-plausible.patch,"
+                        + "patch1-Chart-22-SimFix-plausible.patch,patch1-Chart-22-SimFix-plausible.patch,"
+                        + "patch1-Chart-22-SimFix-plausible.patch,patch1-Closure-26-SimFix-plausible.patch,"
+                        + "patch1-Closure-26-SimFix-plausible.patch,patch1-Chart-18-SimFix-plausible.patch,"
+                        + "patch1-Closure-26-SimFix-plausible.patch,patch1-Chart-18-SimFix-plausible.patch,"
+                        + "patch1-Closure-26-SimFix-plausible.patch,patch1-Closure-26-SimFix-plausible.patch,"
+                        + "patch1-Chart-18-DynaMoth-plausible.patch,patch1-Chart-14-AVATAR-plausible.patch,"
+                        + "patch1-Chart-18-DynaMoth-plausible.patch,patch1-Chart-14-AVATAR-plausible.patch,"
+                        + "patch1-Chart-18-DynaMoth-plausible.patch,patch1-Chart-14-AVATAR-plausible.patch,"
+                        + "patch1-Chart-14-TBar-plausible.patch,patch1-Chart-14-TBar-plausible.patch,"
+                        + "patch1-Chart-14-TBar-plausible.patch,patch1-Chart-14-FixMiner-plausible.patch,"
+                        + "patch1-Chart-14-FixMiner-plausible.patch,patch1-Chart-14-FixMiner-plausible.patch,"
+                        + "patch1-Closure-126-SimFix-plausible.patch,patch1-Chart-25-SimFix-plausible.patch,"
+                        + "patch1-Chart-25-SimFix-plausible.patch";
+        Set<String> set = Arrays.asList(inplausiblePatches.split(",")).stream().collect(Collectors.toSet());
+        //        // delete patch file
+        //        String patchesDir = Constant.HOME + "/Patches/DataSet/trainSet/";
+        //        for (File f : new File(patchesDir).listFiles()) {
+        //            if (set.contains(f.getName())) {
+        //                try {
+        //                    FileUtils.forceDelete(f);
+        //                } catch (IOException exception) {
+        //                    log.error("File {} delete error", f.getName());
+        //                }
+        //            }
+        //        }
+        //
+        //        // update train.info
+        //
+        //        String filePath = Constant.HOME + "/Patches"
+        //                + "/DataSet/train.info";
+        //
+        //        JSONObject newJsonObject = new JSONObject();
+        //        JSONObject jsonObject = JSON.parseObject(FileIO.readFileToString(filePath));
+        //
+        //        for (Entry<String, Object> entry : jsonObject.entrySet()) {
+        //            String patchName = entry.getKey();
+        //            if (!set.contains(patchName)) {
+        //                newJsonObject.put(patchName, entry.getValue());
+        //            }
+        //        }
+        //        FileIO.writeStringToFile("./train.info", JSON.toJSONString(newJsonObject));
+
+        // delete dynamic info
+        for (String patchName : set) {
+            String dynamicDir = Constant.dynamicResult + "/trainSet" + "/" + patchName;
+            try {
+                FileUtils.deleteDirectory(new File(dynamicDir));
+            } catch (IOException exception) {
+                log.error("Dir {} delete error", dynamicDir);
+            }
+        }
+
+    }
+
     private static String processPatch(String content) {
         String line = content.split("@@ -", 2)[1].split(",")[0];
         String result = content.split("@@ -", 2)[1].split("\n", 2)[1].replace(" ", "")
@@ -136,8 +219,9 @@ public class ConstructData {
     public static void main(String[] args) {
         //moveTestData();
         //deDuplicate4Wen();
-        selfdeduplicate4Wen();
+        //selfdeduplicate4Wen();
         // List<Patch> testPatch = ObtainPatches.readTrainPatches();
+        rmInplausible4Wen();
         log.info("finish");
     }
 

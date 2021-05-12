@@ -79,13 +79,6 @@ public class ObtainTraceInfo {
         log.info("finish obtain trace!");
     }
 
-    //    public static void obtainTrace(Map<String, List<Patch>> subjectPatchMap, boolean reverse,
-    //                     String reDir){
-    //        for (Entry<String, List<Patch>> entry : subjectPatchMap.entrySet()) {
-    //            String[] sub = entry.getKey().split("-");
-    //            processTrace(reverse, reDir, entry, sub);
-    //        }
-    //    }
     public static void cleanSubject(String srcPath) {
         log.info("Clean subject ....");
         List<File> list = new LinkedList<>();
@@ -204,10 +197,16 @@ public class ObtainTraceInfo {
     }
 
     public static void main(String[] args) {
-        List<Patch> trainPatch = ObtainPatches.readTrainPatches();
-        Map<String, List<Patch>> trainPatchMap =
-                trainPatch.stream().collect(Collectors.groupingBy(Patch::getBugid));
-        obtainTrace(trainPatchMap, false, "trainSet");
+        //        List<Patch> trainPatch = ObtainPatches.readTrainPatches();
+        //        Map<String, List<Patch>> trainPatchMap =
+        //                trainPatch.stream().collect(Collectors.groupingBy(Patch::getBugid));
+        //        obtainTrace(trainPatchMap, false, "trainSet");
+
+        List<Patch> testPatches = ObtainPatches.readTestPatches();
+        Map<String, List<Patch>> testSubjectPatchMap =
+                testPatches.stream().collect(Collectors.groupingBy(Patch::getBugid));
+        obtainTrace(testSubjectPatchMap, false, "testSet");
+
         //        obtainTrace(ObtainMethods4All.readCorrectPatch4Wen(), false, "Correct4Wen");
         //        obtainTrace(ObtainMethods4All.readInCorrectPatch4Wen(), false, "Overfitting4Wen");
         //obtainTrace(ObtainMethods4All.readTrainPatches(), false, "TrainSet4Kui");
