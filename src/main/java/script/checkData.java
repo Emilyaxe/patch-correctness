@@ -97,10 +97,17 @@ public class checkData {
 
     private static void checkTrainDynamicInfo() {
         List<Patch> patches = ObtainPatches.readTrainPatches();
+        Set<String> patchesSet = patches.stream().map(patch -> patch.getPatchName()).collect(Collectors.toSet());
+        log.info("Patches Size: {}, Patches Name Size {} ", patches.size(), patchesSet.size());
         for (Patch patch : patches) {
             String dynamicDir = Constant.dynamicResult + "/trainSet" + "/" + patch.getPatchName();
             if (!new File(dynamicDir).exists()) {
                 log.error(patch.getPatchName());
+            }
+        }
+        for (File f : new File(Constant.dynamicResult + "/trainSet").listFiles()) {
+            if (!patchesSet.contains(f.getName())) {
+                log.error("Rebundant File {}", f.getName());
             }
         }
     }
