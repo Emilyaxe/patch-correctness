@@ -1,6 +1,6 @@
 package script;
 
-import java.util.Collections;
+import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -16,8 +16,10 @@ import org.apache.commons.lang3.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
+import config.Constant;
 import entity.Patch;
 import lombok.extern.slf4j.Slf4j;
+import service.ObtainPatches;
 import util.FileIO;
 
 @Slf4j
@@ -26,11 +28,14 @@ public class checkData {
     private static final String summaryFile =
             "/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/Patches/experiment3"
                     + "/kui_data_for_cc2v.txt";
-    private static final String testPatchInfoDir = "/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/Patches/experiment3/TestSet/INFO";
+    private static final String testPatchInfoDir =
+            "/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/Patches/experiment3/TestSet"
+                    + "/INFO";
     private static final String testPatchDir =
             "/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/Patches/experiment3/TestSet";
 
-    private static final String trainPatchDir =  "/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/Patches/experiment3/TrainingSet";
+    private static final String trainPatchDir =
+            "/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/Patches/experiment3/TrainingSet";
 
 
     public static void mainProcess() {
@@ -46,7 +51,8 @@ public class checkData {
                 String[] infoArray = info.split("_");
                 String id = StringUtils.getDigits(infoArray[0]);
                 String name = infoArray[0].split(id)[0];
-                JSONObject jsonObject = JSON.parseObject(FileIO.readFileToString(testPatchInfoDir + "/" + infoArray[1] + ".json"));
+                JSONObject jsonObject =
+                        JSON.parseObject(FileIO.readFileToString(testPatchInfoDir + "/" + infoArray[1] + ".json"));
                 Patch.PatchBuilder builder = Patch.builder().lable(label).patchName(infoArray[1])
                         .bugid(name + "-" + id).patchPath(testPatchDir + "/" + infoArray[1]).id(index + 1);
                 if (!jsonObject.isEmpty()) {
@@ -67,10 +73,12 @@ public class checkData {
                         .build());
             }
         }
-        Map<String, List<Patch>> testPatchMap = testPatchInfoList.stream().filter(Objects::nonNull).filter(patch -> patch.getTool().equals("ACS"))
-                .collect(Collectors.groupingBy(patch -> patch.getBugid() + patch.getTool()));
-        Map<String, List<Patch>> trainPatchMap = trainPatchInfoList.stream().filter(Objects::nonNull).filter(patch -> patch.getTool().equals("ACS"))
-                .collect(Collectors.groupingBy(patch -> patch.getBugid() + patch.getTool()));
+        Map<String, List<Patch>> testPatchMap =
+                testPatchInfoList.stream().filter(Objects::nonNull).filter(patch -> patch.getTool().equals("ACS"))
+                        .collect(Collectors.groupingBy(patch -> patch.getBugid() + patch.getTool()));
+        Map<String, List<Patch>> trainPatchMap =
+                trainPatchInfoList.stream().filter(Objects::nonNull).filter(patch -> patch.getTool().equals("ACS"))
+                        .collect(Collectors.groupingBy(patch -> patch.getBugid() + patch.getTool()));
         Set<String> intersection = new HashSet<>(trainPatchMap.keySet());
         intersection.retainAll(testPatchMap.keySet());
         Map<String, Map<String, List<Patch>>> totalMap = new HashMap<>();
@@ -84,6 +92,16 @@ public class checkData {
     }
 
     public static void main(String[] args) {
-        mainProcess();
+        checkTrainDynamicInfo();
+    }
+
+    private static void checkTrainDynamicInfo() {
+        List<Patch> patches = ObtainPatches.readTrainPatches();
+        for (Patch patch : patches) {
+            String dynamicDir = Constant.dynamicResult + "/trainSet" + "/" + patch.getPatchName();
+            if (!new File(dynamicDir).exists()) {
+                log.error(patch.getPatchName());
+            }
+        }
     }
 }
