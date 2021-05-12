@@ -102,9 +102,9 @@ public class ObtainTraceInfo {
         for (Patch patch : entry.getValue()) {
 
             cleanSubject(subject.getHome() + subject.get_ssrc());
-            if (!patch.getPatchName().equals("patch1-Lang-7-Arja-plausible.patch")) {
-                continue;
-            }
+            //            if (!patch.getPatchName().equals("patch1-Lang-7-Arja-plausible.patch")) {
+            //                continue;
+            //            }
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
             int fixedLine = getOneChangeLine(subject, patch, reverse);
             if (fixedLine == 0) {

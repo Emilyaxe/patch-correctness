@@ -105,6 +105,7 @@ public class checkData {
                 log.error(patch.getPatchName());
             }
         }
+        log.info("Dir size {} ", new File(Constant.dynamicResult + "/trainSet").listFiles().length);
         for (File f : new File(Constant.dynamicResult + "/trainSet").listFiles()) {
             if (!patchesSet.contains(f.getName())) {
                 log.error("Rebundant File {}", f.getName());

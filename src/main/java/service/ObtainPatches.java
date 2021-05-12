@@ -16,50 +16,52 @@ import util.FileIO;
 public class ObtainPatches {
     public static List<Patch> readTestPatches() {
         List<Patch> patches = new LinkedList<>();
-        String filePath =  Constant.HOME+  "/Patches"
+        String filePath = Constant.HOME + "/Patches"
                 + "/DataSet/test.info";
         String patchDir =
-                Constant.HOME+ "/Patches/DataSet/testSet/";
+                Constant.HOME + "/Patches/DataSet/testSet/";
 
-        //String[] content = FileIO.readFileToString(filePath).split("\n");
         JSONObject jsonObject = JSON.parseObject(FileIO.readFileToString(filePath));
-        for (Entry<String, Object> entry: jsonObject.entrySet()) {
-           String patchName = entry.getKey();
-           String bugid="", label="";
-           if(entry.getValue() instanceof List){
-                bugid = ((List<String>) entry.getValue()).get(0);
-                label = ((List<String>) entry.getValue()).get(1);
-           }else{
-               log.error(entry.getValue().toString());
-           }
-           patches.add(Patch.builder().patchName(patchName).bugid(bugid).lable(label).patchPath(patchDir+patchName).build());
-        }
-
-//        Map<String, List<Patch>> subjectPatchMap =
-//                patches.stream().collect(Collectors.groupingBy(Patch::getBugid));
-//        log.info("Totol Subject {}", subjectPatchMap.size());
-//        log.info("Total Patches {}", subjectPatchMap.values().stream().mapToLong(List::size).sum());
-        return patches;
-    }
-    public static List<Patch> readTrainPatches() {
-        List<Patch> patches = new LinkedList<>();
-        String filePath =  Constant.HOME+  "/Patches"
-                + "/DataSet/train.info";
-        String patchDir =
-                Constant.HOME+ "/Patches/DataSet/trainSet/";
-
-        //String[] content = FileIO.readFileToString(filePath).split("\n");
-        JSONObject jsonObject = JSON.parseObject(FileIO.readFileToString(filePath));
-        for (Entry<String, Object> entry: jsonObject.entrySet()) {
+        for (Entry<String, Object> entry : jsonObject.entrySet()) {
             String patchName = entry.getKey();
-            String bugid="", label="";
-            if(entry.getValue() instanceof List){
+            String bugid = "", label = "";
+            if (entry.getValue() instanceof List) {
                 bugid = ((List<String>) entry.getValue()).get(0);
                 label = ((List<String>) entry.getValue()).get(1);
-            }else{
+            } else {
                 log.error(entry.getValue().toString());
             }
-            patches.add(Patch.builder().patchName(patchName).bugid(bugid).lable(label).patchPath(patchDir+patchName).build());
+            patches.add(Patch.builder().patchName(patchName).bugid(bugid).lable(label).patchPath(patchDir + patchName)
+                    .build());
+        }
+
+        //        Map<String, List<Patch>> subjectPatchMap =
+        //                patches.stream().collect(Collectors.groupingBy(Patch::getBugid));
+        //        log.info("Totol Subject {}", subjectPatchMap.size());
+        //        log.info("Total Patches {}", subjectPatchMap.values().stream().mapToLong(List::size).sum());
+        return patches;
+    }
+
+    public static List<Patch> readTrainPatches() {
+        List<Patch> patches = new LinkedList<>();
+        String filePath = Constant.HOME + "/Patches"
+                + "/DataSet/train.info";
+        String patchDir =
+                Constant.HOME + "/Patches/DataSet/trainSet/";
+
+        //String[] content = FileIO.readFileToString(filePath).split("\n");
+        JSONObject jsonObject = JSON.parseObject(FileIO.readFileToString(filePath));
+        for (Entry<String, Object> entry : jsonObject.entrySet()) {
+            String patchName = entry.getKey();
+            String bugid = "", label = "";
+            if (entry.getValue() instanceof List) {
+                bugid = ((List<String>) entry.getValue()).get(0);
+                label = ((List<String>) entry.getValue()).get(1);
+            } else {
+                log.error(entry.getValue().toString());
+            }
+            patches.add(Patch.builder().patchName(patchName).bugid(bugid).lable(label).patchPath(patchDir + patchName)
+                    .build());
         }
 
         //        Map<String, List<Patch>> subjectPatchMap =
