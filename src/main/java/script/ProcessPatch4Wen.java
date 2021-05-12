@@ -7,13 +7,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import config.Constant;
-import entity.Patch;
 import lombok.extern.slf4j.Slf4j;
 import util.FileIO;
 
@@ -21,128 +21,126 @@ import util.FileIO;
 public class ProcessPatch4Wen {
 
 
-    public static void mainProcess(){
-        String patches = Constant.HOME + "/Patches";
-        List<File> fileList = new LinkedList<>();
-        countAllFiles(patches, fileList);
+    public static void mainProcess() {
+        //String patches = Constant.HOME + "/Patches/Patches_ICSE";
+        List<File> icseFileList = new LinkedList<>();
+        List<File> otherFileList = new LinkedList<>();
+        List<File> totalFile = new LinkedList<>();
+        countAllFiles(Constant.HOME + "/Patches/Patches_ICSE", icseFileList);
+        countAllFiles(Constant.HOME + "/Patches/Patches_others", otherFileList);
+        totalFile.addAll(icseFileList);
+        totalFile.addAll(otherFileList);
 
+        String targetCorrect = Constant.HOME + "/Patches/ASE20/Correct/";
+        String targetIncorrect = Constant.HOME + "/Patches/ASE20/Overfitting/";
         String patchClassfication = Constant.HOME + "/Patches/records";
         String content = FileIO.readFileToString(patchClassfication);
-        List<Patch> correctPatch = new LinkedList<>();
-        List<Patch> inCorrectPatch = new LinkedList<>();
 
-        for(String line: content.split("\n")){
-//            if(StringUtils.isEmpty(line.trim())){
-//                continue;
-//            }
+        Map<String, String> correctPatchMap = new LinkedHashMap<>();
+        Map<String, String> IncorrectPatchMap = new LinkedHashMap<>();
+        List<String> formatPatchName = new LinkedList<>();
+
+
+        for (String line : content.split("\n")) {
+            //            if(StringUtils.isEmpty(line.trim())){
+            //                continue;
+            //            }
             String c = line.split("\t")[0];
-            if(!StringUtils.isEmpty(c)){
-                correctPatch.add(processName(c,true));
+            if (!StringUtils.isEmpty(c)) {
+                correctPatchMap.put(c, processName(c, true));
             }
             String ic = line.split("\t")[1];
-            if(!StringUtils.isEmpty(ic)){
-                inCorrectPatch.add(processName(ic,false));
+            if (!StringUtils.isEmpty(ic)) {
+                IncorrectPatchMap.put(ic, processName(ic, false));
             }
         }
-        Map<String, List<String>> cPatchMap = new LinkedHashMap<>();
-        for (Patch cPatch: correctPatch){
-            String matcher = "";
-            if(Objects.isNull(cPatch.getPatchName())){
-                matcher = cPatch.getBugid() + "-" + cPatch.getTool();
-            }else{
-                matcher = cPatch.getPatchName();
+        List<String> errorPatchName = new LinkedList<>();
+        Set<String> totalFileList = totalFile.stream().map(File::getName).collect(Collectors.toSet());
+        log.info("totalFile size {}, totalFileList size{}", totalFile.size(), totalFileList.size());
+        for (Entry<String, String> entry : correctPatchMap.entrySet()) {
+            String originalName = entry.getKey();
+            String patchName = entry.getValue();
+            if (!totalFileList.contains(patchName)) {
+                errorPatchName.add(originalName);
             }
-            for(File f : fileList){
-                if(f.getName().equals(matcher) || f.getName().contains(matcher)){
-                    if(cPatchMap.containsKey(f.getName())){
-                        cPatchMap.get(matcher).add(f.getAbsolutePath());
-                    }else{
-                        List<String> list = new LinkedList<>();
-                        list.add(f.getAbsolutePath());
-                        cPatchMap.put(matcher, list);
-                    }
-                }
-            }
-        }
-        String targetDir = Constant.HOME + "/Patches/ASE20/Correct/";
-        for(Entry<String, List<String>> entry : cPatchMap.entrySet()){
-           String source = entry.getValue().get(0);
-           String fileName = source.split("/")[source.split("/").length-1];
-           moveFile(source, targetDir+fileName);
-        }
-        Map<String, List<String>> incPatchMap = new LinkedHashMap<>();
-        for (Patch icPatch: inCorrectPatch){
-            String matcher = "";
-            if(Objects.isNull(icPatch.getPatchName())){
-                matcher = icPatch.getBugid() + "-" + icPatch.getTool();
-            }else{
-                matcher = icPatch.getPatchName();
-            }
-            boolean isFind = false;
-            for(File f : fileList){
-                if(f.getName().equals(matcher) || f.getName().contains(matcher)){
-                    isFind = true;
-                    if(incPatchMap.containsKey(f.getName())){
-                        //log.info(icPatch.toString());
-                        incPatchMap.get(matcher).add(f.getAbsolutePath());
-                    }else{
-                        List<String> list = new LinkedList<>();
-                        list.add(f.getAbsolutePath());
-                        incPatchMap.put(matcher, list);
-                    }
+            for (File f : totalFile) {
+                if (f.getName().equals(patchName)) {
+                    moveFile(f.getAbsolutePath(), targetCorrect + patchName);
                     break;
                 }
             }
-            if(! isFind){
-                log.info(icPatch.toString());
+        }
+        for (Entry<String, String> entry : IncorrectPatchMap.entrySet()) {
+            String originalName = entry.getKey();
+            String patchName = entry.getValue();
+            if (!totalFileList.contains(patchName)) {
+                errorPatchName.add(originalName);
+            }
+            for (File f : totalFile) {
+                if (f.getName().equals(patchName)) {
+                    moveFile(f.getAbsolutePath(), targetIncorrect + patchName);
+                    //formatPatchName.add(patchName);
+                    break;
+                }
             }
         }
-        targetDir = Constant.HOME + "/Patches/ASE20/Overfitting/";
-        for(Entry<String, List<String>> entry : incPatchMap.entrySet()){
-            String source = entry.getValue().get(0);
-            String fileName = source.split("/")[source.split("/").length-1];
-            moveFile(source, targetDir+fileName);
-        }
-        log.info(cPatchMap.size() + "");
-        log.info(incPatchMap.size() + "");
+        log.info("e " + errorPatchName.size());
+
+        //        log.info(cPatchMap.size() + "");
+        //        log.info(incPatchMap.size() + "");
 
     }
-    public static void moveFile(String source, String target){
+
+    public static void moveFile(String source, String target) {
         try {
             FileUtils.copyFile(new File(source), new File(target));
         } catch (IOException exception) {
             exception.printStackTrace();
         }
     }
-    private static Patch processName(String name, boolean isCorrect){
-        String[] patchName = name.split("-");
-        Patch patch = new Patch();
-        patch.setCorrectness(isCorrect? "1":"0");
-        if(patchName.length >= 4){
-            //patch.setId(patchName[0]);
-            patch.setBugid(patchName[1] + "-" + patchName[2]);
-            patch.setTool(patchName[3]);
-            patch.setPatchName(name);
-        }else if(patchName.length == 3){
-            patch.setTool(patchName[0]);
-            patch.setBugid(patchName[1] + "-" + patchName[2]);
-        }else{
-            log.error("Process PatchName Failed {}", name);
+
+    private static String processName(String name, boolean isCorrect) {
+        StringBuilder result = new StringBuilder();
+        if (isCorrect) {
+            String[] patchName = name.split("-");
+            if (patchName.length == 4) {
+                result.append(name);
+            } else if (patchName.length == 3) {
+                result.append("patch1-").append(patchName[1]).append("-")
+                        .append(patchName[2]).append("-").append(patchName[0]);
+            } else {
+                log.error("Process PatchName Failed {}, correct", name);
+            }
+        } else {
+            String[] patchName = name.split("-");
+            if (patchName.length == 4) {
+                result.append(name).append("-").append("plausible");
+            } else if (patchName.length == 3) {
+                result.append("patch1-").append(patchName[1]).append("-").append(patchName[2]).append("-")
+                        .append(patchName[0]).append("-").append("plausible");
+            } else if (patchName.length == 5) {
+                result.append(name);
+            } else {
+                log.error("Process PatchName Failed {}, correct", name);
+            }
+
         }
-        return patch;
+        return result.append(".patch").toString();
     }
-    public static void countAllFiles(String path, List<File> fileList){
-        for(File f: new File(path).listFiles()){
-            if(f.isFile() && f.getName().endsWith(".patch")){
+
+    public static void countAllFiles(String path, List<File> fileList) {
+        for (File f : new File(path).listFiles()) {
+            if (f.isFile() && f.getName().endsWith(".patch")) {
                 fileList.add(f);
-            }else if (f.isDirectory()){
+            } else if (f.isDirectory()) {
                 countAllFiles(f.getAbsolutePath(), fileList);
-            }else{
+            } else {
                 //System.out.println(f.getAbsolutePath());
             }
         }
     }
+
     public static void main(String[] args) {
- mainProcess();
+        mainProcess();
     }
 }

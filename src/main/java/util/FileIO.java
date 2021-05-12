@@ -289,6 +289,7 @@ public class FileIO {
         return (CompilationUnit) astParser.createAST(null);
     }
 
+
     public static CompilationUnit genASTFromFile(String fileName) {
         return (CompilationUnit) genASTFromSource(readFileToString(fileName),
                 ASTParser.K_COMPILATION_UNIT);

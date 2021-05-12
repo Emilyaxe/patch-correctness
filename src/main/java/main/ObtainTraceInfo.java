@@ -14,6 +14,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -26,6 +27,7 @@ import entity.Subject;
 import instrument.IntruMethodsVisitors;
 import lombok.extern.slf4j.Slf4j;
 import run.Runner;
+import service.ObtainPatches;
 import service.ProcessPatch;
 import util.BuildPath;
 import util.FileIO;
@@ -34,6 +36,7 @@ import util.FileIO;
 public class ObtainTraceInfo {
 
     public static List<String> illeglePatches = new LinkedList<>();
+    public static List<String> inPlausiblePatches = new LinkedList<>();
 
     public static final Object lock = new Object();
 
@@ -60,7 +63,6 @@ public class ObtainTraceInfo {
 
     public static void obtainTrace(Map<String, List<Patch>> subjectPatchMap, boolean reverse,
             String reDir) {
-        // Map<String, List<Patch>> subjectPatchMap =
         List<CompletableFuture<Void>> futureList = new LinkedList<>();
         for (Entry<String, List<Patch>> entry : subjectPatchMap.entrySet()) {
             futureList.add(CompletableFuture.runAsync(() -> {
@@ -72,6 +74,7 @@ public class ObtainTraceInfo {
             }, EXECUTOR));
         }
         CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0])).join();
+        log.info("InPlausible Patches: {}", String.join(",", inPlausiblePatches));
         log.info("Illegle Patches: {}", String.join(",", illeglePatches));
         log.info("finish obtain trace!");
     }
@@ -83,7 +86,7 @@ public class ObtainTraceInfo {
     //            processTrace(reverse, reDir, entry, sub);
     //        }
     //    }
-    private static void cleanSubject(String srcPath) {
+    public static void cleanSubject(String srcPath) {
         log.info("Clean subject ....");
         List<File> list = new LinkedList<>();
         FileIO.getAllFile(new File(srcPath), list);
@@ -105,9 +108,9 @@ public class ObtainTraceInfo {
 
         for (Patch patch : entry.getValue()) {
             cleanSubject(subject.getHome() + subject.get_ssrc());
-                        if (!patch.getPatchName().equals("SimFix_Lang-1_P_Patch_164_164.txt")) {
-                            continue;
-                        }
+            //                        if (!patch.getPatchName().equals("SimFix_Lang-1_P_Patch_164_164.txt")) {
+            //                            continue;
+            //                        }
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
             int fixedLine = getOneChangeLine(subject, patch, reverse);
             if (fixedLine == 0) {
@@ -143,6 +146,7 @@ public class ObtainTraceInfo {
                     ProcessPatch.createCombinedFixed4AllFiles(patch, reverse);
                     instrument(fixedLine, writeFile, oneFixedFile);
                     if (!compileAndRun(subject, test)) {
+                        inPlausiblePatches.add(patch.getPatchName());
                         log.error("Patch {}, Should Pass!", patch.getPatchName());
                     }
                 } catch (Exception e) {
@@ -200,10 +204,14 @@ public class ObtainTraceInfo {
     }
 
     public static void main(String[] args) {
+        List<Patch> trainPatch = ObtainPatches.readTrainPatches();
+        Map<String, List<Patch>> trainPatchMap =
+                trainPatch.stream().collect(Collectors.groupingBy(Patch::getBugid));
+        obtainTrace(trainPatchMap, false, "trainSet");
         //        obtainTrace(ObtainMethods4All.readCorrectPatch4Wen(), false, "Correct4Wen");
         //        obtainTrace(ObtainMethods4All.readInCorrectPatch4Wen(), false, "Overfitting4Wen");
-         obtainTrace(ObtainMethods4All.readTrainPatches(), false, "TrainSet4Kui");
+        //obtainTrace(ObtainMethods4All.readTrainPatches(), false, "TrainSet4Kui");
         // obtainTrace(ObtainMethods4All.readTestPatches(), false, "testSet4Kui");
-      //  obtainTrace(ObtainMethods4All.readCorrectPatches(), true, "correctSet4Kui");
+        //  obtainTrace(ObtainMethods4All.readCorrectPatches(), true, "correctSet4Kui");
     }
 }

@@ -21,15 +21,15 @@ public class ObtainMethods4All {
 
     public static Map<String, List<Patch>> readTrainPatches() {
 
-        String filePath =  Constant.HOME+ "/Patches"
+        String filePath = Constant.HOME + "/Patches"
                 + "/experiment3/kui_data_for_cc2v.txt";
 
-        String patchDir =   Constant.HOME+  "/Patches/experiment3/TrainingSet";
+        String patchDir = Constant.HOME + "/Patches/experiment3/TrainingSet";
 
 
         String[] content = FileIO.readFileToString(filePath).split("\n");
         List<Patch> patches = new LinkedList<>();
-        for(int i = 130; i < 662; i++){
+        for (int i = 130; i < 662; i++) {
 
             String[] line = content[i].split("<ml>");
             String label = line[0];
@@ -52,10 +52,10 @@ public class ObtainMethods4All {
 
     public static Map<String, List<Patch>> readTestPatches() {
         List<Patch> patches = new LinkedList<>();
-        String filePath =  Constant.HOME+  "/Patches"
+        String filePath = Constant.HOME + "/Patches"
                 + "/experiment3/kui_data_for_cc2v.txt";
         String patchDir =
-                Constant.HOME+ "/Patches/experiment3/TestSet";
+                Constant.HOME + "/Patches/experiment3/TestSet";
         String[] content = FileIO.readFileToString(filePath).split("\n");
         for (int i = 0; i <= 129; i++) {
             String line = content[i];
@@ -80,10 +80,10 @@ public class ObtainMethods4All {
 
     public static Map<String, List<Patch>> readCorrectPatches() {
         List<Patch> patches = new LinkedList<>();
-        String filePath =  Constant.HOME+ "/Patches/experiment3/kui_data_for_cc2v.txt";
-        String correctDir = Constant.D4J_HOME +  "/framework/projects";
+        String filePath = Constant.HOME + "/Patches/experiment3/kui_data_for_cc2v.txt";
+        String correctDir = Constant.D4J_HOME + "/framework/projects";
         String[] content = FileIO.readFileToString(filePath).split("\n");
-        for(int i = 662; i < 998; i++){
+        for (int i = 662; i < 998; i++) {
             String[] line = content[i].split("<ml>");
             String label = line[0];
             String info = line[1];
@@ -93,7 +93,7 @@ public class ObtainMethods4All {
             String name = infoArray[0];
 
             patches.add(Patch.builder().lable(label).patchName(info)
-                    .bugid(name + "-" + id).patchPath(correctDir + "/" + name +  "/patches/"  + id + ".src.patch")
+                    .bugid(name + "-" + id).patchPath(correctDir + "/" + name + "/patches/" + id + ".src.patch")
                     .id(i)
                     .build());
         }
@@ -106,11 +106,11 @@ public class ObtainMethods4All {
     }
 
 
-    public static Map<String, List<Patch>> readCorrectPatch4Wen(){
+    public static Map<String, List<Patch>> readCorrectPatch4Wen() {
         List<Patch> patches = new LinkedList<>();
-        String Dir = Constant.HOME+ "/Patches/ASE20/Correct";
-        for(File f: new File(Dir).listFiles()){
-            if(!f.getName().endsWith(".patch")){
+        String Dir = Constant.HOME + "/Patches/ASE20/Correct";
+        for (File f : new File(Dir).listFiles()) {
+            if (!f.getName().endsWith(".patch")) {
                 continue;
             }
             String[] name = f.getName().split(".patch")[0].split("-");
@@ -125,11 +125,12 @@ public class ObtainMethods4All {
         log.info("Total Patches {}", subjectPatchMap.values().stream().mapToLong(List::size).sum());
         return subjectPatchMap;
     }
-    public static Map<String, List<Patch>> readInCorrectPatch4Wen(){
+
+    public static Map<String, List<Patch>> readInCorrectPatch4Wen() {
         List<Patch> patches = new LinkedList<>();
-        String Dir =  Constant.HOME+ "/Patches/ASE20/Overfitting";
-        for(File f: new File(Dir).listFiles()){
-            if(!f.getName().endsWith(".patch")){
+        String Dir = Constant.HOME + "/Patches/ASE20/Overfitting";
+        for (File f : new File(Dir).listFiles()) {
+            if (!f.getName().endsWith(".patch")) {
                 continue;
             }
             String[] name = f.getName().split(".patch")[0].split("-");
@@ -147,15 +148,15 @@ public class ObtainMethods4All {
 
     public static void main(String[] args) {
 
-        Map<String, List<Patch>> testsubjectPatchMap = readTestPatches();
-        findMethods(testsubjectPatchMap, "testSet4kui", false);
-        Map<String, List<Patch>> corsubjectPatchMap = readCorrectPatches();
-        findMethods(corsubjectPatchMap, "correctSet4kui", true);
-        Map<String, List<Patch>> trainsubjectPatchMap = readTrainPatches();
-        findMethods(trainsubjectPatchMap, "TrainSet4kui", false);
-        Map<String, List<Patch>>  cor4wensubjectPatchMap = readCorrectPatch4Wen();
+        //        Map<String, List<Patch>> testsubjectPatchMap = readTestPatches();
+        //        findMethods(testsubjectPatchMap, "testSet4kui", false);
+        //        Map<String, List<Patch>> corsubjectPatchMap = readCorrectPatches();
+        //        findMethods(corsubjectPatchMap, "correctSet4kui", true);
+        //        Map<String, List<Patch>> trainsubjectPatchMap = readTrainPatches();
+        //        findMethods(trainsubjectPatchMap, "TrainSet4kui", false);
+        Map<String, List<Patch>> cor4wensubjectPatchMap = readCorrectPatch4Wen();
         findMethods(cor4wensubjectPatchMap, "Correct4Wen", false);
-        Map<String, List<Patch>>  incor4wensubjectPatchMap = readInCorrectPatch4Wen();
+        Map<String, List<Patch>> incor4wensubjectPatchMap = readInCorrectPatch4Wen();
         findMethods(incor4wensubjectPatchMap, "Overfitting4Wen", false);
     }
 }

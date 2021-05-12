@@ -1,5 +1,7 @@
 package entity;
 
+import static main.ObtainTraceInfo.cleanSubject;
+
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -16,7 +18,6 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 
 import config.Constant;
 import instrument.MethodLinesVisitor;
@@ -131,8 +132,8 @@ public class Patch {
 
     public static void findMethods(Map<String, List<Patch>> subjectPatchMap, String methodOutPutDir,
             boolean reverse) {
-        List<JSONObject> resultList = new LinkedList<>();
-        int patchid = 0;
+
+        List<String> errorPatches = new LinkedList<>();
         Map<String, List<String>> nameValueMap = new LinkedHashMap<>();
         for (Entry<String, List<Patch>> entry : subjectPatchMap.entrySet()) {
 
@@ -140,9 +141,9 @@ public class Patch {
             String id = entry.getKey().split("-")[1];
             Subject subject = new Subject(name, Integer.parseInt(id));
             String subjectPath = Constant.PROJECT_HOME + "/" + name + "/" + name + id;
-
+            cleanSubject(subject.getHome() + subject.get_ssrc());
             for (Patch patch : entry.getValue()) {
-                patchid++;
+                //patchid++;
                 //log.info("{} Process patch {}", patchid, patch.getPatchPath());
                 //                if(! patch.getPatchName().equals("Closure_11.src.patch")){
                 //                    continue;
@@ -153,6 +154,7 @@ public class Patch {
                     patch.setCombinedMethod(constructMethod("deleteAllFile"));
                     List<String> tmpList = new LinkedList<>();
                     tmpList.add(patch.getLable());
+                    tmpList.add(patch.getBugid());
                     tmpList.add(patch.getCombinedMethod());
                     nameValueMap.put(patch.getPatchName(), tmpList);
                     continue;
@@ -176,6 +178,9 @@ public class Patch {
                     }
                     String combinedMethod = getMethodContent(fixedFile, findMethod.get_startLine(),
                             findMethod.get_endLine(), patch, reverse);
+                    if (!checkCombineMethod(combinedMethod)) {
+                        errorPatches.add(patch.getPatchName());
+                    }
 
                     patch.setFixedMethodStartLine(lnumber);
                     patch.setCombinedMethod(findMethod.get_startLine() == lnumber ? constructMethod(
@@ -187,33 +192,27 @@ public class Patch {
                     patch.setCombinedMethod(constructMethod("fixedField"));
                 } else if ((patch.getPatchName().equals("Lang_56.src.patch"))
                         || (patch.getPatchName().equals("Closure_28.src.patch")
-                                || patch.getPatchName().equals("Lang_23.src.patch")
-                                || patch.getPatchName().equals("Time_26.src.patch")
-                                || patch.getPatchName().equals("Chart_23.src.patch")
-                                || patch.getPatchName().equals("Time_11.src.patch"))) {
-                                    patch.setCombinedMethod(constructMethod("addAMethod"));
-                                }
+                        || patch.getPatchName().equals("Lang_23.src.patch")
+                        || patch.getPatchName().equals("Time_26.src.patch")
+                        || patch.getPatchName().equals("Chart_23.src.patch")
+                        || patch.getPatchName().equals("Time_11.src.patch"))) {
+                    patch.setCombinedMethod(constructMethod("addAMethod"));
+                }
                 if (StringUtils.isNotEmpty(patch.getCombinedMethod())) {
                     List<String> tmpList = new LinkedList<>();
                     tmpList.add(patch.getLable());
+                    tmpList.add(patch.getBugid());
                     tmpList.add(patch.getCombinedMethod());
                     nameValueMap.put(patch.getPatchName(), tmpList);
-                    //                    JSONObject patchMethodJson =
-                    //                            (JSONObject) JSON.toJSON(Patch.builder().patchName(patch.getPatchName()).lable(patch.getLable())
-                    //                                    .combinedMethod(patch.getCombinedMethod()).build());
-                    //new JSONObject();
-                    //patchMethodJson.put(patch.getPatchName(), patch.getCombinedMethod());
-                    // resultList.add(patchMethodJson);
                 } else {
                     log.error("Patch {} obtain method failed ", patch.getPatchPath());
                 }
             }
         }
+        log.error("Error Patches: {}", String.join(",", errorPatches));
         log.info("JsonMap size: {}", nameValueMap.size());
         FileIO.writeStringToFile(BuildPath.buildMethodReFile(methodOutPutDir),
                 JSON.toJSONString(nameValueMap));
-        //        log.info("JsonList size: {}", resultList.size());
-        //        FileIO.writeStringToFile(BuildPath.buildMethodReFile(methodOutPutDir), JSON.toJSONString(resultList));
     }
 
     public static List<Method> getMethodInfo(String fixedFile) {
@@ -248,6 +247,27 @@ public class Patch {
             }
         }
         FileIO.writeStringToFile(fixedFile, result.toString());
+    }
+
+    private static boolean checkCombineMethod(String method) {
+        StringBuilder buggyVersion = new StringBuilder();
+        StringBuilder fixedVersion = new StringBuilder();
+
+        for (String line : method.split("\n")) {
+            if (line.startsWith("+")) {
+                fixedVersion.append(line.split("\\+", 2)[1]).append("\n");
+            } else if (line.startsWith("-")) {
+                buggyVersion.append(line.split("-", 2)[1]).append("\n");
+            } else {
+                fixedVersion.append(line).append("\n");
+                buggyVersion.append(line).append("\n");
+            }
+        }
+        CompilationUnit fixedUnit =
+                FileIO.genASTFromSource(constructClass(fixedVersion.toString()), ASTParser.K_COMPILATION_UNIT);
+        CompilationUnit buggyUnit =
+                FileIO.genASTFromSource(constructClass(buggyVersion.toString()), ASTParser.K_COMPILATION_UNIT);
+        return fixedUnit.getProblems().length <= 0 && buggyUnit.getProblems().length <= 0;
     }
 
     public static String getMethodContent(String fixedFile, Integer startLine, Integer endLine,
@@ -297,9 +317,16 @@ public class Patch {
         return String.format(dummyMethod, argu);
     }
 
+    private static String constructClass(String method) {
+        String dummyClass = "public class A {\n" +
+                "%s\n" + "}";
+        return String.format(dummyClass, method);
+    }
+
     public static void main(String[] args) {
-        String patchFile = "/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/Patches/experiment3"
-                + "/TestSet/Patch5";
+        String patchFile =
+                "/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/Patches/experiment3"
+                        + "/TestSet/Patch5";
         Patch patch = Patch.builder().patchPath(patchFile).patchName("Chart5").build();
         Map<Integer, String> map = recordChanges(patch, false);
         //patch4Test.recordChangeLines();
