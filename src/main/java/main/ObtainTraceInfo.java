@@ -102,7 +102,7 @@ public class ObtainTraceInfo {
         for (Patch patch : entry.getValue()) {
 
             cleanSubject(subject.getHome() + subject.get_ssrc());
-            if (!patch.getPatchName().equals("patch1-Math-20-FixMiner-plausible.patch")) {
+            if (!patch.getPatchName().equals("patch1-Lang-7-Arja-plausible.patch")) {
                 continue;
             }
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
@@ -198,15 +198,15 @@ public class ObtainTraceInfo {
     }
 
     public static void main(String[] args) {
-        List<Patch> trainPatch = ObtainPatches.readTrainPatches();
-        Map<String, List<Patch>> trainPatchMap =
-                trainPatch.stream().collect(Collectors.groupingBy(Patch::getBugid));
-        obtainTrace(trainPatchMap, false, "trainSet");
+        //        List<Patch> trainPatch = ObtainPatches.readTrainPatches();
+        //        Map<String, List<Patch>> trainPatchMap =
+        //                trainPatch.stream().collect(Collectors.groupingBy(Patch::getBugid));
+        //        obtainTrace(trainPatchMap, false, "trainSet");
 
-        //        List<Patch> testPatches = ObtainPatches.readTestPatches();
-        //        Map<String, List<Patch>> testSubjectPatchMap =
-        //                testPatches.stream().collect(Collectors.groupingBy(Patch::getBugid));
-        //        obtainTrace(testSubjectPatchMap, false, "testSet");
+        List<Patch> testPatches = ObtainPatches.readTestPatches();
+        Map<String, List<Patch>> testSubjectPatchMap =
+                testPatches.stream().collect(Collectors.groupingBy(Patch::getBugid));
+        obtainTrace(testSubjectPatchMap, false, "testSet");
 
         //        obtainTrace(ObtainMethods4All.readCorrectPatch4Wen(), false, "Correct4Wen");
         //        obtainTrace(ObtainMethods4All.readInCorrectPatch4Wen(), false, "Overfitting4Wen");
