@@ -86,6 +86,10 @@ public class Runner {
     public static boolean downloadSubject(Subject subject) {
         log.info("Downloading {} ...", subject.toString());
         File file = new File(subject.getHome());
+        if (!file.exists()) {
+            file.getParentFile().mkdirs();
+            //file.createNewFile();
+        }
         List<String> message = Collections.emptyList();
         try {
             message = Executor.execute(CmdFactory.createCheckOutCmd(subject));
@@ -140,7 +144,7 @@ public class Runner {
         try {
             StringBuilder junitArg = new StringBuilder();
             junitArg.append(Constant.COMMAND_CD + subject.getHome() + " && ");
-            if(isTimeout){
+            if (isTimeout) {
                 junitArg.append(Constant.COMMAND_TIMEOUT).append(Constant.TEST_TIMEOUT).append(" ");
             }
             junitArg.append(Constant.COMMAND_JAVA_HOME).append("/bin/java -Xms2g -Xmx4g -cp \"")
@@ -149,7 +153,7 @@ public class Runner {
                     .append(JUNIT_RUN_MAIN).append(" ")     // get only trace
                     .append(subject.get_name()).append(" ").append(subject.get_id()).append(" ")
                     .append(failingTest);
-           // log.info(junitArg.toString());
+            // log.info(junitArg.toString());
             message = Executor.execute(new String[] {"/bin/bash", "-c", junitArg.toString()});
         } catch (Exception e) {
             log.error(__name__ + "#buildSubject run build subject failed !", e);
@@ -169,28 +173,28 @@ public class Runner {
         } catch (Exception e) {
             log.error(__name__ + "#createPatch run build subject failed !", e);
         }
-//        return !CollectionUtils.isEmpty(message) &&
-//                message.get(0).startsWith("patching file");
+        //        return !CollectionUtils.isEmpty(message) &&
+        //                message.get(0).startsWith("patching file");
         return !CollectionUtils.isEmpty(message)
                 && message.stream().filter(Objects::nonNull)
                 .noneMatch(element -> element.contains("FAILED"));
     }
 
-//    public static void diff2File(String sourceFile, String targetFile, String patchFile) {
-//        List<String> message = null;
-//        try {
-//            message = Executor.execute(CmdFactory.createDiffCmd(sourceFile, targetFile, patchFile));
-//        } catch (Exception e) {
-//            log.error(__name__ + "#diff2File run build subject failed !", e);
-//        }
-        //return  message.get(0);
+    //    public static void diff2File(String sourceFile, String targetFile, String patchFile) {
+    //        List<String> message = null;
+    //        try {
+    //            message = Executor.execute(CmdFactory.createDiffCmd(sourceFile, targetFile, patchFile));
+    //        } catch (Exception e) {
+    //            log.error(__name__ + "#diff2File run build subject failed !", e);
+    //        }
+    //return  message.get(0);
 /*        for(int i = message.size() - 1; i >= 0; i--){
             if (message.get(i).contains(Constant.ANT_BUILD_FAILED)) {
                 success = false;
                 break;
             }
         }*/
-//    }
+    //    }
 
     // the depedency must be this
     public static boolean dynComp(String failingTestPath, Subject subject) {
@@ -324,7 +328,8 @@ public class Runner {
         } catch (Exception e) {
             log.error(__name__ + " Tracer failed !", e);
         }
-        if (message.toString().contains("Exception in thread \"main\" java.lang.OutOfMemoryError: GC overhead limit exceeded")) {
+        if (message.toString()
+                .contains("Exception in thread \"main\" java.lang.OutOfMemoryError: GC overhead limit exceeded")) {
             log.warn("Daikon's error: OutOfMemoryError");
             return false;
         }
