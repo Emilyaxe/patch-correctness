@@ -61,20 +61,28 @@ public class TestFileVisitor extends TraversalVisitor {
 
     @Override
     public boolean visit(TypeDeclaration node) {
-        if (!Modifier.isPublic(node.getModifiers())) {
+        if (Modifier.isPublic(node.getModifiers())) {
+            String[] className = _clazzName.split("\\.");
+            if (node.getName().getFullyQualifiedName().equals(className[className.length - 1])) {
+                return true;
+            }
             if (_clazzFileName.equals("")) {
                 _clazzFileName = _clazzName;
                 _clazzName = _clazzFileName + "." + node.getName().getFullyQualifiedName();
             } else {
                 _clazzName = _clazzFileName + "$" + node.getName().getFullyQualifiedName();
             }
+        } else {
+            return false;
         }
-
         return true;
     }
 
     @Override
     public boolean visit(MethodDeclaration node) {
+        if (!Modifier.isPublic(node.getModifiers())) {
+            return true;
+        }
         ASTNode parent = node.getParent();
         while (parent != null && !(parent instanceof TypeDeclaration)) {
             if (parent instanceof ClassInstanceCreation) {

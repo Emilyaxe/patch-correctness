@@ -27,6 +27,7 @@ import entity.Subject;
 import instrument.IntruMethodsVisitors;
 import lombok.extern.slf4j.Slf4j;
 import run.Runner;
+import service.ObtainPassingTests;
 import service.ObtainPatches;
 import service.ProcessPatch;
 import util.BuildPath;
@@ -67,7 +68,8 @@ public class ObtainTraceInfo {
         for (Entry<String, List<Patch>> entry : subjectPatchMap.entrySet()) {
             futureList.add(CompletableFuture.runAsync(() -> {
                 try {
-                    processTrace(reverse, reDir, entry);
+                    //processTrace(reverse, reDir, entry);
+                    processPassingTrace(reverse, reDir, entry);
                 } catch (Exception e) {
                     log.error("obtain trace failed! subject {}", entry.getKey(), e);
                 }
@@ -89,6 +91,75 @@ public class ObtainTraceInfo {
                     FileUtils.copyFile(new File(f.getAbsolutePath() + ".bak"), f);
                 } catch (IOException exception) {
                     exception.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private static void processPassingTrace(boolean reverse, String reDir,
+            Entry<String, List<Patch>> entry) {
+        String[] sub = entry.getKey().split("-");
+        Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
+
+        for (Patch patch : entry.getValue()) {
+            List<String> illegalTests = new LinkedList<>();
+            cleanSubject(subject.getHome() + subject.get_ssrc());
+            log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
+            int fixedLine = getOneChangeLine(subject, patch, reverse);
+            if (fixedLine == 0) {
+                illeglePatches.add(patch.getPatchName());
+                continue;
+            }
+            // run passing tests on buggy version
+            for (String test : ObtainPassingTests.passingTests(subject)) {
+                try {
+                    String writeFile = BuildPath.buildDymicPassFile(reDir, patch.getPatchName(), test,
+                            true);
+                    String oneFixedFile = Constant.PROJECT_HOME + "/" + subject.get_name() + "/"
+                            + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
+                    ProcessPatch.createCombinedBuggy4AllFiles(patch, reverse);
+                    instrument(fixedLine, writeFile, oneFixedFile);
+                    if (!compileAndRun(subject, test)) {
+                        illegalTests.add(test);
+                        log.error("Patch {}, Should Pass!", patch.getPatchName());
+                    }
+                } catch (Exception e) {
+                    log.error(
+                            "process failing test on buggy version failed! subject {} patch {} test {}",
+                            subject.get_name() + subject.get_id(), patch.getPatchName(), test, e);
+                }
+            }
+
+            // change to fixed version run passing tests on fixed version
+            for (String test : ObtainPassingTests.passingTests(subject)) {
+                try {
+                    String writeFile = BuildPath.buildDymicPassFile(reDir, patch.getPatchName(), test,
+                            false);
+                    String oneFixedFile = Constant.PROJECT_HOME + "/" + subject.get_name() + "/"
+                            + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
+                    ProcessPatch.createCombinedFixed4AllFiles(patch, reverse);
+                    instrument(fixedLine, writeFile, oneFixedFile);
+                    if (!compileAndRun(subject, test)) {
+                        //inPlausiblePatches.add(patch.getPatchName());
+                        illegalTests.add(test);
+                        log.error("Patch {}, Should Pass!", patch.getPatchName());
+                    }
+                } catch (Exception e) {
+                    log.error(
+                            "process failing test on fixed version failed! subject {} patch {} test {}",
+                            subject.get_name() + subject.get_id(), patch.getPatchName(), test, e);
+                }
+            }
+            // remove dynamic info in illegal tests
+            for (String illegaltest : illegalTests) {
+                String illegalDir =
+                        Constant.dynamicResult + "/passing/" + reDir + "/" + patch.getPatchName() + "/" + illegaltest;
+                if (new File(illegalDir).exists()) {
+                    try {
+                        FileUtils.deleteDirectory(new File(illegalDir));
+                    } catch (IOException exception) {
+                        exception.printStackTrace();
+                    }
                 }
             }
         }
