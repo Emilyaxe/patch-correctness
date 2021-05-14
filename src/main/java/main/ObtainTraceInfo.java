@@ -69,8 +69,8 @@ public class ObtainTraceInfo {
         for (Entry<String, List<Patch>> entry : subjectPatchMap.entrySet()) {
             futureList.add(CompletableFuture.runAsync(() -> {
                 try {
-                    //processTrace(reverse, reDir, entry);
-                    processPassingTrace(reverse, reDir, entry);
+                    processTrace(reverse, reDir, entry);
+                    //processPassingTrace(reverse, reDir, entry);
                 } catch (Exception e) {
                     log.error("obtain trace failed! subject {}", entry.getKey(), e);
                 }
@@ -275,10 +275,16 @@ public class ObtainTraceInfo {
         //                trainPatch.stream().collect(Collectors.groupingBy(Patch::getBugid));
         //        obtainTrace(trainPatchMap, false, "trainSet");
 
-        List<Patch> testPatches = ObtainPatches.readTestPatches();
-        Map<String, List<Patch>> testSubjectPatchMap =
-                testPatches.stream().collect(Collectors.groupingBy(Patch::getBugid));
-        obtainTrace(testSubjectPatchMap, false, "testSet");
+        //        List<Patch> testPatches = ObtainPatches.readTestPatches();
+        //        Map<String, List<Patch>> testSubjectPatchMap =
+        //                testPatches.stream().collect(Collectors.groupingBy(Patch::getBugid));
+        //        obtainTrace(testSubjectPatchMap, false, "testSet");
+
+        List<Patch> correctPatches = ObtainPatches.readCorPatches();
+        Map<String, List<Patch>> correctSubjectPatchMap =
+                correctPatches.stream().collect(Collectors.groupingBy(Patch::getBugid));
+        obtainTrace(correctSubjectPatchMap, true, "correctSet");
+
 
         //        obtainTrace(ObtainMethods4All.readCorrectPatch4Wen(), false, "Correct4Wen");
         //        obtainTrace(ObtainMethods4All.readInCorrectPatch4Wen(), false, "Overfitting4Wen");

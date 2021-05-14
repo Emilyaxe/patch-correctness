@@ -91,9 +91,6 @@ public class checkData {
         log.info("intersection: {}", JSON.toJSONString(totalMap));
     }
 
-    public static void main(String[] args) {
-        checkTrainDynamicInfo();
-    }
 
     private static void checkTrainDynamicInfo() {
         List<Patch> patches = ObtainPatches.readTrainPatches();
@@ -111,5 +108,10 @@ public class checkData {
                 log.error("Rebundant File {}", f.getName());
             }
         }
+    }
+
+
+    public static void main(String[] args) {
+        checkTrainDynamicInfo();
     }
 }

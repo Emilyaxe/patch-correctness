@@ -71,6 +71,31 @@ public class ObtainPatches {
         return patches;
     }
 
+    public static List<Patch> readCorPatches() {
+        List<Patch> patches = new LinkedList<>();
+        String filePath = Constant.HOME + "/Patches"
+                + "/DataSet/correct.info";
+        String patchDir =
+                Constant.HOME + "/Patches/DataSet/correctSet/";
+
+        //String[] content = FileIO.readFileToString(filePath).split("\n");
+        JSONObject jsonObject = JSON.parseObject(FileIO.readFileToString(filePath));
+        for (Entry<String, Object> entry : jsonObject.entrySet()) {
+            String patchName = entry.getKey();
+            String bugid = "", label = "";
+            if (entry.getValue() instanceof List) {
+                bugid = ((List<String>) entry.getValue()).get(0);
+                label = ((List<String>) entry.getValue()).get(1);
+            } else {
+                log.error(entry.getValue().toString());
+            }
+            patches.add(Patch.builder().patchName(patchName).bugid(bugid).lable(label).patchPath(patchDir + patchName)
+                    .build());
+        }
+        return patches;
+    }
+
+
     public static void main(String[] args) {
         readTestPatches();
     }

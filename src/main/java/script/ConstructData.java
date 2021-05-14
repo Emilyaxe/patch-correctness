@@ -3,6 +3,7 @@ package script;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -216,12 +217,112 @@ public class ConstructData {
         return line + "#" + result;
     }
 
+    private static String processCorPatch(String content) {
+        String line = content.split("@@ -", 2)[1].split(",")[0];
+        String result = content.split("@@ -", 2)[1].split("\n", 2)[1];
+        String newResult = Arrays.stream(result.split("\n")).map(patchline -> {
+            if (patchline.startsWith("-")) {
+                patchline.replaceAll("-", "\\+");
+            } else if (patchline.startsWith("+")) {
+                patchline.replaceAll("\\+", "-");
+            }
+            return patchline;
+        }).collect(Collectors.joining("\n")).replace(" ", "")
+                .replace("\n", "").replace("\t", "").replace("\r", "");
+        return line + "#" + newResult;
+    }
+
+    private static void checkCorrectPatches() {
+        String correctDir = Constant.D4J_HOME + "/framework/projects";
+        String targetDir = Constant.HOME + "/Patches/DataSet/correctSet/";
+        List<Patch> testSet = ObtainPatches.readTestPatches();
+        List<Patch> trainSet = ObtainPatches.readTrainPatches();
+        Set<String> testContentPatch = testSet.stream().map(patch ->
+                patch.getBugid() + "#" + processPatch(FileIO.readFileToString(patch.getPatchPath())))
+                .collect(Collectors.toSet());
+        Set<String> trainContentPatch = trainSet.stream().map(patch ->
+                patch.getBugid() + "#" + processPatch(FileIO.readFileToString(patch.getPatchPath())))
+                .collect(Collectors.toSet());
+        Set<String> allContent = new LinkedHashSet<>();
+        allContent.addAll(testContentPatch);
+        allContent.addAll(trainContentPatch);
+
+        log.info("testSet {} trainSet {} allSet {}", testContentPatch.size(), trainContentPatch.size(),
+                allContent.size());
+
+        Map<String, Integer> map = new LinkedHashMap<>();
+        map.put("Chart", 26);
+        map.put("Closure", 133);
+        map.put("Math", 106);
+        map.put("Lang", 65);
+        map.put("Time", 27);
+        JSONObject jsonObject = new JSONObject();
+        for (Entry<String, Integer> entry : map.entrySet()) {
+            String name = entry.getKey();
+            Integer end = entry.getValue();
+            for (int i = 1; i <= end; i++) {
+                String patchFile = correctDir + "/" + name + "/patches/" + i + ".src.patch";
+                String bugId = name + "-" + i;
+                if (!allContent.contains(bugId + "#" + processCorPatch(FileIO.readFileToString(patchFile)))) {
+                    allContent.add(bugId + "#" + processCorPatch(FileIO.readFileToString(patchFile)));
+                    List<String> list = new LinkedList<>();
+                    list.add(bugId);
+                    list.add("1");
+                    String patchName = name + i + "_" + i + ".src.patch";
+                    jsonObject.put(patchName, list);
+                    try {
+                        FileUtils.copyFile(new File(patchFile), new File(targetDir + patchName));
+                    } catch (IOException exception) {
+                        log.error(patchFile);
+                    }
+                }
+            }
+        }
+        FileIO.writeStringToFile("./correct.info", JSON.toJSONString(jsonObject));
+        log.info("finish all subject!");
+    }
+
+
+    public static void readCorrectPatches() {
+        List<Patch> patches = new LinkedList<>();
+        String filePath = Constant.HOME + "/Patches/experiment3/kui_data_for_cc2v.txt";
+        String correctDir = Constant.D4J_HOME + "/framework/projects";
+        String[] content = FileIO.readFileToString(filePath).split("\n");
+        JSONObject jsonObject = new JSONObject();
+        String targetDir = Constant.HOME + "/Patches/DataSet/correctSet/";
+        for (int i = 662; i < 998; i++) {
+            String[] line = content[i].split("<ml>");
+            String label = line[0];
+            String info = line[1];
+            String[] infoArray = info.split("_");
+
+            String id = infoArray[1].split("\\.")[0];
+            String name = infoArray[0];
+
+            List<String> list = new LinkedList<>();
+            list.add(name + "-" + id);
+            list.add("1");
+            String patchName = name + "_" + id + ".src.patch";
+            jsonObject.put(patchName, list);
+
+            String patchFile = correctDir + "/" + name + "/patches/" + id + ".src.patch";
+
+            try {
+                FileUtils.copyFile(new File(patchFile), new File(targetDir + patchName));
+            } catch (IOException exception) {
+                log.error(patchFile);
+            }
+        }
+        FileIO.writeStringToFile("./correct.info", JSON.toJSONString(jsonObject));
+    }
+
     public static void main(String[] args) {
         //moveTestData();
         //deDuplicate4Wen();
         //selfdeduplicate4Wen();
         // List<Patch> testPatch = ObtainPatches.readTrainPatches();
-        rmInplausible4Wen();
+        //rmInplausible4Wen();
+        readCorrectPatches();
         log.info("finish");
     }
 

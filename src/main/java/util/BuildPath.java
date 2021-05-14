@@ -8,7 +8,8 @@ public class BuildPath {
 
     public static String buildDymicFile(String dir, String patchName, String test, boolean isBuggy) {
         String prefix = Constant.macOs ? "/Volumes/My Passport" : "";
-        return prefix + Constant.dynamicResult + "/" + dir + "/" + patchName + "/" + test + "/" + (isBuggy ? "buggy"
+        return prefix + Constant.dynamicResult + "/failing/" + dir + "/" + patchName + "/" + test + "/" + (isBuggy
+                                                                                                           ? "buggy"
                                                                                                            : "fixed");
     }
 

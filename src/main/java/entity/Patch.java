@@ -135,7 +135,7 @@ public class Patch {
 
         List<String> errorPatches = new LinkedList<>();
         Map<String, List<String>> nameValueMap = new LinkedHashMap<>();
-        int patchid = 1;
+        int patchid = 0;
         for (Entry<String, List<Patch>> entry : subjectPatchMap.entrySet()) {
 
             String name = entry.getKey().split("-")[0];
@@ -146,7 +146,7 @@ public class Patch {
             for (Patch patch : entry.getValue()) {
                 patchid++;
                 log.info("{} Process patch {}", patchid, patch.getPatchPath());
-                //                if (!patch.getPatchName().equals("Math58b_Patch168")) {
+                //                if (!patch.getPatchName().equals("Closure_16.src.patch")) {
                 //                    continue;
                 //                }
 
@@ -184,7 +184,8 @@ public class Patch {
                     }
 
                     patch.setFixedMethodStartLine(lnumber);
-                    patch.setCombinedMethod(findMethod.get_startLine() == lnumber ? constructMethod(
+                    patch.setCombinedMethod(findMethod.get_startLine() == lnumber && !patch.getPatchName()
+                            .equals("Closure_16.src.patch") ? constructMethod(
                             "deleteAllMethod") : combinedMethod);
                     break;
                 }
@@ -302,6 +303,9 @@ public class Patch {
         }
 
         String[] content = result.toString().split("\n");
+        if (content[startLine - 2].startsWith("+")) {
+            method.append(content[startLine - 2]).append("\n");
+        }
         for (int i = startLine; i <= endLine; i++) {
             method.append(content[i - 1]).append("\n");
         }
