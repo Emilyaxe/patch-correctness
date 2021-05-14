@@ -37,7 +37,7 @@ public class ObtainPassingTests {
         Scanner sc = new Scanner(in);
         List<String> lines = new ArrayList();
         while (sc.hasNextLine()) {
-            lines.add(sc.nextLine());
+            lines.add(sc.nextLine().split("\n")[0]);
         }
         return StringUtils.join(lines, "\n");
     }
@@ -82,11 +82,8 @@ public class ObtainPassingTests {
         String coverageFile = coverageInfoDir + subject.get_name() + "/" + subject.get_id() + ".txt";
         if (subject.get_name().equals("Closure")) {
             coverageFile = coverageFile + ".gz";
-            content = readFromGZFile(coverageFile);
-        } else {
-            content = FileIO.readFileToString(coverageFile);
-        }
-        for (String line : content.split("\n")) {
+            String line = readFromGZFile(coverageFile);
+
             String[] test = line.split("\t")[0].split("\\(")[0].split("\\.");
             StringBuilder stringBuilder = new StringBuilder(test[0]);
             for (int i = 1; i <= test.length - 2; i++) {
@@ -94,7 +91,20 @@ public class ObtainPassingTests {
             }
             stringBuilder.append("::").append(test[test.length - 1]);
             allTests.add(stringBuilder.toString());
+
+        } else {
+            content = FileIO.readFileToString(coverageFile);
+            for (String line : content.split("\n")) {
+                String[] test = line.split("\t")[0].split("\\(")[0].split("\\.");
+                StringBuilder stringBuilder = new StringBuilder(test[0]);
+                for (int i = 1; i <= test.length - 2; i++) {
+                    stringBuilder.append(".").append(test[i]);
+                }
+                stringBuilder.append("::").append(test[test.length - 1]);
+                allTests.add(stringBuilder.toString());
+            }
         }
+
 
         for (String test : allTests) {
             if (!failingTests.contains(test)) {
