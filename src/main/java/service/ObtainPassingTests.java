@@ -144,7 +144,7 @@ public class ObtainPassingTests {
 
     public static List<String> passingTests(Subject subject) {
         String newRelevanFile =
-                Constant.PROJ_INFO + "/relevant_tests/" + subject.get_name() + "/" + subject.get_id();
+                Constant.PROJ_INFO + "/passing_tests/" + subject.get_name() + "/" + subject.get_id();
         return Arrays.asList(FileIO.readFileToString(newRelevanFile).split("\n"));
     }
 
