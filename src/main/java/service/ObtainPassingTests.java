@@ -68,7 +68,7 @@ public class ObtainPassingTests {
         //            if (!str.equals("Closure-33")) {
         //                continue;
         //            }
-        String coverageInfoDir = "/home/jjliang/WorkSpace/Project/PatchCorrectness/tmp";
+        String coverageInfoDir = "/home/jjliang/WorkSpace/Project/PatchCorrectness/tmp/";
 
         Subject subject = new Subject(str.split("-")[0], Integer.parseInt(str.split("-")[1]));
         String newRelevanFile =
