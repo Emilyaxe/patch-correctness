@@ -2,7 +2,10 @@ package service;
 
 import static util.AsyExecutor.EXECUTOR;
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -37,7 +40,37 @@ public class ObtainPassingTests {
         Scanner sc = new Scanner(in);
         List<String> lines = new ArrayList();
         while (sc.hasNextLine()) {
-            lines.add(sc.nextLine().split("\n")[0]);
+            lines.add(sc.nextLine().split("\t")[0]);
+        }
+        return StringUtils.join(lines, "\n");
+    }
+
+    public static String readFileByLines(String fileName) {
+        File file = new File(fileName);
+        BufferedReader reader = null;
+        List<String> lines = new ArrayList();
+        try {
+            //System.out.println("以行为单位读取文件内容，一次读一整行：");
+            reader = new BufferedReader(new FileReader(file));
+            String tempString = null;
+            // int line = 1;
+            // 一次读入一行，直到读入null为文件结束
+            while ((tempString = reader.readLine()) != null) {
+                // 显示行号
+                lines.add(tempString.split("\t")[0]);
+                //                System.out.println("line " + line + ": " + tempString);
+                //                line++;
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e1) {
+                }
+            }
         }
         return StringUtils.join(lines, "\n");
     }
@@ -83,27 +116,20 @@ public class ObtainPassingTests {
         String coverageFile = coverageInfoDir + subject.get_name() + "/" + subject.get_id() + ".txt";
         if (subject.get_name().equals("Closure")) {
             coverageFile = coverageFile + ".gz";
-            String line = readFromGZFile(coverageFile);
+            content = readFromGZFile(coverageFile);
 
-            String[] test = line.split("\t")[0].split("\\(")[0].split("\\.");
+        } else {
+            content = readFileByLines(coverageFile);
+        }
+
+        for (String line : content.split("\n")) {
+            String[] test = line.split("\\(")[0].split("\\.");
             StringBuilder stringBuilder = new StringBuilder(test[0]);
             for (int i = 1; i <= test.length - 2; i++) {
                 stringBuilder.append(".").append(test[i]);
             }
             stringBuilder.append("::").append(test[test.length - 1]);
             allTests.add(stringBuilder.toString());
-
-        } else {
-            content = FileIO.readFileToString(coverageFile);
-            for (String line : content.split("\n")) {
-                String[] test = line.split("\t")[0].split("\\(")[0].split("\\.");
-                StringBuilder stringBuilder = new StringBuilder(test[0]);
-                for (int i = 1; i <= test.length - 2; i++) {
-                    stringBuilder.append(".").append(test[i]);
-                }
-                stringBuilder.append("::").append(test[test.length - 1]);
-                allTests.add(stringBuilder.toString());
-            }
         }
 
 
