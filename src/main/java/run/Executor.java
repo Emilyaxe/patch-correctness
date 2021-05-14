@@ -40,7 +40,7 @@ public class Executor {
                 } catch (IOException e) {
                     log.error("consumer process stream failed!", e);
                 }
-            });
+            }, Thread.currentThread().getName() + "-process-reader-thread");
             processReader.start();
             processReader.join();
             boolean result = process.waitFor(29, TimeUnit.MINUTES);
