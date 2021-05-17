@@ -72,7 +72,7 @@ public class Dumper {
             boolean isString = obj instanceof String || obj instanceof StringBuilder || obj instanceof StringBuffer;
             bufferedWriter.write(VarName);
             bufferedWriter.write(isString ? dumpString(obj.toString()) : dump(obj));
-            bufferedWriter.write("\n");
+            bufferedWriter.write("\t");
             bufferedWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -115,7 +115,7 @@ public class Dumper {
         try {
             bufferedWriter.write(VarName);
             bufferedWriter.write(dump(obj));
-            bufferedWriter.write("\n");
+            bufferedWriter.write("\t");
             bufferedWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -158,7 +158,7 @@ public class Dumper {
         try {
             bufferedWriter.write(VarName);
             bufferedWriter.write(dump(obj));
-            bufferedWriter.write("\n");
+            bufferedWriter.write("\t");
             bufferedWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -201,7 +201,7 @@ public class Dumper {
         try {
             bufferedWriter.write(VarName);
             bufferedWriter.write(dump(obj));
-            bufferedWriter.write("\n");
+            bufferedWriter.write("\t");
             bufferedWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -244,7 +244,7 @@ public class Dumper {
         try {
             bufferedWriter.write(VarName);
             bufferedWriter.write(dump(obj));
-            bufferedWriter.write("\n");
+            bufferedWriter.write("\t");
             bufferedWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -287,7 +287,7 @@ public class Dumper {
         try {
             bufferedWriter.write(VarName);
             bufferedWriter.write(dump(obj));
-            bufferedWriter.write("\n");
+            bufferedWriter.write("\t");
             bufferedWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -330,7 +330,7 @@ public class Dumper {
         try {
             bufferedWriter.write(VarName);
             bufferedWriter.write(dump(obj));
-            bufferedWriter.write("\n");
+            bufferedWriter.write("\t");
             bufferedWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -373,7 +373,7 @@ public class Dumper {
         try {
             bufferedWriter.write(VarName);
             bufferedWriter.write(dump(obj));
-            bufferedWriter.write("\n");
+            bufferedWriter.write("\t");
             bufferedWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -417,7 +417,7 @@ public class Dumper {
 
         try {
             bufferedWriter.write(obj);
-            bufferedWriter.write("\n");
+            bufferedWriter.write("\t");
             bufferedWriter.close();
         } catch (IOException e) {
             e.printStackTrace();

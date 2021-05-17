@@ -17,7 +17,9 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
@@ -25,8 +27,10 @@ import config.Constant;
 import entity.Method;
 import entity.Patch;
 import entity.Subject;
+import instrument.InstruTestFileVisitor;
 import instrument.IntruMethodsVisitors;
 import lombok.extern.slf4j.Slf4j;
+import purification.Purification;
 import run.Runner;
 import service.ObtainPassingTests;
 import service.ObtainPatches;
@@ -63,13 +67,26 @@ public class ObtainTraceInfo {
         return false;
     }
 
+    public static boolean compile(Subject subject) {
+        String srcPath = subject.getHome() + subject.get_ssrc();
+        try {
+            FileUtils.copyDirectory(new File(Constant.DUMPER_HOME),
+                    new File(srcPath + "/auxiliary"));
+        } catch (IOException e) {
+            log.error("subject {} process test {} copy dumper failed!",
+                    subject.get_name() + subject.get_id());
+        }
+        return Runner.compileSubject(subject);
+    }
+
     public static void obtainTrace(Map<String, List<Patch>> subjectPatchMap, boolean reverse,
             String reDir) {
         List<CompletableFuture<Void>> futureList = new LinkedList<>();
         for (Entry<String, List<Patch>> entry : subjectPatchMap.entrySet()) {
             futureList.add(CompletableFuture.runAsync(() -> {
                 try {
-                    processTrace(reverse, reDir, entry);
+                    processAllTrace(reverse, reDir, entry);
+                    //processTrace(reverse, reDir, entry);
                     //processPassingTrace(reverse, reDir, entry);
                 } catch (Exception e) {
                     log.error("obtain trace failed! subject {}", entry.getKey(), e);
@@ -77,9 +94,7 @@ public class ObtainTraceInfo {
             }, EXECUTOR));
         }
         CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0])).join();
-        log.info("InPlausible Patches: {}", String.join(",", inPlausiblePatches));
-        log.info("Illegle Patches: {}", String.join(",", illeglePatches));
-        log.info("finish obtain trace!");
+
     }
 
     public static void cleanSubject(String srcPath) {
@@ -97,12 +112,15 @@ public class ObtainTraceInfo {
         }
     }
 
-    private static void paralProcessPassingTrace(boolean reverse, String reDir,
-            Entry<String, List<Patch>> entry) {
+    private static void processAllTrace(boolean reverse, String reDir, Entry<String, List<Patch>> entry) {
         String[] sub = entry.getKey().split("-");
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
         for (Patch patch : entry.getValue()) {
-            Set<String> illegalTests = new LinkedHashSet<>();
+
+            //            if (!patch.getPatchName().equals("Lang_20.src.patch")) {
+            //                continue;
+            //            }
+            //Set<String> illegalTests = new LinkedHashSet<>();
             cleanSubject(subject.getHome() + subject.get_ssrc());
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
             int fixedLine = getOneChangeLine(subject, patch, reverse);
@@ -110,31 +128,72 @@ public class ObtainTraceInfo {
                 illeglePatches.add(patch.getPatchName());
                 continue;
             }
-            for (String test : ObtainPassingTests.passingTests(subject)) {
-                String testSubjectFile = BuildPath.buildProjectFile(subject, test);
-                try {
-                    FileUtils.copyDirectory(new File(subject.getHome()), new File(testSubjectFile));
-                    String writeFile = BuildPath.buildDymicPassFile(reDir, patch.getPatchName(), test,
-                            true);
-                    String oneFixedFile = Constant.PROJECT_HOME + "/" + subject.get_name() + "/"
-                            + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
-                    ProcessPatch.createCombinedBuggy4AllFiles(patch, reverse);
-                    instrument(fixedLine, writeFile, oneFixedFile);
-                    if (!compileAndRun(subject, test)) {
-                        illegalTests.add(test);
-                        log.error("Patch {}, Should Pass!", patch.getPatchName());
-                    }
-                } catch (Exception e) {
-                    log.error(
-                            "process failing test on buggy version failed! subject {} patch {} test {}",
-                            subject.get_name() + subject.get_id(), patch.getPatchName(), test, e);
-                } finally {
-                    try {
-                        FileUtils.deleteDirectory(new File(testSubjectFile + subject.get_name() + subject.get_id()));
-                    } catch (IOException exception) {
-                        log.error("delete test {} subject {} failed!", test, subject.get_name() + subject.get_id());
-                    }
+            try {
+                String writeFile = BuildPath.buildDymicAllFile(reDir, patch.getPatchName(),
+                        true);
+                String oneFixedFile = Constant.PROJECT_HOME + "/" + subject.get_name() + "/"
+                        + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
+                ProcessPatch.createCombinedBuggy4AllFiles(patch, reverse);
+                instrument(fixedLine, writeFile, oneFixedFile);
+                instrumentTests(subject, writeFile);
+                if (!compile(subject)) {
+                    log.error("Patch {}, Compile Error!", patch.getPatchName());
                 }
+                List<String> message = Runner.runTestSuite(subject);
+                FileIO.writeStringToFile(writeFile + ".failing", StringUtils.join(message, "\n"));
+            } catch (Exception e) {
+                log.error(
+                        "process failing test on buggy version failed! subject {} patch {} test {}",
+                        subject.get_name() + subject.get_id(), patch.getPatchName(), e);
+            }
+
+            try {
+                String writeFile = BuildPath.buildDymicAllFile(reDir, patch.getPatchName(),
+                        false);
+                String oneFixedFile = Constant.PROJECT_HOME + "/" + subject.get_name() + "/"
+                        + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
+                ProcessPatch.createCombinedFixed4AllFiles(patch, reverse);
+                instrument(fixedLine, writeFile, oneFixedFile);
+                instrumentTests(subject, writeFile);
+                if (!compile(subject)) {
+                    log.error("Patch {}, Compile Error!", patch.getPatchName());
+                }
+                List<String> message = Runner.runTestSuite(subject);
+                if (CollectionUtils.isEmpty(message) || message.stream().filter(Objects::nonNull)
+                        .noneMatch(element -> element.contains(Runner.SUCCESSTEST))) {
+                    inPlausiblePatches.add(patch.getPatchName());
+                    log.error("Patch {}, Run tests error on fixed version! \n {} ", patch.getPatchName(),
+                            StringUtils.join(message, "\n"));
+                }
+            } catch (Exception e) {
+                log.error(
+                        "process failing test on buggy version failed! subject {} patch {} test {}",
+                        subject.get_name() + subject.get_id(), patch.getPatchName(), e);
+            }
+        }
+    }
+
+    private static void instrumentTests(Subject subject, String writeFile) {
+        synchronized (lock) {
+            String testDir = subject.getHome() + subject.get_tsrc();
+            FileIO.backupDir(testDir);
+
+            Purification purification = new Purification(subject);
+            purification.purifyWithoutValidate();
+
+            List<File> allTestFiles = new LinkedList<>();
+            FileIO.getAllFile(new File(testDir), allTestFiles);
+            for (File testFile : allTestFiles) {
+                if (!testFile.getName().endsWith(".java")) {
+                    continue;
+                }
+                InstruTestFileVisitor instruTestFileVisitor = new InstruTestFileVisitor();
+                instruTestFileVisitor.setWriteFile(writeFile);
+
+                CompilationUnit compilationUnit = FileIO.genASTFromSource(
+                        FileIO.readFileToString(testFile), ASTParser.K_COMPILATION_UNIT);
+                compilationUnit.accept(instruTestFileVisitor);
+                FileIO.writeStringToFile(testFile, compilationUnit.toString());
             }
         }
     }
@@ -325,21 +384,25 @@ public class ObtainTraceInfo {
     }
 
     public static void main(String[] args) {
-        //        List<Patch> trainPatch = ObtainPatches.readTrainPatches();
-        //        Map<String, List<Patch>> trainPatchMap =
-        //                trainPatch.stream().collect(Collectors.groupingBy(Patch::getBugid));
-        //        obtainTrace(trainPatchMap, false, "trainSet");
+        List<Patch> trainPatch = ObtainPatches.readTrainPatches();
+        Map<String, List<Patch>> trainPatchMap =
+                trainPatch.stream().collect(Collectors.groupingBy(Patch::getBugid));
+        obtainTrace(trainPatchMap, false, "trainSet");
 
-        //        List<Patch> testPatches = ObtainPatches.readTestPatches();
-        //        Map<String, List<Patch>> testSubjectPatchMap =
-        //                testPatches.stream().collect(Collectors.groupingBy(Patch::getBugid));
-        //        obtainTrace(testSubjectPatchMap, false, "testSet");
+        List<Patch> testPatches = ObtainPatches.readTestPatches();
+        Map<String, List<Patch>> testSubjectPatchMap =
+                testPatches.stream().collect(Collectors.groupingBy(Patch::getBugid));
+        obtainTrace(testSubjectPatchMap, false, "testSet");
 
         List<Patch> correctPatches = ObtainPatches.readCorPatches();
         Map<String, List<Patch>> correctSubjectPatchMap =
                 correctPatches.stream().collect(Collectors.groupingBy(Patch::getBugid));
         obtainTrace(correctSubjectPatchMap, true, "correctSet");
         // processCornerCase("correctSet", "Closure_16.src.patch");
+
+        log.info("InPlausible Patches: {}", String.join(",", inPlausiblePatches));
+        log.info("Illegle Patches: {}", String.join(",", illeglePatches));
+        log.info("finish obtain trace!");
 
     }
 }

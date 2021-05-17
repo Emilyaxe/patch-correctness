@@ -20,6 +20,13 @@ public class BuildPath {
                                                                                                            : "fixed");
     }
 
+    public static String buildDymicAllFile(String dir, String patchName, boolean isBuggy) {
+        // String prefix = Constant.macOs ? "/Volumes/My Passport" : "";
+        return Constant.dynamicResult + "/" + dir + "/" + patchName + "/" + (isBuggy
+                                                                             ? "buggy"
+                                                                             : "fixed");
+    }
+
     public static String buildMethodsFile(Subject subject, boolean isBuggy) {
         return Constant.methodResult + "/" + subject.get_name() + "/" + subject.get_id() + (isBuggy ? ".buggy"
                                                                                                     : ".fixed");

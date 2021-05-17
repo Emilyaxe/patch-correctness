@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 public class Runner {
 
     private final static String __name__ = "@Runner ";
-    private final static String SUCCESSTEST = "Failing tests: 0";
+    public final static String SUCCESSTEST = "Failing tests: 0";
 
     public static boolean testSingleTest(Subject subject, String clazzAndMethod) {
         List<String> message = null;
@@ -70,17 +70,18 @@ public class Runner {
         }
     }
 
-    public static boolean runTestSuite(Subject subject) {
+    public static List<String> runTestSuite(Subject subject) {
         List<String> message = null;
         try {
-            System.out.println("TESTING : " + subject.get_name() + "_" + subject.get_id());
+            log.info("TESTING : " + subject.get_name() + "_" + subject.get_id());
             message = Executor.execute(CmdFactory.createTestSubjectCmd(subject, 10 * 60));
         } catch (Exception e) {
             // LevelLogger.fatal(__name__ + "#buildSubject run test single test case failed !", e);
         }
-        return CollectionUtils.isNotEmpty(message)
-                && message.stream().filter(Objects::nonNull)
-                .anyMatch(element -> element.contains(SUCCESSTEST));
+        return message;
+        //        return CollectionUtils.isNotEmpty(message)
+        //                && message.stream().filter(Objects::nonNull)
+        //                .anyMatch(element -> element.contains(SUCCESSTEST));
     }
 
     public static boolean downloadSubject(Subject subject) {

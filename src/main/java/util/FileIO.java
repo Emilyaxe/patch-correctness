@@ -204,6 +204,20 @@ public class FileIO {
         }
     }
 
+    public static void backupDir(String dirPath) {
+        File srcDir = new File(dirPath);
+        File backFile = new File(dirPath + ".bak");
+        try {
+            if (backFile.exists()) {
+                FileUtils.copyDirectory(backFile, srcDir);
+            } else {
+                FileUtils.copyDirectory(srcDir, backFile);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void backupFile(String filePath) {
         File srcFile = new File(filePath);
         File backFile = new File(filePath + ".bak");
