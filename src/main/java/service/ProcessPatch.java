@@ -138,7 +138,7 @@ public class ProcessPatch {
                 String[] patchArray = patchContent.split("\n");
                 for (String patchLine : patchArray) {
                     if (patchLine.startsWith("-")) {
-                        result.append("//").append(contentArray[index]).append("\n");
+                        result.append("//-").append(contentArray[index]).append("\n");
                         ++index;
                     } else if (patchLine.startsWith("+")) {
                         result.append(patchLine.split("\\+", 2)[1]).append("\n");

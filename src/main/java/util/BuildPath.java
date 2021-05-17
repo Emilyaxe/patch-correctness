@@ -7,10 +7,10 @@ import entity.Subject;
 public class BuildPath {
 
     public static String buildDymicFile(String dir, String patchName, String test, boolean isBuggy) {
-        String prefix = Constant.macOs ? "/Volumes/My Passport" : "";
-        return prefix + Constant.dynamicResult + "/failing/" + dir + "/" + patchName + "/" + test + "/" + (isBuggy
-                                                                                                           ? "buggy"
-                                                                                                           : "fixed");
+        // String prefix = Constant.macOs ? "/Volumes/My Passport" : "";
+        return Constant.dynamicResult + "/failing/" + dir + "/" + patchName + "/" + test + "/" + (isBuggy
+                                                                                                  ? "buggy"
+                                                                                                  : "fixed");
     }
 
     public static String buildDymicPassFile(String dir, String patchName, String test, boolean isBuggy) {
@@ -23,6 +23,10 @@ public class BuildPath {
     public static String buildMethodsFile(Subject subject, boolean isBuggy) {
         return Constant.methodResult + "/" + subject.get_name() + "/" + subject.get_id() + (isBuggy ? ".buggy"
                                                                                                     : ".fixed");
+    }
+
+    public static String buildProjectFile(Subject subject, String test) {
+        return "";
     }
 
     public static String buildMethodReFile(String file) {

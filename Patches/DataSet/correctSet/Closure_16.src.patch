@@ -8,7 +8,7 @@ index e2f0538..26fb230 100644
      private final Node typeReference;
 -    private final Node aliasDefinition;
      private final String aliasName;
- 
+
 -    AliasedTypeNode(Node typeReference, Node aliasDefinition,
 +    AliasedTypeNode(Node typeReference,
          String aliasName) {

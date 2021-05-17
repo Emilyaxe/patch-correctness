@@ -79,9 +79,11 @@ public class ObtainPassingTests {
         List<CompletableFuture<Void>> futureList = new LinkedList<>();
         List<Patch> testPatches = ObtainPatches.readTestPatches();
         List<Patch> trainPatches = ObtainPatches.readTrainPatches();
+        List<Patch> correctPatches = ObtainPatches.readCorPatches();
         Set<String> subjects = new LinkedHashSet<>();
         subjects.addAll(testPatches.stream().map(Patch::getBugid).collect(Collectors.toSet()));
         subjects.addAll(trainPatches.stream().map(Patch::getBugid).collect(Collectors.toSet()));
+        subjects.addAll(correctPatches.stream().map(Patch::getBugid).collect(Collectors.toSet()));
         for (String str : subjects) {
             futureList.add(CompletableFuture.runAsync(() -> {
                 try {
@@ -95,18 +97,57 @@ public class ObtainPassingTests {
         log.info("finish obtain test!");
     }
 
+    public static void obtainRelevantTests() {
+        List<CompletableFuture<Void>> futureList = new LinkedList<>();
+        List<Patch> testPatches = ObtainPatches.readTestPatches();
+        List<Patch> trainPatches = ObtainPatches.readTrainPatches();
+        List<Patch> correctPatches = ObtainPatches.readCorPatches();
+        Set<String> subjects = new LinkedHashSet<>();
+        subjects.addAll(testPatches.stream().map(Patch::getBugid).collect(Collectors.toSet()));
+        subjects.addAll(trainPatches.stream().map(Patch::getBugid).collect(Collectors.toSet()));
+        subjects.addAll(correctPatches.stream().map(Patch::getBugid).collect(Collectors.toSet()));
+        for (String str : subjects) {
+            futureList.add(CompletableFuture.runAsync(() -> {
+                try {
+                    //obtainTest4subject(str);
+                    obtainRelevantTest4Subject(str);
+                } catch (Exception e) {
+                    log.error("obtain trace failed! subject {}", str, e);
+                }
+            }, EXECUTOR));
+        }
+        CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0])).join();
+        log.info("finish obtain test!");
+    }
+
+    private static void obtainRelevantTest4Subject(String str) {
+        log.info("Start process Subject {}", str);
+        Subject subject = new Subject(str.split("-")[0], Integer.parseInt(str.split("-")[1]));
+        List<String> allPassings = passingTests(subject);
+
+        String relevantFile =
+                Constant.D4J_HOME + "/framework/projects/" + subject.get_name() + "/relevant_tests/" + subject.get_id();
+        List<String> files = Arrays.asList(FileIO.readFileToString(relevantFile).split("\n"));
+        List<String> relevantPassings =
+                allPassings.stream().filter(line -> files.contains(line.split("::")[0])).collect(Collectors.toList());
+        String newRelevanFile =
+                Constant.PROJ_INFO + "/relevant_passing_tests/" + subject.get_name() + "/" + subject.get_id();
+        FileIO.writeStringToFile(newRelevanFile, StringUtils.join(relevantPassings, "\n"));
+    }
+
 
     public static void obtainTest4subject(String str) {
 
-        //            if (!str.equals("Closure-33")) {
-        //                continue;
-        //            }
         log.info("Start process Subject {}", str);
-        String coverageInfoDir = "/home/jjliang/WorkSpace/Project/PatchCorrectness/tmp/";
+        String coverageInfoDir = "/home/emily/WorkSpace/Project/PatchCorrectness/tmp/";
 
         Subject subject = new Subject(str.split("-")[0], Integer.parseInt(str.split("-")[1]));
         String newRelevanFile =
-                Constant.PROJ_INFO + "/relevant_tests/" + subject.get_name() + "/" + subject.get_id();
+                Constant.PROJ_INFO + "/passing_tests/" + subject.get_name() + "/" + subject.get_id();
+
+        if (new File(newRelevanFile).exists()) {
+            return;
+        }
 
         List<String> failingTests = subject.getFailingTests();
         List<String> passTests = new LinkedList<>();
@@ -132,7 +173,6 @@ public class ObtainPassingTests {
             allTests.add(stringBuilder.toString());
         }
 
-
         for (String test : allTests) {
             if (!failingTests.contains(test)) {
                 passTests.add(test);
@@ -151,5 +191,6 @@ public class ObtainPassingTests {
     public static void main(String[] args) {
         //String relevantTest = Constant.HOME + "/d4j-info/relevant_tests";
         obtainTest();
+        //obtainRelevantTests();
     }
 }

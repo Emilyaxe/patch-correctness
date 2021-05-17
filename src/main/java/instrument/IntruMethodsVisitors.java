@@ -47,7 +47,7 @@ import util.FileIO;
 @NoArgsConstructor
 @AllArgsConstructor
 @Slf4j
-public class IntruMethodsVisitors extends TraversalVisitor{
+public class IntruMethodsVisitors extends TraversalVisitor {
 
     private String _clazzName = "";
     private String _clazzFileName = "";
@@ -70,7 +70,7 @@ public class IntruMethodsVisitors extends TraversalVisitor{
                     _clazzName += "." + type.getName().getFullyQualifiedName();
                     _clazzFileName = _clazzName;
                 }
-            } else if (object instanceof EnumDeclaration)  {
+            } else if (object instanceof EnumDeclaration) {
                 EnumDeclaration type = (EnumDeclaration) object;
                 if (Modifier.isPublic(type.getModifiers())) {
                     _clazzName += "." + type.getName().getFullyQualifiedName();
@@ -97,15 +97,31 @@ public class IntruMethodsVisitors extends TraversalVisitor{
     @Override
     public boolean visit(MethodDeclaration node) {
 
+        //        ASTNode parent = node.getParent();
+        //        while (parent != null && !(parent instanceof TypeDeclaration)) {
+        //            if (parent instanceof ClassInstanceCreation) {
+        //                return false;
+        //            }
+        //            parent = parent.getParent();
+        //        }
 
         int lineStartNumber = _cu.getLineNumber(node.getStartPosition());
+
         int lineEndNumber = _cu
                 .getLineNumber(node.getStartPosition() + node.getLength());
 
-        if(! (lineStartNumber <= fixedMethodStartLine && lineEndNumber >= fixedMethodStartLine)){
+        if (!(lineStartNumber <= fixedMethodStartLine && lineEndNumber >= fixedMethodStartLine)) {
             return false;
         }
 
+        ASTNode parent = node.getParent();
+        while (parent != null && !(parent instanceof TypeDeclaration)) {
+            if (parent instanceof MethodDeclaration) {
+                lineStartNumber = _cu.getLineNumber(parent.getStartPosition());
+            }
+            parent = parent.getParent();
+        }
+        
         if (node.getBody() != null) {
             Block methodBody = node.getBody();
             List<ASTNode> blockStatement = new ArrayList<>();
@@ -179,7 +195,7 @@ public class IntruMethodsVisitors extends TraversalVisitor{
                     elseBlock = ast.newBlock();
                     elseBlock.statements().add(ASTNode.copySubtree(elseBlock.getAST(), elseBody));
                 }
-                Block newElseBlock = processBlock(elseBlock,null, reType, lineStartNumber);
+                Block newElseBlock = processBlock(elseBlock, null, reType, lineStartNumber);
                 ifStatement
                         .setElseStatement((Statement) ASTNode.copySubtree(ifStatement.getAST(), newElseBlock));
             }
@@ -199,7 +215,7 @@ public class IntruMethodsVisitors extends TraversalVisitor{
                 }
                 Statement insert = GenStatement.genDumpLine(writeFile, message, lineNumber);
 
-                Block newWhileBlock = processBlock(whileBlock,insert, reType, lineStartNumber);
+                Block newWhileBlock = processBlock(whileBlock, insert, reType, lineStartNumber);
                 whileStatement
                         .setBody((Statement) ASTNode.copySubtree(whileStatement.getAST(), newWhileBlock));
             }
@@ -238,7 +254,7 @@ public class IntruMethodsVisitors extends TraversalVisitor{
                     doBlock.statements().add(ASTNode.copySubtree(doBlock.getAST(), doBody));
                 }
                 Statement insert = GenStatement.genDumpLine(writeFile, message, lineNumber);
-                Block newDoBlock = processBlock(doBlock,insert, reType, lineStartNumber);
+                Block newDoBlock = processBlock(doBlock, insert, reType, lineStartNumber);
                 doStatement.setBody((Statement) ASTNode.copySubtree(doStatement.getAST(), newDoBlock));
             }
 
@@ -374,8 +390,10 @@ public class IntruMethodsVisitors extends TraversalVisitor{
 
     public static void main(String[] args) {
         String writeFile = "tmpWriteFile";
-        String filePath = "/Users/liangjingjing/WorkSpace/Data/Defects4J/projects_buggy/Chart/Chart15/source/org/jfree/chart/JFreeChart.java";
-        IntruMethodsVisitors visitor  = new IntruMethodsVisitors();
+        String filePath =
+                "/Users/liangjingjing/WorkSpace/Data/Defects4J/projects_buggy/Chart/Chart15/source/org/jfree/chart"
+                        + "/JFreeChart.java";
+        IntruMethodsVisitors visitor = new IntruMethodsVisitors();
         visitor.setWriteFile(writeFile);
         visitor.setFixedMethodStartLine(1216);
         CompilationUnit compilationUnit = FileIO.genASTFromSource(FileIO.readFileToString(filePath),

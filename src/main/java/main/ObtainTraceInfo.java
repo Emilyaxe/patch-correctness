@@ -97,6 +97,48 @@ public class ObtainTraceInfo {
         }
     }
 
+    private static void paralProcessPassingTrace(boolean reverse, String reDir,
+            Entry<String, List<Patch>> entry) {
+        String[] sub = entry.getKey().split("-");
+        Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
+        for (Patch patch : entry.getValue()) {
+            Set<String> illegalTests = new LinkedHashSet<>();
+            cleanSubject(subject.getHome() + subject.get_ssrc());
+            log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
+            int fixedLine = getOneChangeLine(subject, patch, reverse);
+            if (fixedLine == 0) {
+                illeglePatches.add(patch.getPatchName());
+                continue;
+            }
+            for (String test : ObtainPassingTests.passingTests(subject)) {
+                String testSubjectFile = BuildPath.buildProjectFile(subject, test);
+                try {
+                    FileUtils.copyDirectory(new File(subject.getHome()), new File(testSubjectFile));
+                    String writeFile = BuildPath.buildDymicPassFile(reDir, patch.getPatchName(), test,
+                            true);
+                    String oneFixedFile = Constant.PROJECT_HOME + "/" + subject.get_name() + "/"
+                            + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
+                    ProcessPatch.createCombinedBuggy4AllFiles(patch, reverse);
+                    instrument(fixedLine, writeFile, oneFixedFile);
+                    if (!compileAndRun(subject, test)) {
+                        illegalTests.add(test);
+                        log.error("Patch {}, Should Pass!", patch.getPatchName());
+                    }
+                } catch (Exception e) {
+                    log.error(
+                            "process failing test on buggy version failed! subject {} patch {} test {}",
+                            subject.get_name() + subject.get_id(), patch.getPatchName(), test, e);
+                } finally {
+                    try {
+                        FileUtils.deleteDirectory(new File(testSubjectFile + subject.get_name() + subject.get_id()));
+                    } catch (IOException exception) {
+                        log.error("delete test {} subject {} failed!", test, subject.get_name() + subject.get_id());
+                    }
+                }
+            }
+        }
+    }
+
     private static void processPassingTrace(boolean reverse, String reDir,
             Entry<String, List<Patch>> entry) {
         String[] sub = entry.getKey().split("-");
@@ -174,9 +216,9 @@ public class ObtainTraceInfo {
         for (Patch patch : entry.getValue()) {
 
             cleanSubject(subject.getHome() + subject.get_ssrc());
-            //            if (!patch.getPatchName().equals("patch1-Lang-7-Arja-plausible.patch")) {
-            //                continue;
-            //            }
+            if (!patch.getPatchName().equals("Chart_7.src.patch")) {
+                continue;
+            }
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
             int fixedLine = getOneChangeLine(subject, patch, reverse);
             if (fixedLine == 0) {
@@ -221,8 +263,6 @@ public class ObtainTraceInfo {
                             subject.get_name() + subject.get_id(), patch.getPatchName(), test, e);
                 }
             }
-            // obtain the instrumented fixed file and changes lines
-
         }
     }
 
@@ -269,6 +309,21 @@ public class ObtainTraceInfo {
         return result;
     }
 
+    private static void processCornerCase(String reDir, String patchName) {
+        Subject subject = new Subject("Closure", 16);
+        for (String test : subject.getFailingTests()) {
+            String writeFile = BuildPath.buildDymicFile(reDir, patchName, test,
+                    true);
+            String content = FileIO.readFileToString(writeFile);
+            StringBuilder newContent = new StringBuilder();
+            for (String line : content.split("\n")) {
+                String[] lineStr = line.split("#");
+                newContent.append(lineStr[0]).append("#").append(Integer.parseInt(lineStr[1]) + 1).append("\n");
+            }
+            FileIO.writeStringToFile(writeFile, newContent.toString());
+        }
+    }
+
     public static void main(String[] args) {
         //        List<Patch> trainPatch = ObtainPatches.readTrainPatches();
         //        Map<String, List<Patch>> trainPatchMap =
@@ -284,12 +339,7 @@ public class ObtainTraceInfo {
         Map<String, List<Patch>> correctSubjectPatchMap =
                 correctPatches.stream().collect(Collectors.groupingBy(Patch::getBugid));
         obtainTrace(correctSubjectPatchMap, true, "correctSet");
+        // processCornerCase("correctSet", "Closure_16.src.patch");
 
-
-        //        obtainTrace(ObtainMethods4All.readCorrectPatch4Wen(), false, "Correct4Wen");
-        //        obtainTrace(ObtainMethods4All.readInCorrectPatch4Wen(), false, "Overfitting4Wen");
-        //obtainTrace(ObtainMethods4All.readTrainPatches(), false, "TrainSet4Kui");
-        // obtainTrace(ObtainMethods4All.readTestPatches(), false, "testSet4Kui");
-        //  obtainTrace(ObtainMethods4All.readCorrectPatches(), true, "correctSet4Kui");
     }
 }

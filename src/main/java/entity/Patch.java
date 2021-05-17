@@ -303,6 +303,7 @@ public class Patch {
         }
 
         String[] content = result.toString().split("\n");
+        // corner case: add //+ in first line
         if (content[startLine - 2].startsWith("+")) {
             method.append(content[startLine - 2]).append("\n");
         }

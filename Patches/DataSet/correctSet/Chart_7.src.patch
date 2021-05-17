@@ -1,7 +1,7 @@
 Index: source/org/jfree/data/time/TimePeriodValues.java
 ===================================================================
---- source/org/jfree/data/time/TimePeriodValues.java	(revision 1087)
-+++ source/org/jfree/data/time/TimePeriodValues.java	(revision 1086)
+--- /source/org/jfree/data/time/TimePeriodValues.java	(revision 1087)
++++ /source/org/jfree/data/time/TimePeriodValues.java	(revision 1086)
 @@ -297,9 +297,9 @@
          }
          
