@@ -117,9 +117,9 @@ public class ObtainTraceInfo {
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
         for (Patch patch : entry.getValue()) {
 
-            //            if (!patch.getPatchName().equals("Lang_20.src.patch")) {
-            //                continue;
-            //            }
+            if (!patch.getPatchName().equals("patch3-Lang-55-Jaid-plausible.patch")) {
+                continue;
+            }
             //Set<String> illegalTests = new LinkedHashSet<>();
             cleanSubject(subject.getHome() + subject.get_ssrc());
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
@@ -143,7 +143,7 @@ public class ObtainTraceInfo {
                 FileIO.writeStringToFile(writeFile + ".failing", StringUtils.join(message, "\n"));
             } catch (Exception e) {
                 log.error(
-                        "process failing test on buggy version failed! subject {} patch {} test {}",
+                        "process  test on buggy version failed! subject {} patch {} test {}",
                         subject.get_name() + subject.get_id(), patch.getPatchName(), e);
             }
 
@@ -167,7 +167,7 @@ public class ObtainTraceInfo {
                 }
             } catch (Exception e) {
                 log.error(
-                        "process failing test on buggy version failed! subject {} patch {} test {}",
+                        "process test on fixed version failed! subject {} patch {} test {}",
                         subject.get_name() + subject.get_id(), patch.getPatchName(), e);
             }
         }
@@ -189,7 +189,7 @@ public class ObtainTraceInfo {
                 }
                 InstruTestFileVisitor instruTestFileVisitor = new InstruTestFileVisitor();
                 instruTestFileVisitor.setWriteFile(writeFile);
-
+                //log.info(testFile.getAbsolutePath());
                 CompilationUnit compilationUnit = FileIO.genASTFromSource(
                         FileIO.readFileToString(testFile), ASTParser.K_COMPILATION_UNIT);
                 compilationUnit.accept(instruTestFileVisitor);

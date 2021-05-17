@@ -121,7 +121,7 @@ public class IntruMethodsVisitors extends TraversalVisitor {
             }
             parent = parent.getParent();
         }
-        
+
         if (node.getBody() != null) {
             Block methodBody = node.getBody();
             List<ASTNode> blockStatement = new ArrayList<>();
@@ -391,11 +391,11 @@ public class IntruMethodsVisitors extends TraversalVisitor {
     public static void main(String[] args) {
         String writeFile = "tmpWriteFile";
         String filePath =
-                "/Users/liangjingjing/WorkSpace/Data/Defects4J/projects_buggy/Chart/Chart15/source/org/jfree/chart"
-                        + "/JFreeChart.java";
+                "/Users/liangjingjing/WorkSpace/Data/Defects4J/projects_buggy/Lang/Lang55/src/test/org/apache/commons"
+                        + "/lang/enum/Broken4OperationEnum.java";
         IntruMethodsVisitors visitor = new IntruMethodsVisitors();
         visitor.setWriteFile(writeFile);
-        visitor.setFixedMethodStartLine(1216);
+        // visitor.setFixedMethodStartLine(1216);
         CompilationUnit compilationUnit = FileIO.genASTFromSource(FileIO.readFileToString(filePath),
                 ASTParser.K_COMPILATION_UNIT);
         compilationUnit.accept(visitor);

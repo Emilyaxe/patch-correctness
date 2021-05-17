@@ -22,6 +22,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import util.FileIO;
 
 @Slf4j
 @Data
@@ -47,10 +48,16 @@ public class InstruTestFileVisitor extends TraversalVisitor {
         for (Object object : node.types()) {
             if (object instanceof TypeDeclaration) {
                 TypeDeclaration type = (TypeDeclaration) object;
-                if (Modifier.isPublic(type.getModifiers())) {
-                    _clazzName += "." + type.getName().getFullyQualifiedName();
-                    _clazzFileName = _clazzName;
+                if (!Modifier.isPublic(type.getModifiers())) {
+                    return false;
                 }
+                if (!type.getName().getFullyQualifiedName().startsWith("Test") && !type.getName()
+                        .getFullyQualifiedName().endsWith("Test")) {
+                    return false;
+                }
+                _clazzName += "." + type.getName().getFullyQualifiedName();
+                _clazzFileName = _clazzName;
+
             } else {
                 return false;
             }
@@ -148,5 +155,15 @@ public class InstruTestFileVisitor extends TraversalVisitor {
             }
         }
         return true;
+    }
+
+    public static void main(String[] args) {
+        String file =
+                "/Users/liangjingjing/WorkSpace/Data/Defects4J/projects_buggy/Lang/Lang55/src/test/org/apache/commons"
+                        + "/lang/enum/Broken4OperationEnum.java";
+        InstruTestFileVisitor instruTestFileVisitor = new InstruTestFileVisitor();
+        CompilationUnit compilationUnit = FileIO.genASTFromFile(file);
+        compilationUnit.accept(instruTestFileVisitor);
+        FileIO.writeStringToFile(file, compilationUnit.toString());
     }
 }
