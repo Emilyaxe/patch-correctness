@@ -188,9 +188,15 @@ public class ObtainPassingTests {
         return Arrays.asList(FileIO.readFileToString(newRelevanFile).split("\n"));
     }
 
+    public static List<String> relevantPassingTests(Subject subject) {
+        String newRelevanFile =
+                Constant.PROJ_INFO + "/relevant_passing_tests/" + subject.get_name() + "/" + subject.get_id();
+        return Arrays.asList(FileIO.readFileToString(newRelevanFile).split("\n"));
+    }
+
     public static void main(String[] args) {
         //String relevantTest = Constant.HOME + "/d4j-info/relevant_tests";
-        obtainTest();
-        //obtainRelevantTests();
+        //obtainTest();
+        obtainRelevantTests();
     }
 }

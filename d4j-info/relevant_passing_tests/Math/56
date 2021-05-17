@@ -1,0 +1,4 @@
+org.apache.commons.math.util.MultidimensionalCounterTest::testPreconditions
+org.apache.commons.math.util.MultidimensionalCounterTest::testAccessors
+org.apache.commons.math.util.MultidimensionalCounterTest::testIteratorPreconditions
+org.apache.commons.math.util.MultidimensionalCounterTest::testMulti2UniConversion
