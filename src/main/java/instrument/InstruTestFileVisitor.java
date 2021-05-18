@@ -57,9 +57,6 @@ public class InstruTestFileVisitor extends TraversalVisitor {
                 }
                 _clazzName += "." + type.getName().getFullyQualifiedName();
                 _clazzFileName = _clazzName;
-
-            } else {
-                return false;
             }
         }
         return true;
@@ -137,9 +134,7 @@ public class InstruTestFileVisitor extends TraversalVisitor {
                 }
             }
             String message = "\n" + _clazzName + "::" + name;
-            //            if (!passingList.contains(message.trim())) {
-            //                return true;
-            //            }
+  
             Integer lineNumber = _cu.getLineNumber(node.getStartPosition());
             Statement insert = GenStatement.genDumpLine(writeFile, message, lineNumber);
             blockStatement.add(insert);
@@ -159,8 +154,8 @@ public class InstruTestFileVisitor extends TraversalVisitor {
 
     public static void main(String[] args) {
         String file =
-                "/Users/liangjingjing/WorkSpace/Data/Defects4J/projects_buggy/Lang/Lang55/src/test/org/apache/commons"
-                        + "/lang/enum/Broken4OperationEnum.java";
+                "/Users/liangjingjing/WorkSpace/Data/Defects4J/projects_buggy/Lang/Lang6/src/test/java/org/apache"
+                        + "/commons/lang3/EnumUtilsTest.java";
         InstruTestFileVisitor instruTestFileVisitor = new InstruTestFileVisitor();
         CompilationUnit compilationUnit = FileIO.genASTFromFile(file);
         compilationUnit.accept(instruTestFileVisitor);

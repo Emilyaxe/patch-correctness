@@ -294,9 +294,9 @@ public class FileIO {
      */
     public static CompilationUnit genASTFromSource(String icu, int type) {
         ASTParser astParser = ASTParser.newParser(AST.JLS8);
-        //        Map<String, String> options = JavaCore.getOptions();
-        //        JavaCore.setComplianceOptions(JavaCore.VERSION_1_7, options);
-        //        astParser.setCompilerOptions(options);
+        Map<String, String> options = JavaCore.getOptions();
+        JavaCore.setComplianceOptions(JavaCore.VERSION_1_8, options);
+        astParser.setCompilerOptions(options);
         astParser.setSource(icu.toCharArray());
         astParser.setKind(type);
         astParser.setResolveBindings(true);
