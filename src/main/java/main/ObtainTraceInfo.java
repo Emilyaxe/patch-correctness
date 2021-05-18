@@ -346,7 +346,7 @@ public class ObtainTraceInfo {
         }
     }
 
-    private static int getOneChangeLine(Subject subject, Patch patch, boolean reverse) {
+    public static int getOneChangeLine(Subject subject, Patch patch, boolean reverse) {
 
         ProcessPatch.createCombinedBuggy4AllFiles(patch, reverse);
 
