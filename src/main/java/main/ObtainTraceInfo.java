@@ -118,9 +118,9 @@ public class ObtainTraceInfo {
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
         for (Patch patch : entry.getValue()) {
 
-            if (!patch.getPatchName().equals("patch1-Chart-1-Arja-plausible.patch")) {
-                continue;
-            }
+            //            if (!patch.getPatchName().equals("patch1-Chart-1-Arja-plausible.patch")) {
+            //                continue;
+            //            }
             //Set<String> illegalTests = new LinkedHashSet<>();
             cleanSubject(subject.getHome() + subject.get_ssrc());
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());

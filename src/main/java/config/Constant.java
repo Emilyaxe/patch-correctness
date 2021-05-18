@@ -3,10 +3,10 @@ package config;
 public class Constant {
 
     public static final boolean macOs = System.getProperty("os.name").contains("Mac OS X");
-    public static String env = macOs ? "/Users/liangjingjing" : "/home/emily";
+    public static String env = macOs ? "/Users/liangjingjing" : "/home/jjliang";
     public static String HOME = env + "/WorkSpace/Project/PatchCorrectness/patch-correctness";
     public static String PROJECT_HOME = env + "/WorkSpace/Data/Defects4J/projects_buggy";
-    public static String D4J_HOME = env + (macOs ? "/WorkSpace/defects4j" : "/defects4j");
+    public static String D4J_HOME = env + (macOs ? "/WorkSpace/defects4j" : "/WorkSpace/defects4j");
 
 
     public static String PROJ_INFO = HOME + "/d4j-info";
@@ -15,8 +15,7 @@ public class Constant {
     public static final String COMMAND_JAVA_HOME =
             macOs ? "/Library/Java/JavaVirtualMachines/jdk1.8.0_171.jdk/Contents/Home"
                   : env + "/pathFile/jdk1.8.0_144";
-
-    // for javaslicer use in java1.7
+    
     //    public static final String COMMAND_JAVA_HOME =
     //            macOs ? "/Library/Java/JavaVirtualMachines/jdk1.7.0_79.jdk/Contents/Home"
     //                  : "/home/emily/pathFile/jdk1.7.0_80";

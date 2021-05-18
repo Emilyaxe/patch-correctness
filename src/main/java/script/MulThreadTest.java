@@ -13,6 +13,8 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
@@ -42,6 +44,7 @@ public class MulThreadTest {
                 futureList.add(CompletableFuture.runAsync(() -> {
                     //Subject subject = new Subject(name, index);
                     downloadProject(name, String.valueOf(index));
+                    //runTests(name, String.valueOf(index));
                 }, EXECUTOR));
             }
         }
@@ -66,7 +69,6 @@ public class MulThreadTest {
         } catch (Exception e) {
         }
         log.info(String.join("\n", message));
-
         runTests(name, id);
         //        return CollectionUtils.isNotEmpty(message) || message.stream().filter(Objects::nonNull)
         //                .noneMatch(element -> element.contains("Version id does not exist:"));
@@ -85,6 +87,7 @@ public class MulThreadTest {
             //            }
             stringBuilder.append(Constant.COMMAND_D4J).append("test");
             message = Executor.execute(new String[] {"/bin/bash", "-c", stringBuilder.toString()});
+            log.info(StringUtils.join(message, "\n"));
             List<String> result = processMessage(message);
             if (Objects.nonNull(result)) {
                 jsonObject.put(name + id, result);
