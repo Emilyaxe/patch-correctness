@@ -393,15 +393,15 @@ public class ObtainTraceInfo {
     }
 
     public static void main(String[] args) {
-        //        List<Patch> trainPatch = ObtainPatches.readTrainPatches();
-        //        Map<String, List<Patch>> trainPatchMap =
-        //                trainPatch.stream().collect(Collectors.groupingBy(Patch::getBugid));
-        //        obtainTrace(trainPatchMap, false, "trainSet");
+        List<Patch> trainPatch = ObtainPatches.readTrainPatches();
+        Map<String, List<Patch>> trainPatchMap =
+                trainPatch.stream().collect(Collectors.groupingBy(Patch::getBugid));
+        obtainTrace(trainPatchMap, false, "trainSet");
 
-        List<Patch> testPatches = ObtainPatches.readTestPatches();
-        Map<String, List<Patch>> testSubjectPatchMap =
-                testPatches.stream().collect(Collectors.groupingBy(Patch::getBugid));
-        obtainTrace(testSubjectPatchMap, false, "testSet");
+        //        List<Patch> testPatches = ObtainPatches.readTestPatches();
+        //        Map<String, List<Patch>> testSubjectPatchMap =
+        //                testPatches.stream().collect(Collectors.groupingBy(Patch::getBugid));
+        //        obtainTrace(testSubjectPatchMap, false, "testSet");
 
         //        List<Patch> correctPatches = ObtainPatches.readCorPatches();
         //        Map<String, List<Patch>> correctSubjectPatchMap =
