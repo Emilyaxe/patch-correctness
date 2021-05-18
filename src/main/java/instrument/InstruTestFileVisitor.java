@@ -134,7 +134,7 @@ public class InstruTestFileVisitor extends TraversalVisitor {
                 }
             }
             String message = "\n" + _clazzName + "::" + name;
-  
+
             Integer lineNumber = _cu.getLineNumber(node.getStartPosition());
             Statement insert = GenStatement.genDumpLine(writeFile, message, lineNumber);
             blockStatement.add(insert);
@@ -154,8 +154,8 @@ public class InstruTestFileVisitor extends TraversalVisitor {
 
     public static void main(String[] args) {
         String file =
-                "/Users/liangjingjing/WorkSpace/Data/Defects4J/projects_buggy/Lang/Lang6/src/test/java/org/apache"
-                        + "/commons/lang3/EnumUtilsTest.java";
+                "/Users/liangjingjing/WorkSpace/Data/Defects4J/projects_buggy/Lang/Lang55/src/test/org/apache/commons"
+                        + "/lang/enum/Broken4OperationEnum.java";
         InstruTestFileVisitor instruTestFileVisitor = new InstruTestFileVisitor();
         CompilationUnit compilationUnit = FileIO.genASTFromFile(file);
         compilationUnit.accept(instruTestFileVisitor);

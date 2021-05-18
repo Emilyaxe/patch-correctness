@@ -117,9 +117,9 @@ public class ObtainTraceInfo {
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
         for (Patch patch : entry.getValue()) {
 
-            if (!patch.getPatchName().equals("patch2-Lang-6-SequenceR-plausible.patch")) {
-                continue;
-            }
+            //            if (!patch.getPatchName().equals("patch2-Lang-6-SequenceR-plausible.patch")) {
+            //                continue;
+            //            }
             //Set<String> illegalTests = new LinkedHashSet<>();
             cleanSubject(subject.getHome() + subject.get_ssrc());
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
@@ -137,10 +137,17 @@ public class ObtainTraceInfo {
                 instrument(fixedLine, writeFile, oneFixedFile);
                 instrumentTests(subject, writeFile);
                 if (!compile(subject)) {
-                    log.error("Patch {}, Compile Error!", patch.getPatchName());
+                    log.error("Patch {}, Compile Error on buggy version!", patch.getPatchName());
                 }
                 List<String> message = Runner.runTestSuite(subject);
-                FileIO.writeStringToFile(writeFile + ".failing", StringUtils.join(message, "\n"));
+                if (message.size() <= 3) {
+                    log.error("Patch {}, Should Fail! \n {} ", patch.getPatchName(),
+                            StringUtils.join(message, "\n"));
+                } else {
+                    String failingTest = message.stream().filter(line -> line.trim().startsWith("-"))
+                            .map(line -> line.split("-", 2)[1].trim()).collect(Collectors.joining("\n"));
+                    FileIO.writeStringToFile(writeFile + ".failing", failingTest);
+                }
             } catch (Exception e) {
                 log.error(
                         "process  test on buggy version failed! subject {} patch {} test {}",
@@ -156,13 +163,13 @@ public class ObtainTraceInfo {
                 instrument(fixedLine, writeFile, oneFixedFile);
                 instrumentTests(subject, writeFile);
                 if (!compile(subject)) {
-                    log.error("Patch {}, Compile Error!", patch.getPatchName());
+                    log.error("Patch {}, Compile Error on fixed version!", patch.getPatchName());
                 }
                 List<String> message = Runner.runTestSuite(subject);
                 if (CollectionUtils.isEmpty(message) || message.stream().filter(Objects::nonNull)
                         .noneMatch(element -> element.contains(Runner.SUCCESSTEST))) {
                     inPlausiblePatches.add(patch.getPatchName());
-                    log.error("Patch {}, Run tests error on fixed version! \n {} ", patch.getPatchName(),
+                    log.error("Patch {}, Should Pass! \n {} ", patch.getPatchName(),
                             StringUtils.join(message, "\n"));
                 }
             } catch (Exception e) {
@@ -384,20 +391,20 @@ public class ObtainTraceInfo {
     }
 
     public static void main(String[] args) {
-        List<Patch> trainPatch = ObtainPatches.readTrainPatches();
-        Map<String, List<Patch>> trainPatchMap =
-                trainPatch.stream().collect(Collectors.groupingBy(Patch::getBugid));
-        obtainTrace(trainPatchMap, false, "trainSet");
+        //        List<Patch> trainPatch = ObtainPatches.readTrainPatches();
+        //        Map<String, List<Patch>> trainPatchMap =
+        //                trainPatch.stream().collect(Collectors.groupingBy(Patch::getBugid));
+        //        obtainTrace(trainPatchMap, false, "trainSet");
 
         List<Patch> testPatches = ObtainPatches.readTestPatches();
         Map<String, List<Patch>> testSubjectPatchMap =
                 testPatches.stream().collect(Collectors.groupingBy(Patch::getBugid));
         obtainTrace(testSubjectPatchMap, false, "testSet");
 
-        List<Patch> correctPatches = ObtainPatches.readCorPatches();
-        Map<String, List<Patch>> correctSubjectPatchMap =
-                correctPatches.stream().collect(Collectors.groupingBy(Patch::getBugid));
-        obtainTrace(correctSubjectPatchMap, true, "correctSet");
+        //        List<Patch> correctPatches = ObtainPatches.readCorPatches();
+        //        Map<String, List<Patch>> correctSubjectPatchMap =
+        //                correctPatches.stream().collect(Collectors.groupingBy(Patch::getBugid));
+        //        obtainTrace(correctSubjectPatchMap, true, "correctSet");
         // processCornerCase("correctSet", "Closure_16.src.patch");
 
         log.info("InPlausible Patches: {}", String.join(",", inPlausiblePatches));
