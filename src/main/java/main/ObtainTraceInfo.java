@@ -42,7 +42,8 @@ import util.FileIO;
 public class ObtainTraceInfo {
 
     public static List<String> illeglePatches = new LinkedList<>();
-    public static List<String> inPlausiblePatches = new LinkedList<>();
+    public static List<String> shouldPass = new LinkedList<>();
+    public static List<String> shouldFail = new LinkedList<>();
 
     public static final Object lock = new Object();
 
@@ -143,6 +144,7 @@ public class ObtainTraceInfo {
                 if (message.size() <= 3) {
                     log.error("Patch {}, Should Fail! \n {} ", patch.getPatchName(),
                             StringUtils.join(message, "\n"));
+                    shouldFail.add(patch.getPatchName());
                 } else {
                     String failingTest = message.stream().filter(line -> line.trim().startsWith("-"))
                             .map(line -> line.split("-", 2)[1].trim()).collect(Collectors.joining("\n"));
@@ -168,7 +170,7 @@ public class ObtainTraceInfo {
                 List<String> message = Runner.runTestSuite(subject);
                 if (CollectionUtils.isEmpty(message) || message.stream().filter(Objects::nonNull)
                         .noneMatch(element -> element.contains(Runner.SUCCESSTEST))) {
-                    inPlausiblePatches.add(patch.getPatchName());
+                    shouldPass.add(patch.getPatchName());
                     log.error("Patch {}, Should Pass! \n {} ", patch.getPatchName(),
                             StringUtils.join(message, "\n"));
                 }
@@ -320,7 +322,7 @@ public class ObtainTraceInfo {
                     ProcessPatch.createCombinedFixed4AllFiles(patch, reverse);
                     instrument(fixedLine, writeFile, oneFixedFile);
                     if (!compileAndRun(subject, test)) {
-                        inPlausiblePatches.add(patch.getPatchName());
+                        shouldPass.add(patch.getPatchName());
                         log.error("Patch {}, Should Pass!", patch.getPatchName());
                     }
                 } catch (Exception e) {
@@ -407,7 +409,8 @@ public class ObtainTraceInfo {
         //        obtainTrace(correctSubjectPatchMap, true, "correctSet");
         // processCornerCase("correctSet", "Closure_16.src.patch");
 
-        log.info("InPlausible Patches: {}", String.join(",", inPlausiblePatches));
+        log.info("Should Pass Patches: {}", String.join(",", shouldPass));
+        log.info("Should Fail Patches: {}", String.join(",", shouldFail));
         log.info("Illegle Patches: {}", String.join(",", illeglePatches));
         log.info("finish obtain trace!");
 
