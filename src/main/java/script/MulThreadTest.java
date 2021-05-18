@@ -19,6 +19,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import config.Constant;
+import entity.Subject;
 import lombok.extern.slf4j.Slf4j;
 import run.Executor;
 import run.Runner;
@@ -42,8 +43,8 @@ public class MulThreadTest {
             for (int i = 1; i <= end; i++) {
                 int index = i;
                 futureList.add(CompletableFuture.runAsync(() -> {
-                    //Subject subject = new Subject(name, index);
-                    downloadProject(name, String.valueOf(index));
+                    Subject subject = new Subject(name, index);
+                    // downloadProject(name, String.valueOf(index));
                     //runTests(name, String.valueOf(index));
                 }, EXECUTOR));
             }
@@ -87,6 +88,7 @@ public class MulThreadTest {
             log.info(StringUtils.join(message, "\n"));
             List<String> result = processMessage(message);
             if (Objects.nonNull(result)) {
+                log.error("Subject {} has failing tests", name + id);
                 jsonObject.put(name + id, result);
             }
         } catch (Exception e) {
