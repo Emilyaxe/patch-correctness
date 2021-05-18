@@ -3,7 +3,7 @@ package config;
 public class Constant {
 
     public static final boolean macOs = System.getProperty("os.name").contains("Mac OS X");
-    public static String env = macOs ? "/Users/liangjingjing" : "/home/emily";
+    public static String env = macOs ? "/Users/liangjingjing" : "/home/jjliang";
     public static String HOME = env + "/WorkSpace/Project/PatchCorrectness/patch-correctness";
     public static String PROJECT_HOME = env + "/WorkSpace/Data/Defects4J/projects_buggy";
     public static String D4J_HOME = env + (macOs ? "/WorkSpace/defects4j" : "/WorkSpace/defects4j");
