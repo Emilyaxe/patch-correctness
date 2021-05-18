@@ -160,8 +160,8 @@ public class InstruTestFileVisitor extends TraversalVisitor {
         //                        + "commons/lang/enum/Broken4OperationEnum.java";
 
         String file =
-                "/Users/liangjingjing/WorkSpace/Data/Defects4J/projects_buggy/Lang/Lang6/src/test/java/org/apache"
-                        + "/commons/lang3/EnumUtilsTest.java";
+                "/Users/liangjingjing/WorkSpace/Data/Defects4J/projects_buggy/Lang/Lang53/src/test/org/apache"
+                        + "/commons/lang/AllLangTestSuite.java";
         InstruTestFileVisitor instruTestFileVisitor = new InstruTestFileVisitor();
         CompilationUnit compilationUnit = FileIO.genASTFromFile(file);
         compilationUnit.accept(instruTestFileVisitor);

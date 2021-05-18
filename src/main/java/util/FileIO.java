@@ -303,7 +303,7 @@ public class FileIO {
         CompilationUnit compilationUnit = (CompilationUnit) astParser.createAST(null);
 
         // process the cast where using enum
-        if (Objects.isNull(compilationUnit.getPackage())) {
+        if (compilationUnit.getProblems().length > 0) {
             astParser = ASTParser.newParser(AST.JLS8);
             options = JavaCore.getOptions();
             JavaCore.setComplianceOptions(JavaCore.VERSION_1_4, options);
