@@ -82,9 +82,6 @@ public class MulThreadTest {
 
             StringBuilder stringBuilder =
                     new StringBuilder(Constant.COMMAND_CD).append(home).append(" && ");
-            //            if (timeout > 0) {
-            //                stringBuilder.append(Constant.COMMAND_TIMEOUT).append(timeout).append(" ");
-            //            }
             stringBuilder.append(Constant.COMMAND_D4J).append("test");
             message = Executor.execute(new String[] {"/bin/bash", "-c", stringBuilder.toString()});
             log.info(StringUtils.join(message, "\n"));

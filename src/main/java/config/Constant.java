@@ -11,14 +11,14 @@ public class Constant {
 
     public static String PROJ_INFO = HOME + "/d4j-info";
 
-    // for daikon use in java1.8
-    public static final String COMMAND_JAVA_HOME =
-            macOs ? "/Library/Java/JavaVirtualMachines/jdk1.8.0_171.jdk/Contents/Home"
-                  : env + "/pathFile/jdk1.8.0_144";
-    
+
     //    public static final String COMMAND_JAVA_HOME =
-    //            macOs ? "/Library/Java/JavaVirtualMachines/jdk1.7.0_79.jdk/Contents/Home"
-    //                  : "/home/emily/pathFile/jdk1.7.0_80";
+    //            macOs ? "/Library/Java/JavaVirtualMachines/jdk1.8.0_171.jdk/Contents/Home"
+    //                  : env + "/pathFile/jdk1.8.0_144";
+
+    public static final String COMMAND_JAVA_HOME =
+            macOs ? "/Library/Java/JavaVirtualMachines/jdk1.7.0_79.jdk/Contents/Home"
+                  : env + "/pathFile/jdk1.7.0_80";
 
     public static final String COMMAND_CD = "cd ";
 
