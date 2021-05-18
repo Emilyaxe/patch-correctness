@@ -42,6 +42,10 @@ public class InstruTestFileVisitor extends TraversalVisitor {
     public boolean visit(CompilationUnit node) {
 
         _cu = node;
+        _clazzName = node.getPackage().getName().getFullyQualifiedName();
+        if (_clazzName.equals("auxiliary")) {
+            return false;
+        }
         for (Object object : node.types()) {
             if (object instanceof TypeDeclaration) {
                 TypeDeclaration type = (TypeDeclaration) object;
@@ -50,10 +54,6 @@ public class InstruTestFileVisitor extends TraversalVisitor {
                 }
                 if (!type.getName().getFullyQualifiedName().startsWith("Test") && !type.getName()
                         .getFullyQualifiedName().endsWith("Test")) {
-                    return false;
-                }
-                _clazzName = node.getPackage().getName().getFullyQualifiedName();
-                if (_clazzName.equals("auxiliary")) {
                     return false;
                 }
                 _clazzName += "." + type.getName().getFullyQualifiedName();
@@ -154,14 +154,14 @@ public class InstruTestFileVisitor extends TraversalVisitor {
     }
 
     public static void main(String[] args) {
-        String file =
-                "/Users/liangjingjing/WorkSpace/Data/Defects4J/projects_buggy/Lang/Lang55/src/test/org/apache/"
-                        + "commons/lang/enum/Broken4OperationEnum.java";
-
         //        String file =
-        //                "/Users/liangjingjing/WorkSpace/Data/Defects4J/projects_buggy/Lang/Lang6/src/test/java/org
-        //                /apache"
-        //                        + "/commons/lang3/EnumUtilsTest.java";
+        //                "/Users/liangjingjing/WorkSpace/Data/Defects4J/projects_buggy/Lang/Lang55/src/test/org
+        //                /apache/"
+        //                        + "commons/lang/enum/Broken4OperationEnum.java";
+
+        String file =
+                "/Users/liangjingjing/WorkSpace/Data/Defects4J/projects_buggy/Lang/Lang6/src/test/java/org/apache"
+                        + "/commons/lang3/EnumUtilsTest.java";
         InstruTestFileVisitor instruTestFileVisitor = new InstruTestFileVisitor();
         CompilationUnit compilationUnit = FileIO.genASTFromFile(file);
         compilationUnit.accept(instruTestFileVisitor);

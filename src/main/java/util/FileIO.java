@@ -295,12 +295,24 @@ public class FileIO {
     public static CompilationUnit genASTFromSource(String icu, int type) {
         ASTParser astParser = ASTParser.newParser(AST.JLS8);
         Map<String, String> options = JavaCore.getOptions();
-        JavaCore.setComplianceOptions(JavaCore.VERSION_1_8, options);
+        JavaCore.setComplianceOptions(JavaCore.VERSION_1_7, options);
         astParser.setCompilerOptions(options);
         astParser.setSource(icu.toCharArray());
         astParser.setKind(type);
         astParser.setResolveBindings(true);
-        return (CompilationUnit) astParser.createAST(null);
+        CompilationUnit compilationUnit = (CompilationUnit) astParser.createAST(null);
+
+        if (Objects.isNull(compilationUnit.getPackage())) {
+            astParser = ASTParser.newParser(AST.JLS8);
+            options = JavaCore.getOptions();
+            JavaCore.setComplianceOptions(JavaCore.VERSION_1_4, options);
+            astParser.setCompilerOptions(options);
+            astParser.setSource(icu.toCharArray());
+            astParser.setKind(type);
+            astParser.setResolveBindings(true);
+            compilationUnit = (CompilationUnit) astParser.createAST(null);
+        }
+        return compilationUnit;
     }
 
 

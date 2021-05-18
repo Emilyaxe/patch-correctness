@@ -117,9 +117,9 @@ public class ObtainTraceInfo {
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
         for (Patch patch : entry.getValue()) {
 
-            //            if (!patch.getPatchName().equals("patch2-Lang-6-SequenceR-plausible.patch")) {
-            //                continue;
-            //            }
+            if (!patch.getPatchName().equals("Lang53b_Patch24")) {
+                continue;
+            }
             //Set<String> illegalTests = new LinkedHashSet<>();
             cleanSubject(subject.getHome() + subject.get_ssrc());
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
@@ -196,7 +196,7 @@ public class ObtainTraceInfo {
                 }
                 InstruTestFileVisitor instruTestFileVisitor = new InstruTestFileVisitor();
                 instruTestFileVisitor.setWriteFile(writeFile);
-                //log.info(testFile.getAbsolutePath());
+                log.info(testFile.getAbsolutePath());
                 CompilationUnit compilationUnit = FileIO.genASTFromSource(
                         FileIO.readFileToString(testFile), ASTParser.K_COMPILATION_UNIT);
                 compilationUnit.accept(instruTestFileVisitor);
