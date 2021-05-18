@@ -302,6 +302,7 @@ public class FileIO {
         astParser.setResolveBindings(true);
         CompilationUnit compilationUnit = (CompilationUnit) astParser.createAST(null);
 
+        // process the cast where using enum
         if (Objects.isNull(compilationUnit.getPackage())) {
             astParser = ASTParser.newParser(AST.JLS8);
             options = JavaCore.getOptions();
