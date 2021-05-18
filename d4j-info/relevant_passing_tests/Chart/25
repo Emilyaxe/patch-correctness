@@ -1,5 +1,0 @@
-org.jfree.chart.renderer.category.junit.StatisticalBarRendererTests::testCloning
-org.jfree.chart.renderer.category.junit.StatisticalBarRendererTests::testEquals
-org.jfree.chart.renderer.category.junit.StatisticalBarRendererTests::testHashcode
-org.jfree.chart.renderer.category.junit.StatisticalBarRendererTests::testSerialization
-org.jfree.chart.renderer.category.junit.StatisticalBarRendererTests::testDrawWithNullInfo
