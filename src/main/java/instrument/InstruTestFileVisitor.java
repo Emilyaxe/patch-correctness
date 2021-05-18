@@ -52,10 +52,10 @@ public class InstruTestFileVisitor extends TraversalVisitor {
                 if (!Modifier.isPublic(type.getModifiers())) {
                     return false;
                 }
-                if (!type.getName().getFullyQualifiedName().startsWith("Test") && !type.getName()
-                        .getFullyQualifiedName().endsWith("Test")) {
-                    return false;
-                }
+                //                if (!type.getName().getFullyQualifiedName().startsWith("Test") && !type.getName()
+                //                        .getFullyQualifiedName().endsWith("Test")) {
+                //                    return false;
+                //                }
                 _clazzName += "." + type.getName().getFullyQualifiedName();
                 _clazzFileName = _clazzName;
             }

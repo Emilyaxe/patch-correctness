@@ -118,9 +118,9 @@ public class ObtainTraceInfo {
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
         for (Patch patch : entry.getValue()) {
 
-            //            if (!patch.getPatchName().equals("Lang53b_Patch24")) {
-            //                continue;
-            //            }
+            if (!patch.getPatchName().equals("patch1-Chart-1-Arja-plausible.patch")) {
+                continue;
+            }
             //Set<String> illegalTests = new LinkedHashSet<>();
             cleanSubject(subject.getHome() + subject.get_ssrc());
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
@@ -393,20 +393,20 @@ public class ObtainTraceInfo {
     }
 
     public static void main(String[] args) {
-        //        List<Patch> trainPatch = ObtainPatches.readTrainPatches();
-        //        Map<String, List<Patch>> trainPatchMap =
-        //                trainPatch.stream().collect(Collectors.groupingBy(Patch::getBugid));
-        //        obtainTrace(trainPatchMap, false, "trainSet");
+        List<Patch> trainPatch = ObtainPatches.readTrainPatches();
+        Map<String, List<Patch>> trainPatchMap =
+                trainPatch.stream().collect(Collectors.groupingBy(Patch::getBugid));
+        obtainTrace(trainPatchMap, false, "trainSet");
 
         //        List<Patch> testPatches = ObtainPatches.readTestPatches();
         //        Map<String, List<Patch>> testSubjectPatchMap =
         //                testPatches.stream().collect(Collectors.groupingBy(Patch::getBugid));
         //        obtainTrace(testSubjectPatchMap, false, "testSet");
 
-        List<Patch> correctPatches = ObtainPatches.readCorPatches();
-        Map<String, List<Patch>> correctSubjectPatchMap =
-                correctPatches.stream().collect(Collectors.groupingBy(Patch::getBugid));
-        obtainTrace(correctSubjectPatchMap, true, "correctSet");
+        //        List<Patch> correctPatches = ObtainPatches.readCorPatches();
+        //        Map<String, List<Patch>> correctSubjectPatchMap =
+        //                correctPatches.stream().collect(Collectors.groupingBy(Patch::getBugid));
+        //        obtainTrace(correctSubjectPatchMap, true, "correctSet");
         // processCornerCase("correctSet", "Closure_16.src.patch");
 
         log.info("Should Pass Patches: {}", String.join(",", shouldPass));
