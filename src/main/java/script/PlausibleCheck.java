@@ -180,9 +180,9 @@ public class PlausibleCheck {
         String content = FileIO.readFileToString("./log/inplausible19-1.log");
         Set<String> contentSet = new HashSet<>(Arrays.asList(content.split("\n")));
         Set<String> contentSet1 = new HashSet<>(Arrays.asList(content1.split("\n")));
-        contentSet = contentSet.stream().filter(line -> !content1.contains(line))
+        Set<String> contentResult = contentSet.stream().filter(line -> !content1.contains(line))
                 .collect(Collectors.toSet());
-        contentSet1 = contentSet1.stream().filter(line -> !content.contains(line))
+        Set<String> contentResult1 = contentSet1.stream().filter(line -> !content.contains(line))
                 .collect(Collectors.toSet());
         //        Set<String> tmpPatch =
         //                Arrays.stream(content.split("\n")).filter(line -> line.contains("tmp")).collect(Collectors
