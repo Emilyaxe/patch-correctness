@@ -5,11 +5,13 @@ import static util.AsyExecutor.EXECUTOR;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -26,6 +28,7 @@ import main.ObtainTraceInfo;
 import run.Runner;
 import service.ObtainPatches;
 import service.ProcessPatch;
+import util.FileIO;
 
 @Slf4j
 public class PlausibleCheck {
@@ -165,9 +168,32 @@ public class PlausibleCheck {
         return subjectPatchMap;
     }
 
+    private static void checkResult() {
+        String file = "./log/inplausible";
+        String file18 = "./log/inplausible18.log";
+        String content18 = FileIO.readFileToString(file18);
+        String content = FileIO.readFileToString(file);
+        Set<String> contentOnly = Arrays.stream(content.split("\n")).filter(line -> !content18.contains(line)).collect(
+                Collectors.toSet());
+        Set<String> content18Only =
+                Arrays.stream(content18.split("\n")).filter(line -> !content.contains(line)).collect(
+                        Collectors.toSet());
+        //        Set<String> tmpPatch =
+        //                Arrays.stream(content.split("\n")).filter(line -> line.contains("tmp")).collect(Collectors
+        //                .toSet());
+        //        Set<String> trainPatch =
+        //                Arrays.stream(content.split("\n")).filter(line -> line.contains("trainSet"))
+        //                        .collect(Collectors.toSet());
+        //        Set<String> testPatch = Arrays.stream(content.split("\n")).filter(line -> line.contains("testSet"))
+        //                .collect(Collectors.toSet());
+        log.info("finish!");
+
+    }
+
     public static void main(String[] args) {
         //moveTestSet();
         // moveTrainSet();
-        checkPlausible();
+        //checkPlausible();
+        checkResult();
     }
 }
