@@ -14,6 +14,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -36,9 +37,9 @@ public class PlausibleCheck {
     public static Map<String, String> inplausiblePatches = new ConcurrentHashMap<>();
 
     public static void moveTestSet() {
-        String[] testSet = {"Math88b_Patch74", "Lang46b_Patch22", "Math79b_Patch77",
+        String[] testSet = { "Math88b_Patch74", "Lang46b_Patch22", "Math79b_Patch77",
                 "Math22b_PatchHDRepair3", "Math4b_Patch155", "Chart13b_Patch9",
-                "Lang57b_PatchHDRepair1", "Time11b_Patch182", "Time12b_Patch183"};
+                "Lang57b_PatchHDRepair1", "Time11b_Patch182", "Time12b_Patch183" };
         String sourceDir = Constant.HOME + "/Patches/experiment3/TestSet/";
         String targetDir = Constant.HOME + "/Patches/DataSet/tmp/";
         for (String patch : testSet) {
@@ -113,7 +114,9 @@ public class PlausibleCheck {
             ObtainTraceInfo.cleanSubject(subject.getHome() + subject.get_ssrc());
             log.info("Process for Patch {}", patch.getPatchName());
             try {
+                TimeUnit.MILLISECONDS.sleep(100);
                 ProcessPatch.createCombinedFixed4AllFiles(patch, false);
+                TimeUnit.MILLISECONDS.sleep(500);
                 if (!compile(subject)) {
                     log.error("Patch {}, Compile Error on fixed version!", patch.getPatchName());
                     continue;

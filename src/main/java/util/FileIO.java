@@ -125,11 +125,6 @@ public class FileIO {
         try {
             bufferedWriter = new BufferedWriter(new OutputStreamWriter(
                     new FileOutputStream(file, append), StandardCharsets.UTF_8));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
             bufferedWriter.write(string);
             bufferedWriter.flush();
             bufferedWriter.close();

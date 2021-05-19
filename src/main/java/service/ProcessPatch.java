@@ -18,6 +18,8 @@ import util.FileIO;
 @Slf4j
 public class ProcessPatch {
 
+    private static final Object LOCK = new Object();
+
     private static String obtainOneFixedFile(String line, String prefix) {
         String fixedFile = "";
         if (line.trim().startsWith(prefix)) {
@@ -104,7 +106,9 @@ public class ProcessPatch {
                     }
                 }
             }
-            FileIO.writeStringToFile(fixedFile, result.toString());
+            synchronized (LOCK) {
+                FileIO.writeStringToFile(fixedFile, result.toString());
+            }
         }
 
     }
@@ -148,7 +152,9 @@ public class ProcessPatch {
                     }
                 }
             }
-            FileIO.writeStringToFile(fixedFile, result.toString());
+            synchronized (LOCK) {
+                FileIO.writeStringToFile(fixedFile, result.toString());
+            }
         }
     }
 

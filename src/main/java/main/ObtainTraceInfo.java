@@ -107,7 +107,7 @@ public class ObtainTraceInfo {
                 try {
                     FileUtils.copyFile(new File(f.getAbsolutePath() + ".bak"), f);
                 } catch (IOException exception) {
-                    exception.printStackTrace();
+                    log.error("clean subject {} failed! ", srcPath, exception);
                 }
             }
         }
