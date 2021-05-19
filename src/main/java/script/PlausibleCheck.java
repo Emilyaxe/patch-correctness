@@ -186,7 +186,7 @@ public class PlausibleCheck {
     public static void main(String[] args) {
         //moveTestSet();
         // moveTrainSet();
-        //checkPlausible();
-        checkResult();
+        checkPlausible();
+        //checkResult();
     }
 }
