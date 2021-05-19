@@ -5,6 +5,7 @@ import static util.AsyExecutor.EXECUTOR;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -177,10 +178,12 @@ public class PlausibleCheck {
 
         String content1 = FileIO.readFileToString("./log/inplausible19-4.log");
         String content = FileIO.readFileToString("./log/inplausible19-1.log");
-        Set<String> contentSet = Arrays.stream(content.split("\n"))
-                .filter(line -> !content1.contains(line)).collect(Collectors.toSet());
-        Set<String> contentSet1 = Arrays.stream(content1.split("\n"))
-                .filter(line -> !content.contains(line)).collect(Collectors.toSet());
+        Set<String> contentSet = new HashSet<>(Arrays.asList(content.split("\n")));
+        Set<String> contentSet1 = new HashSet<>(Arrays.asList(content1.split("\n")));
+        contentSet = contentSet.stream().filter(line -> !content1.contains(line))
+                .collect(Collectors.toSet());
+        contentSet1 = contentSet1.stream().filter(line -> !content.contains(line))
+                .collect(Collectors.toSet());
         //        Set<String> tmpPatch =
         //                Arrays.stream(content.split("\n")).filter(line -> line.contains("tmp")).collect(Collectors
         //                .toSet());

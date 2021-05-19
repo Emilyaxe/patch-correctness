@@ -47,34 +47,16 @@ public class FileIO {
             return "";
         }
         StringBuilder stringBuilder = new StringBuilder();
-        InputStream in = null;
-        InputStreamReader inputStreamReader = null;
-        try {
-            in = new FileInputStream(file);
-            inputStreamReader = new InputStreamReader(in, StandardCharsets.UTF_8);
+        try (InputStream in = new FileInputStream(file);
+                InputStreamReader inputStreamReader = new InputStreamReader(in,
+                        StandardCharsets.UTF_8)) {
             char[] ch = new char[1024];
-            int readCount = 0;
+            int readCount;
             while ((readCount = inputStreamReader.read(ch)) != -1) {
                 stringBuilder.append(ch, 0, readCount);
             }
-            inputStreamReader.close();
-            in.close();
-
         } catch (Exception e) {
-            if (inputStreamReader != null) {
-                try {
-                    inputStreamReader.close();
-                } catch (IOException e1) {
-                    return "";
-                }
-            }
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e1) {
-                    return "";
-                }
-            }
+            log.error("read file {} failed! ", file.getName(), e);
         }
         return stringBuilder.toString();
     }
@@ -107,8 +89,7 @@ public class FileIO {
 
     public static boolean writeStringToFile(File file, String string, boolean append) {
         if (file == null || string == null) {
-            //LevelLogger.error(__name__ + "#writeStringToFile Illegal arguments : null.");
-            log.error("file does {} not exist", file.toString());
+            log.error("file does {} not exist", file);
             return false;
         }
         if (!file.exists()) {
@@ -116,28 +97,16 @@ public class FileIO {
                 file.getParentFile().mkdirs();
                 file.createNewFile();
             } catch (IOException e) {
-                // LevelLogger.error(__name__ + "#writeStringToFile Create new file failed : " + file.getAbsolutePath
-                // ());
+                log.error("create new file {} failed! ", file.getName(), e);
                 return false;
             }
         }
-        BufferedWriter bufferedWriter = null;
-        try {
-            bufferedWriter = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(file, append), StandardCharsets.UTF_8));
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream(file, append), StandardCharsets.UTF_8))) {
             bufferedWriter.write(string);
             bufferedWriter.flush();
-            bufferedWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (bufferedWriter != null) {
-                try {
-                    bufferedWriter.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+        } catch (Exception e) {
+            log.error("write file {} failed! ", file.getName(), e);
         }
         return true;
     }
