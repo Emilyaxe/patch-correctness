@@ -36,9 +36,9 @@ public class PlausibleCheck {
     public static Map<String, String> inplausiblePatches = new ConcurrentHashMap<>();
 
     public static void moveTestSet() {
-        String[] testSet =
-                {"Math88b_Patch74", "Lang46b_Patch22", "Math79b_Patch77", "Math22b_PatchHDRepair3", "Math4b_Patch155",
-                        "Chart13b_Patch9", "Lang57b_PatchHDRepair1", "Time11b_Patch182", "Time12b_Patch183"};
+        String[] testSet = { "Math88b_Patch74", "Lang46b_Patch22", "Math79b_Patch77",
+                "Math22b_PatchHDRepair3", "Math4b_Patch155", "Chart13b_Patch9",
+                "Lang57b_PatchHDRepair1", "Time11b_Patch182", "Time12b_Patch183" };
         String sourceDir = Constant.HOME + "/Patches/experiment3/TestSet/";
         String targetDir = Constant.HOME + "/Patches/DataSet/tmp/";
         for (String patch : testSet) {
@@ -79,7 +79,8 @@ public class PlausibleCheck {
         String targetDir = Constant.HOME + "/Patches/DataSet/tmp/";
         for (String patch : trainPatches.split(",")) {
 
-            String sourceFile = !patch.contains("plausible") ? sourceDircor + patch : sourceDirIncor + patch;
+            String sourceFile = !patch.contains("plausible") ? sourceDircor + patch : sourceDirIncor
+                    + patch;
             String targetFile = targetDir + patch;
             try {
                 FileUtils.copyFile(new File(sourceFile), new File(targetFile));
@@ -92,7 +93,6 @@ public class PlausibleCheck {
     public static void checkPlausible() {
         Map<String, List<Patch>> subjectPatchMap = patchCollection();
         List<CompletableFuture<Void>> futureList = new LinkedList<>();
-
         for (Entry<String, List<Patch>> entry : subjectPatchMap.entrySet()) {
             futureList.add(CompletableFuture.runAsync(() -> {
                 try {
@@ -107,7 +107,6 @@ public class PlausibleCheck {
     }
 
     private static void testPlausible(Entry<String, List<Patch>> entry) {
-
         String[] sub = entry.getKey().split("-");
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
         for (Patch patch : entry.getValue()) {
@@ -120,6 +119,7 @@ public class PlausibleCheck {
                 ProcessPatch.createCombinedFixed4AllFiles(patch, false);
                 if (!compile(subject)) {
                     log.error("Patch {}, Compile Error on fixed version!", patch.getPatchName());
+                    continue;
                 }
                 List<String> message = Runner.runTestSuite(subject);
                 //log.info(StringUtils.join(message, "\n"));
@@ -130,8 +130,7 @@ public class PlausibleCheck {
                             StringUtils.join(message, "\n"));
                 }
             } catch (Exception e) {
-                log.error(
-                        "process test on fixed version failed! subject {} patch {} test {}",
+                log.error("process test on fixed version failed! subject {} patch {}",
                         subject.get_name() + subject.get_id(), patch.getPatchName(), e);
             }
         }
@@ -150,12 +149,13 @@ public class PlausibleCheck {
                 String id = StringUtils.getDigits(res);
                 String name = res.split(id)[0];
                 String bugid = name + "-" + id;
-                tmpPatch.add(Patch.builder().patchName(fileName).patchPath(filePath).bugid(bugid).build());
-
+                tmpPatch.add(Patch.builder().patchName(fileName).patchPath(filePath).bugid(bugid)
+                        .build());
             } else {
                 String[] result = fileName.split("-");
                 String bugid = result[1] + "-" + result[2];
-                tmpPatch.add(Patch.builder().patchName(fileName).patchPath(filePath).bugid(bugid).build());
+                tmpPatch.add(Patch.builder().patchName(fileName).patchPath(filePath).bugid(bugid)
+                        .build());
             }
         }
         List<Patch> allPatches = new LinkedList<>();
@@ -163,9 +163,7 @@ public class PlausibleCheck {
         allPatches.addAll(testPatch);
         allPatches.addAll(tmpPatch);
         log.info("All Patches {}", allPatches.size());
-        Map<String, List<Patch>> subjectPatchMap =
-                allPatches.stream().collect(Collectors.groupingBy(Patch::getBugid));
-        return subjectPatchMap;
+        return allPatches.stream().collect(Collectors.groupingBy(Patch::getBugid));
     }
 
     private static void checkResult() {
@@ -173,11 +171,10 @@ public class PlausibleCheck {
         String file18 = "./log/inplausible18.log";
         String content18 = FileIO.readFileToString(file18);
         String content = FileIO.readFileToString(file);
-        Set<String> contentOnly = Arrays.stream(content.split("\n")).filter(line -> !content18.contains(line)).collect(
-                Collectors.toSet());
-        Set<String> content18Only =
-                Arrays.stream(content18.split("\n")).filter(line -> !content.contains(line)).collect(
-                        Collectors.toSet());
+        Set<String> contentOnly = Arrays.stream(content.split("\n"))
+                .filter(line -> !content18.contains(line)).collect(Collectors.toSet());
+        Set<String> content18Only = Arrays.stream(content18.split("\n"))
+                .filter(line -> !content.contains(line)).collect(Collectors.toSet());
         //        Set<String> tmpPatch =
         //                Arrays.stream(content.split("\n")).filter(line -> line.contains("tmp")).collect(Collectors
         //                .toSet());

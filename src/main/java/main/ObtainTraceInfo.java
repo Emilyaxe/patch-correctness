@@ -74,8 +74,8 @@ public class ObtainTraceInfo {
             FileUtils.copyDirectory(new File(Constant.DUMPER_HOME),
                     new File(srcPath + "/auxiliary"));
         } catch (IOException e) {
-            log.error("subject {} process test {} copy dumper failed!",
-                    subject.get_name() + subject.get_id());
+            log.error("subject {} process copy dumper failed!",
+                    subject.get_name() + subject.get_id(), e);
         }
         return Runner.compileSubject(subject);
     }
@@ -113,7 +113,8 @@ public class ObtainTraceInfo {
         }
     }
 
-    private static void processAllTrace(boolean reverse, String reDir, Entry<String, List<Patch>> entry) {
+    private static void processAllTrace(boolean reverse, String reDir,
+            Entry<String, List<Patch>> entry) {
         String[] sub = entry.getKey().split("-");
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
         for (Patch patch : entry.getValue()) {
@@ -130,8 +131,7 @@ public class ObtainTraceInfo {
                 continue;
             }
             try {
-                String writeFile = BuildPath.buildDymicAllFile(reDir, patch.getPatchName(),
-                        true);
+                String writeFile = BuildPath.buildDymicAllFile(reDir, patch.getPatchName(), true);
                 String oneFixedFile = Constant.PROJECT_HOME + "/" + subject.get_name() + "/"
                         + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
                 ProcessPatch.createCombinedBuggy4AllFiles(patch, reverse);
@@ -146,19 +146,19 @@ public class ObtainTraceInfo {
                             StringUtils.join(message, "\n"));
                     shouldFail.add(patch.getPatchName());
                 } else {
-                    String failingTest = message.stream().filter(line -> line.trim().startsWith("-"))
-                            .map(line -> line.split("-", 2)[1].trim()).collect(Collectors.joining("\n"));
+                    String failingTest = message.stream()
+                            .filter(line -> line.trim().startsWith("-"))
+                            .map(line -> line.split("-", 2)[1].trim())
+                            .collect(Collectors.joining("\n"));
                     FileIO.writeStringToFile(writeFile + ".failing", failingTest);
                 }
             } catch (Exception e) {
-                log.error(
-                        "process  test on buggy version failed! subject {} patch {} test {}",
+                log.error("process  test on buggy version failed! subject {} patch {} test {}",
                         subject.get_name() + subject.get_id(), patch.getPatchName(), e);
             }
 
             try {
-                String writeFile = BuildPath.buildDymicAllFile(reDir, patch.getPatchName(),
-                        false);
+                String writeFile = BuildPath.buildDymicAllFile(reDir, patch.getPatchName(), false);
                 String oneFixedFile = Constant.PROJECT_HOME + "/" + subject.get_name() + "/"
                         + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
                 ProcessPatch.createCombinedFixed4AllFiles(patch, reverse);
@@ -175,8 +175,7 @@ public class ObtainTraceInfo {
                             StringUtils.join(message, "\n"));
                 }
             } catch (Exception e) {
-                log.error(
-                        "process test on fixed version failed! subject {} patch {} test {}",
+                log.error("process test on fixed version failed! subject {} patch {} test {}",
                         subject.get_name() + subject.get_id(), patch.getPatchName(), e);
             }
         }
@@ -224,8 +223,8 @@ public class ObtainTraceInfo {
             // run passing tests on buggy version
             for (String test : ObtainPassingTests.passingTests(subject)) {
                 try {
-                    String writeFile = BuildPath.buildDymicPassFile(reDir, patch.getPatchName(), test,
-                            true);
+                    String writeFile = BuildPath.buildDymicPassFile(reDir, patch.getPatchName(),
+                            test, true);
                     String oneFixedFile = Constant.PROJECT_HOME + "/" + subject.get_name() + "/"
                             + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
                     ProcessPatch.createCombinedBuggy4AllFiles(patch, reverse);
@@ -244,8 +243,8 @@ public class ObtainTraceInfo {
             // change to fixed version run passing tests on fixed version
             for (String test : ObtainPassingTests.passingTests(subject)) {
                 try {
-                    String writeFile = BuildPath.buildDymicPassFile(reDir, patch.getPatchName(), test,
-                            false);
+                    String writeFile = BuildPath.buildDymicPassFile(reDir, patch.getPatchName(),
+                            test, false);
                     String oneFixedFile = Constant.PROJECT_HOME + "/" + subject.get_name() + "/"
                             + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
                     ProcessPatch.createCombinedFixed4AllFiles(patch, reverse);
@@ -263,8 +262,8 @@ public class ObtainTraceInfo {
             }
             // remove dynamic info in illegal tests
             for (String illegaltest : illegalTests) {
-                String illegalDir =
-                        Constant.dynamicResult + "/passing/" + reDir + "/" + patch.getPatchName() + "/" + illegaltest;
+                String illegalDir = Constant.dynamicResult + "/passing/" + reDir + "/"
+                        + patch.getPatchName() + "/" + illegaltest;
                 if (new File(illegalDir).exists()) {
                     try {
                         FileUtils.deleteDirectory(new File(illegalDir));
@@ -380,13 +379,13 @@ public class ObtainTraceInfo {
     private static void processCornerCase(String reDir, String patchName) {
         Subject subject = new Subject("Closure", 16);
         for (String test : subject.getFailingTests()) {
-            String writeFile = BuildPath.buildDymicFile(reDir, patchName, test,
-                    true);
+            String writeFile = BuildPath.buildDymicFile(reDir, patchName, test, true);
             String content = FileIO.readFileToString(writeFile);
             StringBuilder newContent = new StringBuilder();
             for (String line : content.split("\n")) {
                 String[] lineStr = line.split("#");
-                newContent.append(lineStr[0]).append("#").append(Integer.parseInt(lineStr[1]) + 1).append("\n");
+                newContent.append(lineStr[0]).append("#").append(Integer.parseInt(lineStr[1]) + 1)
+                        .append("\n");
             }
             FileIO.writeStringToFile(writeFile, newContent.toString());
         }
@@ -394,8 +393,8 @@ public class ObtainTraceInfo {
 
     public static void main(String[] args) {
         List<Patch> trainPatch = ObtainPatches.readTrainPatches();
-        Map<String, List<Patch>> trainPatchMap =
-                trainPatch.stream().collect(Collectors.groupingBy(Patch::getBugid));
+        Map<String, List<Patch>> trainPatchMap = trainPatch.stream()
+                .collect(Collectors.groupingBy(Patch::getBugid));
         obtainTrace(trainPatchMap, false, "trainSet");
 
         //        List<Patch> testPatches = ObtainPatches.readTestPatches();

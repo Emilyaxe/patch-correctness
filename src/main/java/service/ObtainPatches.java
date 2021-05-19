@@ -14,12 +14,11 @@ import util.FileIO;
 
 @Slf4j
 public class ObtainPatches {
+
     public static List<Patch> readTestPatches() {
         List<Patch> patches = new LinkedList<>();
-        String filePath = Constant.HOME + "/Patches"
-                + "/DataSet/test.info";
-        String patchDir =
-                Constant.HOME + "/Patches/DataSet/testSet/";
+        String filePath = Constant.HOME + "/Patches" + "/DataSet/test.info";
+        String patchDir = Constant.HOME + "/Patches/DataSet/testSet/";
 
         JSONObject jsonObject = JSON.parseObject(FileIO.readFileToString(filePath));
         for (Entry<String, Object> entry : jsonObject.entrySet()) {
@@ -31,8 +30,8 @@ public class ObtainPatches {
             } else {
                 log.error(entry.getValue().toString());
             }
-            patches.add(Patch.builder().patchName(patchName).bugid(bugid).lable(label).patchPath(patchDir + patchName)
-                    .build());
+            patches.add(Patch.builder().patchName(patchName).bugid(bugid).lable(label)
+                    .patchPath(patchDir + patchName).build());
         }
 
         //        Map<String, List<Patch>> subjectPatchMap =
@@ -44,10 +43,8 @@ public class ObtainPatches {
 
     public static List<Patch> readTrainPatches() {
         List<Patch> patches = new LinkedList<>();
-        String filePath = Constant.HOME + "/Patches"
-                + "/DataSet/train.info";
-        String patchDir =
-                Constant.HOME + "/Patches/DataSet/trainSet/";
+        String filePath = Constant.HOME + "/Patches/DataSet/train.info";
+        String patchDir = Constant.HOME + "/Patches/DataSet/trainSet/";
 
         //String[] content = FileIO.readFileToString(filePath).split("\n");
         JSONObject jsonObject = JSON.parseObject(FileIO.readFileToString(filePath));
@@ -60,8 +57,8 @@ public class ObtainPatches {
             } else {
                 log.error(entry.getValue().toString());
             }
-            patches.add(Patch.builder().patchName(patchName).bugid(bugid).lable(label).patchPath(patchDir + patchName)
-                    .build());
+            patches.add(Patch.builder().patchName(patchName).bugid(bugid).lable(label)
+                    .patchPath(patchDir + patchName).build());
         }
 
         //        Map<String, List<Patch>> subjectPatchMap =
@@ -73,10 +70,8 @@ public class ObtainPatches {
 
     public static List<Patch> readCorPatches() {
         List<Patch> patches = new LinkedList<>();
-        String filePath = Constant.HOME + "/Patches"
-                + "/DataSet/correct.info";
-        String patchDir =
-                Constant.HOME + "/Patches/DataSet/correctSet/";
+        String filePath = Constant.HOME + "/Patches" + "/DataSet/correct.info";
+        String patchDir = Constant.HOME + "/Patches/DataSet/correctSet/";
 
         //String[] content = FileIO.readFileToString(filePath).split("\n");
         JSONObject jsonObject = JSON.parseObject(FileIO.readFileToString(filePath));
@@ -89,12 +84,11 @@ public class ObtainPatches {
             } else {
                 log.error(entry.getValue().toString());
             }
-            patches.add(Patch.builder().patchName(patchName).bugid(bugid).lable(label).patchPath(patchDir + patchName)
-                    .build());
+            patches.add(Patch.builder().patchName(patchName).bugid(bugid).lable(label)
+                    .patchPath(patchDir + patchName).build());
         }
         return patches;
     }
-
 
     public static void main(String[] args) {
         readTestPatches();

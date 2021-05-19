@@ -131,6 +131,7 @@ public class FileIO {
 
         try {
             bufferedWriter.write(string);
+            bufferedWriter.flush();
             bufferedWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -315,7 +316,6 @@ public class FileIO {
         }
         return compilationUnit;
     }
-
 
     public static CompilationUnit genASTFromFile(String fileName) {
         return (CompilationUnit) genASTFromSource(readFileToString(fileName),
