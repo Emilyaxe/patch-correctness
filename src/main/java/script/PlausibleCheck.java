@@ -163,7 +163,7 @@ public class PlausibleCheck {
     }
 
     private static void checkResult() {
-        String file = "./log/inplausible19.log";
+        String file = "./log/inplausible19-3.log";
         String file1 = "./log/inplausible19-1.log";
         String content1 = FileIO.readFileToString(file1);
         String content = FileIO.readFileToString(file);
@@ -186,7 +186,7 @@ public class PlausibleCheck {
     public static void main(String[] args) {
         //moveTestSet();
         // moveTrainSet();
-        checkPlausible();
-        //checkResult();
+        //checkPlausible();
+        checkResult();
     }
 }
