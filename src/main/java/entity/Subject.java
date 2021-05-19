@@ -68,7 +68,7 @@ public class Subject {
         download();
     }
 
-    private void download() {
+    public void download() {
         if (!new File(getHome()).exists()) {
             Runner.downloadSubject(this);
         }

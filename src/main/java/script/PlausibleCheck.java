@@ -25,7 +25,6 @@ import config.Constant;
 import entity.Patch;
 import entity.Subject;
 import lombok.extern.slf4j.Slf4j;
-import main.ObtainTraceInfo;
 import run.Runner;
 import service.ObtainPatches;
 import service.ProcessPatch;
@@ -115,6 +114,17 @@ public class PlausibleCheck {
         log.info("inplausible patches \n {}", StringUtils.join(inplausiblePatches.values(), "\n"));
     }
 
+    private static void deleteSubject(Subject subject) {
+        try {
+            if (new File(subject.getHome()).exists()) {
+                FileUtils.deleteDirectory(new File(subject.getHome()));
+            }
+        } catch (IOException exception) {
+            log.error("Delete Subject {} with exception {}", subject, exception.getMessage());
+        }
+        subject.download();
+    }
+
     private static void testPlausible(Entry<String, List<Patch>> entry,
             Map<String, String> inplausiblePatches) {
         String[] sub = entry.getKey().split("-");
@@ -122,7 +132,8 @@ public class PlausibleCheck {
         for (Patch patch : entry.getValue()) {
             try {
                 log.info("Process for Patch {}", patch.getPatchName());
-                ObtainTraceInfo.cleanSubject(subject.getHome() + subject.get_ssrc());
+                deleteSubject(subject);
+                //ObtainTraceInfo.cleanSubject(subject.getHome() + subject.get_ssrc());
                 TimeUnit.MILLISECONDS.sleep(100);
                 ProcessPatch.createCombinedFixed4AllFiles(patch, false);
                 TimeUnit.SECONDS.sleep(10);
