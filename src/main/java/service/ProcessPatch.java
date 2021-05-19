@@ -108,8 +108,7 @@ public class ProcessPatch {
             }
             synchronized (LOCK) {
                 FileIO.writeStringToFile(fixedFile, result.toString());
-                FileIO.writeStringToFile(
-                        "/tmp/bug/" + patch.getPatchPath().replaceAll("\\/", "\\."),
+                FileIO.writeStringToFile("/tmp/bug/" + patch.getPatchName() + entry.getKey(),
                         result.toString());
             }
         }
@@ -157,8 +156,7 @@ public class ProcessPatch {
             }
             synchronized (LOCK) {
                 FileIO.writeStringToFile(fixedFile, result.toString());
-                FileIO.writeStringToFile(
-                        "/tmp/fix/" + patch.getPatchPath().replaceAll("\\/", "\\."),
+                FileIO.writeStringToFile("/tmp/fix/" + patch.getPatchName() + entry.getKey(),
                         result.toString());
             }
         }
