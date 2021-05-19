@@ -1,6 +1,5 @@
 package script;
 
-import static main.ObtainTraceInfo.compile;
 import static util.AsyExecutor.EXECUTOR;
 
 import java.io.File;
@@ -126,10 +125,10 @@ public class PlausibleCheck {
                 TimeUnit.MILLISECONDS.sleep(100);
                 ProcessPatch.createCombinedFixed4AllFiles(patch, false);
                 TimeUnit.MILLISECONDS.sleep(500);
-                if (!compile(subject)) {
-                    log.error("Patch {}, Compile Error on fixed version!", patch.getPatchName());
-                    continue;
-                }
+                //                if (!compile(subject)) {
+                //                    log.error("Patch {}, Compile Error on fixed version!", patch.getPatchName());
+                //                    continue;
+                //                }
                 List<String> message = Runner.runTestSuite(subject);
                 if (CollectionUtils.isEmpty(message) || message.stream().filter(Objects::nonNull)
                         .noneMatch(element -> element.contains(Runner.SUCCESSTEST))) {
@@ -175,13 +174,12 @@ public class PlausibleCheck {
     }
 
     private static void checkResult() {
-        String file = "./log/inplausible19-3.log";
-        String file1 = "./log/inplausible19-1.log";
-        String content1 = FileIO.readFileToString(file1);
-        String content = FileIO.readFileToString(file);
-        Set<String> contentOnly = Arrays.stream(content.split("\n"))
+
+        String content1 = FileIO.readFileToString("./log/inplausible19-4.log");
+        String content = FileIO.readFileToString("./log/inplausible19-1.log");
+        Set<String> contentSet = Arrays.stream(content.split("\n"))
                 .filter(line -> !content1.contains(line)).collect(Collectors.toSet());
-        Set<String> content18Only = Arrays.stream(content1.split("\n"))
+        Set<String> contentSet1 = Arrays.stream(content1.split("\n"))
                 .filter(line -> !content.contains(line)).collect(Collectors.toSet());
         //        Set<String> tmpPatch =
         //                Arrays.stream(content.split("\n")).filter(line -> line.contains("tmp")).collect(Collectors
@@ -198,8 +196,8 @@ public class PlausibleCheck {
     public static void main(String[] args) {
         //moveTestSet();
         // moveTrainSet();
-        //checkPlausible();
-        checkPlausiblebySingle();
+        checkPlausible();
+        //checkPlausiblebySingle();
         //checkResult();
     }
 }
