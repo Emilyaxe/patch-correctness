@@ -111,7 +111,7 @@ public class PlausibleCheck {
             }, EXECUTOR));
         }
         CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0])).join();
-        log.info("inplausible patches {}", StringUtils.join(inplausiblePatches.values(), "\n"));
+        log.info("inplausible patches \n {}", StringUtils.join(inplausiblePatches.values(), "\n"));
     }
 
     private static void testPlausible(Entry<String, List<Patch>> entry,
