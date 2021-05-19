@@ -99,7 +99,7 @@ public class ObtainTraceInfo {
     }
 
     public static void cleanSubject(String srcPath) {
-        log.info("Clean subject ....");
+        log.info("Clean subject {} ....", srcPath);
         List<File> list = new LinkedList<>();
         FileIO.getAllFile(new File(srcPath), list);
         for (File f : list) {
@@ -107,7 +107,7 @@ public class ObtainTraceInfo {
                 try {
                     FileUtils.copyFile(new File(f.getAbsolutePath() + ".bak"), f);
                 } catch (IOException exception) {
-                    log.error("clean subject {} failed! ", srcPath, exception);
+                    log.error("clean subject {} file {} failed! ", srcPath, f.getName(), exception);
                 }
             }
         }

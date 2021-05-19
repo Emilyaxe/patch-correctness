@@ -120,9 +120,9 @@ public class PlausibleCheck {
         String[] sub = entry.getKey().split("-");
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
         for (Patch patch : entry.getValue()) {
-            ObtainTraceInfo.cleanSubject(subject.getHome() + subject.get_ssrc());
-            log.info("Process for Patch {}", patch.getPatchName());
             try {
+                ObtainTraceInfo.cleanSubject(subject.getHome() + subject.get_ssrc());
+                log.info("Process for Patch {}", patch.getPatchName());
                 TimeUnit.MILLISECONDS.sleep(100);
                 ProcessPatch.createCombinedFixed4AllFiles(patch, false);
                 TimeUnit.MILLISECONDS.sleep(500);
