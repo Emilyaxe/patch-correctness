@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -137,6 +138,8 @@ public class ObtainTraceInfo {
                 ProcessPatch.createCombinedBuggy4AllFiles(patch, reverse);
                 instrument(fixedLine, writeFile, oneFixedFile);
                 instrumentTests(subject, writeFile);
+                TimeUnit.SECONDS.sleep(10);
+
                 if (!compile(subject)) {
                     log.error("Patch {}, Compile Error on buggy version!", patch.getPatchName());
                 }
@@ -164,6 +167,8 @@ public class ObtainTraceInfo {
                 ProcessPatch.createCombinedFixed4AllFiles(patch, reverse);
                 instrument(fixedLine, writeFile, oneFixedFile);
                 instrumentTests(subject, writeFile);
+                TimeUnit.SECONDS.sleep(10);
+
                 if (!compile(subject)) {
                     log.error("Patch {}, Compile Error on fixed version!", patch.getPatchName());
                 }
@@ -301,6 +306,7 @@ public class ObtainTraceInfo {
                             + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
                     ProcessPatch.createCombinedBuggy4AllFiles(patch, reverse);
                     instrument(fixedLine, writeFile, oneFixedFile);
+                    TimeUnit.SECONDS.sleep(10);
                     if (compileAndRun(subject, test)) {
                         log.error("Patch {}, Should Fail!", patch.getPatchName());
                     }

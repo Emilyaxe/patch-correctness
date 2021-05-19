@@ -175,7 +175,7 @@ public class PlausibleCheck {
     }
 
     private static void checkResult() {
-        String content1 = FileIO.readFileToString("./log/inplausible19-6.log");
+        String content1 = FileIO.readFileToString("./log/inplausible19-9.log");
         String content = FileIO.readFileToString("./log/inplausible19-8.log");
         Set<String> contentSet = new HashSet<>(Arrays.asList(content.split("\n")));
         Set<String> contentSet1 = new HashSet<>(Arrays.asList(content1.split("\n")));

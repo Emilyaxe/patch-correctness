@@ -72,7 +72,6 @@ public class Runner {
 
     public static List<String> runTestSuite(Subject subject) {
         List<String> message = null;
-        subject.deleteBin();
         try {
             log.info("TESTING : " + subject.get_name() + "_" + subject.get_id());
             message = Executor.execute(CmdFactory.createTestSubjectCmd(subject, 30 * 60));
