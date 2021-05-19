@@ -119,7 +119,7 @@ public class PlausibleCheck {
                     log.error("Patch {}, Compile Error on fixed version!", patch.getPatchName());
                 }
                 List<String> message = Runner.runTestSuite(subject);
-                log.error(StringUtils.join(message, "\n"));
+                //log.info(StringUtils.join(message, "\n"));
                 if (CollectionUtils.isEmpty(message) || message.stream().filter(Objects::nonNull)
                         .noneMatch(element -> element.contains(Runner.SUCCESSTEST))) {
                     inplausiblePatches.put(patch.getPatchName(), patch.getPatchPath());
