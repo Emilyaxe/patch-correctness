@@ -37,9 +37,9 @@ public class PlausibleCheck {
     public static Map<String, String> inplausiblePatches = new ConcurrentHashMap<>();
 
     public static void moveTestSet() {
-        String[] testSet = { "Math88b_Patch74", "Lang46b_Patch22", "Math79b_Patch77",
+        String[] testSet = {"Math88b_Patch74", "Lang46b_Patch22", "Math79b_Patch77",
                 "Math22b_PatchHDRepair3", "Math4b_Patch155", "Chart13b_Patch9",
-                "Lang57b_PatchHDRepair1", "Time11b_Patch182", "Time12b_Patch183" };
+                "Lang57b_PatchHDRepair1", "Time11b_Patch182", "Time12b_Patch183"};
         String sourceDir = Constant.HOME + "/Patches/experiment3/TestSet/";
         String targetDir = Constant.HOME + "/Patches/DataSet/tmp/";
         for (String patch : testSet) {
@@ -89,6 +89,15 @@ public class PlausibleCheck {
                 exception.printStackTrace();
             }
         }
+    }
+
+    public static void checkPlausiblebySingle() {
+        Map<String, List<Patch>> subjectPatchMap = patchCollection();
+        for (Entry<String, List<Patch>> entry : subjectPatchMap.entrySet()) {
+            testPlausible(entry);
+        }
+        log.info("inplausible patches {}", StringUtils.join(inplausiblePatches.values(), "\n"));
+
     }
 
     public static void checkPlausible() {
@@ -189,7 +198,8 @@ public class PlausibleCheck {
     public static void main(String[] args) {
         //moveTestSet();
         // moveTrainSet();
-        checkPlausible();
+        //checkPlausible();
+        checkPlausiblebySingle();
         //checkResult();
     }
 }
