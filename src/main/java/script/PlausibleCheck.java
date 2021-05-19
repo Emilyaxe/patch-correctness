@@ -108,6 +108,9 @@ public class PlausibleCheck {
         String[] sub = entry.getKey().split("-");
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
         for (Patch patch : entry.getValue()) {
+            //            if (!patch.getPatchName().equals("patch1-Math-53-Jaid-plausible.patch")) {
+            //                continue;
+            //            }
             ObtainTraceInfo.cleanSubject(subject.getHome() + subject.get_ssrc());
             log.info("Process for Patch {}", patch.getPatchName());
             try {
@@ -116,6 +119,7 @@ public class PlausibleCheck {
                     log.error("Patch {}, Compile Error on fixed version!", patch.getPatchName());
                 }
                 List<String> message = Runner.runTestSuite(subject);
+                log.error(StringUtils.join(message, "\n"));
                 if (CollectionUtils.isEmpty(message) || message.stream().filter(Objects::nonNull)
                         .noneMatch(element -> element.contains(Runner.SUCCESSTEST))) {
                     inplausiblePatches.put(patch.getPatchName(), patch.getPatchPath());
