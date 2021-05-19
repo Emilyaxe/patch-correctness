@@ -33,8 +33,6 @@ import util.FileIO;
 @Slf4j
 public class PlausibleCheck {
 
-    public static Map<String, String> inplausiblePatches = new ConcurrentHashMap<>();
-
     public static void moveTestSet() {
         String[] testSet = {"Math88b_Patch74", "Lang46b_Patch22", "Math79b_Patch77",
                 "Math22b_PatchHDRepair3", "Math4b_Patch155", "Chart13b_Patch9",
@@ -102,10 +100,11 @@ public class PlausibleCheck {
     public static void checkPlausible() {
         Map<String, List<Patch>> subjectPatchMap = patchCollection();
         List<CompletableFuture<Void>> futureList = new LinkedList<>();
+        Map<String, String> inplausiblePatches = new ConcurrentHashMap<>();
         for (Entry<String, List<Patch>> entry : subjectPatchMap.entrySet()) {
             futureList.add(CompletableFuture.runAsync(() -> {
                 try {
-                    testPlausible(entry);
+                    testPlausible(entry, inplausiblePatches);
                 } catch (Exception e) {
                     log.error("obtain trace failed! subject {}", entry.getKey(), e);
                 }
@@ -115,7 +114,8 @@ public class PlausibleCheck {
         log.info("inplausible patches {}", StringUtils.join(inplausiblePatches.values(), "\n"));
     }
 
-    private static void testPlausible(Entry<String, List<Patch>> entry) {
+    private static void testPlausible(Entry<String, List<Patch>> entry,
+            Map<String, String> inplausiblePatches) {
         String[] sub = entry.getKey().split("-");
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
         for (Patch patch : entry.getValue()) {
@@ -132,7 +132,7 @@ public class PlausibleCheck {
                 List<String> message = Runner.runTestSuite(subject);
                 if (CollectionUtils.isEmpty(message) || message.stream().filter(Objects::nonNull)
                         .noneMatch(element -> element.contains(Runner.SUCCESSTEST))) {
-                    inplausiblePatches.put(patch.getPatchName(), patch.getPatchPath());
+                    inplausiblePatches.putIfAbsent(patch.getPatchName(), patch.getPatchPath());
                     log.error("Patch {}, Should Pass! \n {} ", patch.getPatchName(),
                             StringUtils.join(message, "\n"));
                 }
