@@ -125,7 +125,7 @@ public class PlausibleCheck {
                 ObtainTraceInfo.cleanSubject(subject.getHome() + subject.get_ssrc());
                 TimeUnit.MILLISECONDS.sleep(100);
                 ProcessPatch.createCombinedFixed4AllFiles(patch, false);
-                TimeUnit.MILLISECONDS.sleep(500);
+                TimeUnit.SECONDS.sleep(10);
                 //                if (!compile(subject)) {
                 //                    log.error("Patch {}, Compile Error on fixed version!", patch.getPatchName());
                 //                    continue;
@@ -176,7 +176,7 @@ public class PlausibleCheck {
 
     private static void checkResult() {
         String content1 = FileIO.readFileToString("./log/inplausible19-6.log");
-        String content = FileIO.readFileToString("./log/inplausible19-4.log");
+        String content = FileIO.readFileToString("./log/inplausible19-8.log");
         Set<String> contentSet = new HashSet<>(Arrays.asList(content.split("\n")));
         Set<String> contentSet1 = new HashSet<>(Arrays.asList(content1.split("\n")));
         Set<String> contentResult = contentSet.stream().filter(line -> !content1.contains(line))

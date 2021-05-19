@@ -156,8 +156,8 @@ public class ProcessPatch {
             }
             synchronized (LOCK) {
                 FileIO.writeStringToFile(fixedFile, result.toString());
-                FileIO.writeStringToFile("./tmp/fix/" + patch.getPatchName() + entry.getKey(),
-                        result.toString());
+                //                FileIO.writeStringToFile("./tmp/fix/" + patch.getPatchName() + entry.getKey(),
+                //                        result.toString());
             }
         }
     }
