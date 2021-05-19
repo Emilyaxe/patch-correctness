@@ -110,9 +110,6 @@ public class PlausibleCheck {
         String[] sub = entry.getKey().split("-");
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
         for (Patch patch : entry.getValue()) {
-            //            if (!patch.getPatchName().equals("patch1-Math-53-Jaid-plausible.patch")) {
-            //                continue;
-            //            }
             ObtainTraceInfo.cleanSubject(subject.getHome() + subject.get_ssrc());
             log.info("Process for Patch {}", patch.getPatchName());
             try {
@@ -122,7 +119,6 @@ public class PlausibleCheck {
                     continue;
                 }
                 List<String> message = Runner.runTestSuite(subject);
-                //log.info(StringUtils.join(message, "\n"));
                 if (CollectionUtils.isEmpty(message) || message.stream().filter(Objects::nonNull)
                         .noneMatch(element -> element.contains(Runner.SUCCESSTEST))) {
                     inplausiblePatches.put(patch.getPatchName(), patch.getPatchPath());
@@ -167,13 +163,13 @@ public class PlausibleCheck {
     }
 
     private static void checkResult() {
-        String file = "./log/inplausible";
-        String file18 = "./log/inplausible18.log";
-        String content18 = FileIO.readFileToString(file18);
+        String file = "./log/inplausible19.log";
+        String file1 = "./log/inplausible19-1.log";
+        String content1 = FileIO.readFileToString(file1);
         String content = FileIO.readFileToString(file);
         Set<String> contentOnly = Arrays.stream(content.split("\n"))
-                .filter(line -> !content18.contains(line)).collect(Collectors.toSet());
-        Set<String> content18Only = Arrays.stream(content18.split("\n"))
+                .filter(line -> !content1.contains(line)).collect(Collectors.toSet());
+        Set<String> content18Only = Arrays.stream(content1.split("\n"))
                 .filter(line -> !content.contains(line)).collect(Collectors.toSet());
         //        Set<String> tmpPatch =
         //                Arrays.stream(content.split("\n")).filter(line -> line.contains("tmp")).collect(Collectors
