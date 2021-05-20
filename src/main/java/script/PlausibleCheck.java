@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -16,15 +18,21 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+
 import config.Constant;
 import entity.Patch;
 import entity.Subject;
 import lombok.extern.slf4j.Slf4j;
+import main.ObtainTraceInfo;
 import run.Runner;
 import service.ObtainPatches;
 import service.ProcessPatch;
@@ -132,15 +140,16 @@ public class PlausibleCheck {
         for (Patch patch : entry.getValue()) {
             try {
                 log.info("Process for Patch {}", patch.getPatchName());
-                deleteSubject(subject);
-                //ObtainTraceInfo.cleanSubject(subject.getHome() + subject.get_ssrc());
-                TimeUnit.MILLISECONDS.sleep(100);
+                //  deleteSubject(subject);
+                ObtainTraceInfo.cleanSubject(subject.getHome() + subject.get_ssrc());
                 ProcessPatch.createCombinedFixed4AllFiles(patch, false);
                 TimeUnit.SECONDS.sleep(10);
                 //                if (!compile(subject)) {
                 //                    log.error("Patch {}, Compile Error on fixed version!", patch.getPatchName());
                 //                    continue;
                 //                }
+                //                Runner.runTestSuite(subject);
+                //                TimeUnit.SECONDS.sleep(10);
                 List<String> message = Runner.runTestSuite(subject);
                 if (CollectionUtils.isEmpty(message) || message.stream().filter(Objects::nonNull)
                         .noneMatch(element -> element.contains(Runner.SUCCESSTEST))) {
@@ -186,15 +195,52 @@ public class PlausibleCheck {
     }
 
     private static void checkResult() {
-        String content1 = FileIO.readFileToString("./log/inplausible19-9.log");
-        String content = FileIO.readFileToString("./log/inplausible19-8.log");
-        Set<String> contentSet = new HashSet<>(Arrays.asList(content.split("\n")));
-        Set<String> contentSet1 = new HashSet<>(Arrays.asList(content1.split("\n")));
-        Set<String> contentResult = contentSet.stream().filter(line -> !content1.contains(line))
-                .collect(Collectors.toSet());
-        Set<String> contentResult1 = contentSet1.stream().filter(line -> !content.contains(line))
-                .collect(Collectors.toSet());
+        String filePath = "./log/inplausible19-%s.log";
+        Map<String, Set<String>> inPlausibleMap = new LinkedHashMap<>();
+        String maxLengthFile = String.format(filePath, 3);
+        for (int i = 3; i <= 9; ++i) {
+            String currentFile = String.format(filePath, i);
+            String content = FileIO.readFileToString(currentFile);
+            Set<String> patchSet = new HashSet<>(Arrays.asList(content.split("\n")));
+            inPlausibleMap.put(currentFile, patchSet);
+            if (patchSet.size() > inPlausibleMap.get(maxLengthFile).size()) {
+                maxLengthFile = currentFile;
+            }
+        }
+        Set<String> totalInPlausibleSet =
+                inPlausibleMap.values().stream().flatMap(Set::stream).collect(Collectors.toSet());
 
+        Set<String> commonInPlausibleSet = new HashSet<>();
+
+        for (String patch : inPlausibleMap.get(maxLengthFile)) {
+            if (Stream.iterate(3, x -> ++x).limit(7).map(i -> String.format(filePath, i))
+                    .allMatch(file -> inPlausibleMap.get(file).contains(patch))) {
+                commonInPlausibleSet.add(patch);
+            }
+        }
+
+        Map<String, Set<String>> retainMap = new LinkedHashMap<>();
+
+        for (int i = 3; i <= 9; ++i) {
+            String currentFile = String.format(filePath, i);
+            retainMap.put(currentFile,
+                    inPlausibleMap.get(currentFile).stream().filter(patch -> !commonInPlausibleSet.contains(patch))
+                            .collect(Collectors.toSet()));
+        }
+        Set<String> unstableSet = new LinkedHashSet<>();
+        retainMap.values().stream().forEach(set -> unstableSet.addAll(set));
+
+        log.info("total map {} common map {} retain map {}", totalInPlausibleSet.size(), commonInPlausibleSet.size(),
+                retainMap.size());
+
+        String inplausibleDir =
+                "/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/Patches/DataSet"
+                        + "/inplausible/";
+        for (String patchPath : commonInPlausibleSet) {
+            patchPath = patchPath.replaceAll("/home/jjliang", "/Users/liangjingjing");
+            String[] result = patchPath.split("/");
+            new File(patchPath).renameTo(new File(inplausibleDir + result[result.length - 1]));
+        }
         //        Set<String> tmpPatch =
         //                Arrays.stream(content.split("\n")).filter(line -> line.contains("tmp")).collect(Collectors
         //                .toSet());
@@ -203,15 +249,102 @@ public class PlausibleCheck {
         //                        .collect(Collectors.toSet());
         //        Set<String> testPatch = Arrays.stream(content.split("\n")).filter(line -> line.contains("testSet"))
         //                .collect(Collectors.toSet());
-        log.info("finish!");
+    }
+
+    public static void updateInfo() {
+        JSONArray allInfo = new JSONArray();
+        JSONObject correctObject =
+                JSON.parseObject(FileIO.readFileToString(Constant.HOME + "/Patches" + "/DataSet/correct.info"));
+        JSONObject testObject =
+                JSON.parseObject(FileIO.readFileToString(Constant.HOME + "/Patches" + "/DataSet/test.info"));
+        JSONObject trainObject =
+                JSON.parseObject(FileIO.readFileToString(Constant.HOME + "/Patches" + "/DataSet/train.info"));
+        allInfo.add(correctObject);
+
+        JSONObject newTestObject = new JSONObject();
+        JSONObject newTrainObject = new JSONObject();
+        JSONObject inplausibleObject = new JSONObject();
+        for (File testPatch : new File(Constant.HOME + "/Patches/DataSet/testSet").listFiles()) {
+            String fileName = testPatch.getName();
+            if (testObject.containsKey(fileName)) {
+                newTestObject.put(fileName, testObject.get(fileName));
+            }
+        }
+
+        for (File trainPatch : new File(Constant.HOME + "/Patches/DataSet/trainSet").listFiles()) {
+            String fileName = trainPatch.getName();
+            if (trainObject.containsKey(fileName)) {
+                newTrainObject.put(fileName, trainObject.get(fileName));
+            }
+        }
+
+        List<Patch> patches = new LinkedList<>();
+        String filePath = Constant.HOME + "/Patches"
+                + "/experiment3/kui_data_for_cc2v.txt";
+        String patchDir =
+                Constant.HOME + "/Patches/experiment3/TestSet";
+        String[] content = FileIO.readFileToString(filePath).split("\n");
+        for (int i = 0; i <= 129; i++) {
+            String line = content[i];
+            String label = String.valueOf(line.charAt(0));
+            String info = line.split("ppp")[1].trim().split(" ")[0];
+            String[] infoArray = info.split("_");
+
+            String id = StringUtils.getDigits(infoArray[0]);
+            String name = infoArray[0].split(id)[0];
+
+            patches.add(Patch.builder().lable(label).patchName(info)
+                    .bugid(name + "-" + id).patchPath(patchDir + "/" + infoArray[1]).id(i)
+                    .build());
+        }
+
+
+        for (File patch : new File(Constant.HOME + "/Patches/DataSet/inplausible").listFiles()) {
+            String fileName = patch.getName();
+            if (trainObject.containsKey(fileName)) {
+                inplausibleObject.put(fileName, trainObject.get(fileName));
+            } else if (testObject.containsKey(fileName)) {
+                inplausibleObject.put(fileName, testObject.get(fileName));
+            } else {
+                if (fileName.contains("_")) {
+                    for (Patch patch1 : patches) {
+                        if (patch1.getPatchName().equals(fileName)) {
+                            List<String> list = new LinkedList<>();
+                            list.add(patch1.getBugid());
+                            list.add(patch1.getLable());
+                            inplausibleObject.put(fileName, list);
+                            break;
+                        }
+                    }
+                } else {
+                    List<String> list = new LinkedList<>();
+                    String bugid = fileName.split("-")[1] + "-" + fileName.split("-")[2];
+                    String label = fileName.contains("plausible") ? "0" : "1";
+                    list.add(bugid);
+                    list.add(label);
+                    inplausibleObject.put(fileName, list);
+                }
+                //log.info(fileName);
+            }
+        }
+
+        allInfo.add(newTestObject);
+        allInfo.add(newTrainObject);
+        allInfo.add(inplausibleObject);
+
+        FileIO.writeStringToFile("./test.info", JSON.toJSONString(newTestObject));
+        FileIO.writeStringToFile("./train.info", JSON.toJSONString(newTrainObject));
+        FileIO.writeStringToFile("./all.info", JSON.toJSONString(allInfo));
 
     }
+
 
     public static void main(String[] args) {
         //moveTestSet();
         // moveTrainSet();
-        checkPlausible();
+        //checkPlausible();
         //checkPlausiblebySingle();
         //checkResult();
+        updateInfo();
     }
 }
