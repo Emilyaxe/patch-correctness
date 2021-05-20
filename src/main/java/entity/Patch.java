@@ -144,9 +144,9 @@ public class Patch {
             String subjectPath = Constant.PROJECT_HOME + "/" + name + "/" + name + id;
             for (Patch patch : entry.getValue()) {
                 patchid++;
-                if (!patch.getPatchName().equals("Time_9.src.patch")) {
-                    continue;
-                }
+                //                if (!patch.getPatchName().equals("Time_9.src.patch")) {
+                //                    continue;
+                //                }
                 log.info("{} Process patch {}", patchid, patch.getPatchPath());
                 cleanSubject(subject.getHome() + subject.get_ssrc());
                 initFixedFileAndChanges(patch);
@@ -178,7 +178,7 @@ public class Patch {
                     }
                     String combinedMethod = getMethodContent(fixedFile, findMethod.get_startLine(),
                             findMethod.get_endLine(), patch, reverse);
-                    log.info("Patch {}, Method{}", patch.getPatchName(), combinedMethod);
+                    //log.info("Patch {}, Method{}", patch.getPatchName(), combinedMethod);
                     if (!checkCombineMethod(combinedMethod)) {
                         errorPatches.add(patch.getPatchName());
                     }
@@ -269,8 +269,8 @@ public class Patch {
                 FileIO.genASTFromSource(constructClass(fixedVersion.toString()), ASTParser.K_COMPILATION_UNIT);
         CompilationUnit buggyUnit =
                 FileIO.genASTFromSource(constructClass(buggyVersion.toString()), ASTParser.K_COMPILATION_UNIT);
-        log.error("fixedUnit: {}", fixedUnit.getProblems());
-        log.error("buggyUnit: {}", buggyUnit.getProblems());
+        //        log.error("fixedUnit: {}", fixedUnit.getProblems());
+        //        log.error("buggyUnit: {}", buggyUnit.getProblems());
         return fixedUnit.getProblems().length <= 0 && buggyUnit.getProblems().length <= 0;
     }
 
