@@ -42,9 +42,9 @@ import util.FileIO;
 public class PlausibleCheck {
 
     public static void moveTestSet() {
-        String[] testSet = {"Math88b_Patch74", "Lang46b_Patch22", "Math79b_Patch77",
+        String[] testSet = { "Math88b_Patch74", "Lang46b_Patch22", "Math79b_Patch77",
                 "Math22b_PatchHDRepair3", "Math4b_Patch155", "Chart13b_Patch9",
-                "Lang57b_PatchHDRepair1", "Time11b_Patch182", "Time12b_Patch183"};
+                "Lang57b_PatchHDRepair1", "Time11b_Patch182", "Time12b_Patch183" };
         String sourceDir = Constant.HOME + "/Patches/experiment3/TestSet/";
         String targetDir = Constant.HOME + "/Patches/DataSet/tmp/";
         for (String patch : testSet) {
@@ -207,8 +207,8 @@ public class PlausibleCheck {
                 maxLengthFile = currentFile;
             }
         }
-        Set<String> totalInPlausibleSet =
-                inPlausibleMap.values().stream().flatMap(Set::stream).collect(Collectors.toSet());
+        Set<String> totalInPlausibleSet = inPlausibleMap.values().stream().flatMap(Set::stream)
+                .collect(Collectors.toSet());
 
         Set<String> commonInPlausibleSet = new HashSet<>();
 
@@ -224,18 +224,18 @@ public class PlausibleCheck {
         for (int i = 3; i <= 9; ++i) {
             String currentFile = String.format(filePath, i);
             retainMap.put(currentFile,
-                    inPlausibleMap.get(currentFile).stream().filter(patch -> !commonInPlausibleSet.contains(patch))
+                    inPlausibleMap.get(currentFile).stream()
+                            .filter(patch -> !commonInPlausibleSet.contains(patch))
                             .collect(Collectors.toSet()));
         }
         Set<String> unstableSet = new LinkedHashSet<>();
-        retainMap.values().stream().forEach(set -> unstableSet.addAll(set));
+        retainMap.values().forEach(unstableSet::addAll);
 
-        log.info("total map {} common map {} retain map {}", totalInPlausibleSet.size(), commonInPlausibleSet.size(),
-                retainMap.size());
+        log.info("total map {} common map {} retain map {}", totalInPlausibleSet.size(),
+                commonInPlausibleSet.size(), retainMap.size());
 
-        String inplausibleDir =
-                "/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/Patches/DataSet"
-                        + "/inplausible/";
+        String inplausibleDir = "/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/Patches/DataSet"
+                + "/inplausible/";
         for (String patchPath : commonInPlausibleSet) {
             patchPath = patchPath.replaceAll("/home/jjliang", "/Users/liangjingjing");
             String[] result = patchPath.split("/");
@@ -253,12 +253,12 @@ public class PlausibleCheck {
 
     public static void updateInfo() {
         JSONArray allInfo = new JSONArray();
-        JSONObject correctObject =
-                JSON.parseObject(FileIO.readFileToString(Constant.HOME + "/Patches" + "/DataSet/correct.info"));
-        JSONObject testObject =
-                JSON.parseObject(FileIO.readFileToString(Constant.HOME + "/Patches" + "/DataSet/test.info"));
-        JSONObject trainObject =
-                JSON.parseObject(FileIO.readFileToString(Constant.HOME + "/Patches" + "/DataSet/train.info"));
+        JSONObject correctObject = JSON.parseObject(
+                FileIO.readFileToString(Constant.HOME + "/Patches" + "/DataSet/correct.info"));
+        JSONObject testObject = JSON.parseObject(
+                FileIO.readFileToString(Constant.HOME + "/Patches" + "/DataSet/test.info"));
+        JSONObject trainObject = JSON.parseObject(
+                FileIO.readFileToString(Constant.HOME + "/Patches" + "/DataSet/train.info"));
         allInfo.add(correctObject);
 
         JSONObject newTestObject = new JSONObject();
@@ -279,10 +279,8 @@ public class PlausibleCheck {
         }
 
         List<Patch> patches = new LinkedList<>();
-        String filePath = Constant.HOME + "/Patches"
-                + "/experiment3/kui_data_for_cc2v.txt";
-        String patchDir =
-                Constant.HOME + "/Patches/experiment3/TestSet";
+        String filePath = Constant.HOME + "/Patches" + "/experiment3/kui_data_for_cc2v.txt";
+        String patchDir = Constant.HOME + "/Patches/experiment3/TestSet";
         String[] content = FileIO.readFileToString(filePath).split("\n");
         for (int i = 0; i <= 129; i++) {
             String line = content[i];
@@ -293,11 +291,9 @@ public class PlausibleCheck {
             String id = StringUtils.getDigits(infoArray[0]);
             String name = infoArray[0].split(id)[0];
 
-            patches.add(Patch.builder().lable(label).patchName(info)
-                    .bugid(name + "-" + id).patchPath(patchDir + "/" + infoArray[1]).id(i)
-                    .build());
+            patches.add(Patch.builder().lable(label).patchName(info).bugid(name + "-" + id)
+                    .patchPath(patchDir + "/" + infoArray[1]).id(i).build());
         }
-
 
         for (File patch : new File(Constant.HOME + "/Patches/DataSet/inplausible").listFiles()) {
             String fileName = patch.getName();
@@ -337,7 +333,6 @@ public class PlausibleCheck {
         FileIO.writeStringToFile("./all.info", JSON.toJSONString(allInfo));
 
     }
-
 
     public static void main(String[] args) {
         //moveTestSet();

@@ -156,7 +156,7 @@ public class ObtainTraceInfo {
                     FileIO.writeStringToFile(writeFile + ".failing", failingTest);
                 }
             } catch (Exception e) {
-                log.error("process  test on buggy version failed! subject {} patch {} test {}",
+                log.error("process  test on buggy version failed! subject {} patch {} ",
                         subject.get_name() + subject.get_id(), patch.getPatchName(), e);
             }
 
@@ -180,7 +180,7 @@ public class ObtainTraceInfo {
                             StringUtils.join(message, "\n"));
                 }
             } catch (Exception e) {
-                log.error("process test on fixed version failed! subject {} patch {} test {}",
+                log.error("process test on fixed version failed! subject {} patch {} ",
                         subject.get_name() + subject.get_id(), patch.getPatchName(), e);
             }
         }
