@@ -100,7 +100,7 @@ public class ObtainTraceInfo {
     }
 
     public static void cleanSubject(String srcPath) {
-        log.info("Clean subject {} ....", srcPath);
+        log.info("Clean subject ....");
         List<File> list = new LinkedList<>();
         FileIO.getAllFile(new File(srcPath), list);
         for (File f : list) {
