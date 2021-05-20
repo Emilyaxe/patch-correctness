@@ -73,9 +73,12 @@ public class ObtainTraceInfo {
 
     public static boolean compile(Subject subject) {
         String srcPath = subject.getHome() + subject.get_ssrc();
+        String testPath = subject.getHome() + subject.get_tsrc();
         try {
             FileUtils.copyDirectory(new File(Constant.DUMPER_HOME),
                     new File(srcPath + "/auxiliary"));
+            FileUtils.copyDirectory(new File(Constant.DUMPER_HOME),
+                    new File(testPath + "/auxiliary"));
         } catch (IOException e) {
             log.error("subject {} process copy dumper failed!",
                     subject.get_name() + subject.get_id(), e);
@@ -122,7 +125,7 @@ public class ObtainTraceInfo {
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
         for (Patch patch : entry.getValue()) {
 
-            //            if (!patch.getPatchName().equals("patch1-Chart-1-Arja-plausible.patch")) {
+            //            if (!patch.getPatchName().equals("patch1-Chart-8-CapGen.patch")) {
             //                continue;
             //            }
             //Set<String> illegalTests = new LinkedHashSet<>();
@@ -407,15 +410,15 @@ public class ObtainTraceInfo {
                 .collect(Collectors.groupingBy(Patch::getBugid));
         obtainTrace(trainPatchMap, false, "trainSet");
 
-        //        List<Patch> testPatches = ObtainPatches.readTestPatches();
-        //        Map<String, List<Patch>> testSubjectPatchMap =
-        //                testPatches.stream().collect(Collectors.groupingBy(Patch::getBugid));
-        //        obtainTrace(testSubjectPatchMap, false, "testSet");
+        List<Patch> testPatches = ObtainPatches.readTestPatches();
+        Map<String, List<Patch>> testSubjectPatchMap =
+                testPatches.stream().collect(Collectors.groupingBy(Patch::getBugid));
+        obtainTrace(testSubjectPatchMap, false, "testSet");
 
-        //        List<Patch> correctPatches = ObtainPatches.readCorPatches();
-        //        Map<String, List<Patch>> correctSubjectPatchMap =
-        //                correctPatches.stream().collect(Collectors.groupingBy(Patch::getBugid));
-        //        obtainTrace(correctSubjectPatchMap, true, "correctSet");
+        List<Patch> correctPatches = ObtainPatches.readCorPatches();
+        Map<String, List<Patch>> correctSubjectPatchMap =
+                correctPatches.stream().collect(Collectors.groupingBy(Patch::getBugid));
+        obtainTrace(correctSubjectPatchMap, true, "correctSet");
         // processCornerCase("correctSet", "Closure_16.src.patch");
 
 
