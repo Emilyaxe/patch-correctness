@@ -144,13 +144,11 @@ public class Patch {
             String subjectPath = Constant.PROJECT_HOME + "/" + name + "/" + name + id;
             for (Patch patch : entry.getValue()) {
                 patchid++;
+                if (!patch.getPatchName().equals("Time_9.src.patch")) {
+                    continue;
+                }
                 log.info("{} Process patch {}", patchid, patch.getPatchPath());
                 cleanSubject(subject.getHome() + subject.get_ssrc());
-
-                //                if (!patch.getPatchName().equals("Time_9.src.patch")) {
-                //                    continue;
-                //                }
-
                 initFixedFileAndChanges(patch);
                 if (patch.isDeleteAll()) {
                     patch.setCombinedMethod(constructMethod("deleteAllFile"));
