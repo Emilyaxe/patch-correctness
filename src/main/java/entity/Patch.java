@@ -145,11 +145,10 @@ public class Patch {
             cleanSubject(subject.getHome() + subject.get_ssrc());
             for (Patch patch : entry.getValue()) {
                 patchid++;
-                log.info("{} Process patch {}", patchid, patch.getPatchPath());
-                if (!patch.getPatchName().equals("Time_9.src.patch") || !patch.getPatchName()
-                        .equals("Closure_51.src.patch")) {
+                if (!patch.getPatchName().equals("Time_9.src.patch")) {
                     continue;
                 }
+                log.info("{} Process patch {}", patchid, patch.getPatchPath());
 
                 initFixedFileAndChanges(patch);
                 if (patch.isDeleteAll()) {
