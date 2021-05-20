@@ -142,13 +142,14 @@ public class Patch {
             String id = entry.getKey().split("-")[1];
             Subject subject = new Subject(name, Integer.parseInt(id));
             String subjectPath = Constant.PROJECT_HOME + "/" + name + "/" + name + id;
-            cleanSubject(subject.getHome() + subject.get_ssrc());
             for (Patch patch : entry.getValue()) {
                 patchid++;
-                if (!patch.getPatchName().equals("Time_9.src.patch")) {
-                    continue;
-                }
                 log.info("{} Process patch {}", patchid, patch.getPatchPath());
+                cleanSubject(subject.getHome() + subject.get_ssrc());
+
+                //                if (!patch.getPatchName().equals("Time_9.src.patch")) {
+                //                    continue;
+                //                }
 
                 initFixedFileAndChanges(patch);
                 if (patch.isDeleteAll()) {
