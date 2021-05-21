@@ -114,7 +114,6 @@ public class TestFileVisitor extends TraversalVisitor {
         if (node.getBody().statements().size() > 0) {
             testsSet.add(_clazzName + "::" + name);
         }
-
         return true;
     }
 

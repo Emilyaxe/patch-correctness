@@ -140,9 +140,9 @@ public class ObtainTraceInfo {
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
         for (Patch patch : entry.getValue()) {
 
-            //            if (!patch.getPatchName().equals("patch1-Math-78-Nopol-plausible.patch")) {
-            //                continue;
-            //            }
+            if (!patch.getPatchName().equals("Math_61.src.patch")) {
+                continue;
+            }
 
             boolean isPurify = !unPurifyPatches.contains(patch.getPatchName());
             //Set<String> illegalTests = new LinkedHashSet<>();

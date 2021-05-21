@@ -16,11 +16,12 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PatchJson {
-    
+
     private String patchName;
     private String lable;
     private String bugid;
     private String combinedMethod;
     private List<String> failingTests;
-    private Map<String, Set<String>> traceInfo;
+    private Map<String, Set<String>> buggyTraceInfo;
+    private Map<String, Set<String>> fixedTraceInfo;
 }
