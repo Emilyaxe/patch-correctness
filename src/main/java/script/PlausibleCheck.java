@@ -228,8 +228,8 @@ public class PlausibleCheck {
                             .filter(patch -> !commonInPlausibleSet.contains(patch))
                             .collect(Collectors.toSet()));
         }
-        Set<String> unstableSet = new LinkedHashSet<>();
-        retainMap.values().forEach(unstableSet::addAll);
+        Set<String> unstableSet = retainMap.values().stream().flatMap(Set::stream)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
 
         log.info("total map {} common map {} retain map {}", totalInPlausibleSet.size(),
                 commonInPlausibleSet.size(), retainMap.size());
