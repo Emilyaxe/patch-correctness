@@ -95,14 +95,11 @@ public class InstruTestFileVisitor extends TraversalVisitor {
             parent = parent.getParent();
         }
         String name = node.getName().getFullyQualifiedName();
-        //        if ((name.equals("setUp") || name.equals("countTestCases") || name.equals("createResult") || name
-        //        .equals("run")
-        //                || name.equals("runBare") || name.equals("runTest") || name.equals("tearDown")
-        //                || name.equals("toString") || name.equals("getName") || name.equals("setName") || name
-        //                .equals("suite"))) {
-        //            return true;
-        //        }
-        if (!name.startsWith("test")) {
+        if ((name.equals("setUp") || name.equals("countTestCases") || name.equals("createResult") || name
+                .equals("run")
+                || name.equals("runBare") || name.equals("runTest") || name.equals("tearDown")
+                || name.equals("toString") || name.equals("getName") || name.equals("setName") || name
+                .equals("suite"))) {
             return true;
         }
         if (_clazzName.contains("$")) {

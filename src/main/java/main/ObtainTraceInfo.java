@@ -54,6 +54,21 @@ public class ObtainTraceInfo {
             "Math_104.src.patch", "Math_12.src.patch", "Lang_56.src.patch", "Closure_28.src.patch",
             "Lang_23.src.patch", "Time_26.src.patch", "Chart_23.src.patch", "Time_11.src.patch"));
 
+    private static final String unPurifyPatches =
+            "Math_13.src.patch,Chart26b_Patch93,Lang_34.src.patch,patch1-Math-44-SimFix-plausible.patch,"
+                    + "Math_66.src.patch,Math78b_Patch171,patch2-Chart-26-Jaid.patch,"
+                    + "patch1-Chart-26-jMutRepair-plausible.patch,"
+                    + "Math78b_Patch58,Time_7.src.patch,Chart26b_Patch18,patch1-Math-56-Arja-plausible.patch,"
+                    + "patch1-Chart-26-SOFix.patch,Chart26b_Patch19,patch2-Chart-26-Jaid-plausible.patch,"
+                    + "patch1-Chart-26-Kali-plausible.patch,patch1-Math-78-AVATAR-plausible.patch,Lang_65.src.patch,"
+                    + "Math_78.src.patch,patch3-Chart-26-Jaid.patch,Math_44.src.patch,patch1-Chart-26-Jaid-plausible"
+                    + ".patch,"
+                    + "Math_14.src.patch,patch1-Lang-55-Jaid-plausible.patch,patch1-Math-78-Nopol-plausible.patch,"
+                    + "patch1-Chart-26-TBar-plausible.patch,patch1-Chart-26-AVATAR-plausible.patch,Math_56.src.patch,"
+                    + "Time_16.src.patch,patch1-Chart-26-FixMiner-plausible.patch,patch1-Chart-26-Jaid.patch,"
+                    + "Time16b_Patch185,"
+                    + "Chart_26.src.patch,Math_67.src.patch,Lang_53.src.patch";
+
     public static boolean compileAndRun(Subject subject, String oneTest) {
         String srcPath = subject.getHome() + subject.get_ssrc();
         try {
@@ -125,9 +140,11 @@ public class ObtainTraceInfo {
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
         for (Patch patch : entry.getValue()) {
 
-            //            if (!patch.getPatchName().equals("patch1-Chart-8-CapGen.patch")) {
+            //            if (!patch.getPatchName().equals("patch1-Math-78-Nopol-plausible.patch")) {
             //                continue;
             //            }
+
+            boolean isPurify = !unPurifyPatches.contains(patch.getPatchName());
             //Set<String> illegalTests = new LinkedHashSet<>();
             cleanSubject(subject.getHome() + subject.get_ssrc());
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
@@ -142,7 +159,7 @@ public class ObtainTraceInfo {
                         + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
                 ProcessPatch.createCombinedBuggy4AllFiles(patch, reverse);
                 instrument(fixedLine, writeFile, oneFixedFile);
-                instrumentTests(subject, writeFile);
+                instrumentTests(subject, writeFile, isPurify);
                 TimeUnit.SECONDS.sleep(10);
 
                 if (!compile(subject)) {
@@ -172,7 +189,7 @@ public class ObtainTraceInfo {
                         + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
                 ProcessPatch.createCombinedFixed4AllFiles(patch, reverse);
                 instrument(fixedLine, writeFile, oneFixedFile);
-                instrumentTests(subject, writeFile);
+                instrumentTests(subject, writeFile, isPurify);
                 TimeUnit.SECONDS.sleep(10);
 
                 if (!compile(subject)) {
@@ -193,13 +210,14 @@ public class ObtainTraceInfo {
         }
     }
 
-    private static void instrumentTests(Subject subject, String writeFile) {
+    private static void instrumentTests(Subject subject, String writeFile, boolean isPurify) {
         synchronized (lock) {
             String testDir = subject.getHome() + subject.get_tsrc();
             FileIO.backupDir(testDir);
-
-            Purification purification = new Purification(subject);
-            purification.purifyWithoutValidate();
+            if (isPurify) {
+                Purification purification = new Purification(subject);
+                purification.purifyWithoutValidate();
+            }
 
             List<File> allTestFiles = new LinkedList<>();
             FileIO.getAllFile(new File(testDir), allTestFiles);
