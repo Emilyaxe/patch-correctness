@@ -65,6 +65,7 @@ public class BuildJsonResult {
             patchJson.setFixedTraceInfo(fixedMap);
         }
         //FileIO.writeStringToFile("./" + dir, JSON.toJSONString(patches));
+        log.info("Build Patch Set: {} for Dir {}", patches.size(), dir);
         multiPcoessCheck(patches);
     }
 
@@ -86,10 +87,12 @@ public class BuildJsonResult {
             //                continue;
             //            }
             // check all failing tests have traces
+            log.info("Check Patch {}", patchJson.getPatchName());
             List<String> failingTest = patchJson.getFailingTests();
             Map<String, Set<String>> buggyMap = patchJson.getBuggyTraceInfo();
             Map<String, Set<String>> fixedMap = patchJson.getFixedTraceInfo();
             if (failingTest.stream().anyMatch(line -> !buggyMap.containsKey(line) || !fixedMap.containsKey(line))) {
+                log.error("Patch {} does not have failing test trace", patchJson.getPatchName());
                 failingTestProblemList.putIfAbsent(patchJson.getPatchName(), "");
             }
             String combineMethod = patchJson.getCombinedMethod();
@@ -97,6 +100,7 @@ public class BuildJsonResult {
                     buggyMap.values().stream().flatMap(Set::stream).collect(Collectors.toSet()), true) &&
                     checkMapTrace(combineMethod,
                             fixedMap.values().stream().flatMap(Set::stream).collect(Collectors.toSet()), false))) {
+                log.error("Patch {} has a wrong map", patchJson.getPatchName());
                 traceProblemList.put(patchJson.getPatchName(), "");
             }
         }

@@ -53,7 +53,7 @@ public class ObtainTraceInfo {
     private static final Set<String> specialPatches = new HashSet<>(Arrays.asList(
             "Math_104.src.patch", "Math_12.src.patch", "Lang_56.src.patch", "Closure_28.src.patch",
             "Lang_23.src.patch", "Time_26.src.patch", "Chart_23.src.patch", "Time_11.src.patch"));
-    
+
 
     private static final String unPurifyPatches =
             "Math_13.src.patch,Chart26b_Patch93,Lang_34.src.patch,patch1-Math-44-SimFix-plausible.patch,"
@@ -141,9 +141,9 @@ public class ObtainTraceInfo {
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
         for (Patch patch : entry.getValue()) {
 
-            if (!patch.getPatchName().equals("Math_61.src.patch")) {
-                continue;
-            }
+            //            if (!patch.getPatchName().equals("Closure_16.src.patch")) {
+            //                continue;
+            //            }
 
             boolean isPurify = !unPurifyPatches.contains(patch.getPatchName());
             //Set<String> illegalTests = new LinkedHashSet<>();
@@ -438,7 +438,7 @@ public class ObtainTraceInfo {
         Map<String, List<Patch>> correctSubjectPatchMap =
                 correctPatches.stream().collect(Collectors.groupingBy(Patch::getBugid));
         obtainTrace(correctSubjectPatchMap, true, "correctSet");
-        // processCornerCase("correctSet", "Closure_16.src.patch");
+        //processCornerCase("correctSet", "Closure_16.src.patch");
 
 
         log.info("Should Pass Patches: {}", String.join(",", shoulPass.keySet()));
