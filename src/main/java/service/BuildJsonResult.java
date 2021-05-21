@@ -65,7 +65,7 @@ public class BuildJsonResult {
             patchJson.setBuggyTraceInfo(buggyMap);
             patchJson.setFixedTraceInfo(fixedMap);
         }
-        //FileIO.writeStringToFile("./" + dir, JSON.toJSONString(patches));
+        FileIO.writeStringToFile("./" + dir, JSON.toJSONString(patches));
         log.info("Build Patch Set: {} for Dir {}", patches.size(), dir);
         multiPcoessCheck(patches);
     }
