@@ -53,7 +53,7 @@ public class BuildJsonResult {
             //            if (!patchJson.getPatchName().equals("patch1-Math-78-Nopol-plausible.patch")) {
             //                continue;
             //            }
-
+            log.info("Patch {} dynamic info collecting ...", patchJson.getPatchName());
             String buggyLine = BuildPath.buildDymicAllFile(dir, patchJson.getPatchName(), true);
             String fixedLine = BuildPath.buildDymicAllFile(dir, patchJson.getPatchName(), false);
             String failingTestContent = FileIO.readFileToString(
