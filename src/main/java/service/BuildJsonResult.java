@@ -33,6 +33,7 @@ public class BuildJsonResult {
         List<PatchJson> patches = new LinkedList<>();
         JSONObject jsonObject =
                 JSON.parseObject(FileIO.readFileToString(BuildPath.buildMethodReFile(dir)));
+        log.info("Obtain Static Info ...");
         for (Entry<String, Object> entry : jsonObject.entrySet()) {
             String patchName = entry.getKey();
             String bugid = "", label = "", combinedMethod = "";
@@ -47,7 +48,7 @@ public class BuildJsonResult {
                     PatchJson.builder().patchName(patchName).bugid(bugid).lable(label).combinedMethod(combinedMethod)
                             .build());
         }
-
+        log.info("Obtain Dynamic Info ...");
         for (PatchJson patchJson : patches) {
             //            if (!patchJson.getPatchName().equals("patch1-Math-78-Nopol-plausible.patch")) {
             //                continue;
