@@ -37,8 +37,8 @@ public class BuildJsonResult {
             String patchName = entry.getKey();
             String bugid = "", label = "", combinedMethod = "";
             if (entry.getValue() instanceof List) {
-                bugid = ((List<String>) entry.getValue()).get(0);
-                label = ((List<String>) entry.getValue()).get(1);
+                bugid = ((List<String>) entry.getValue()).get(1);
+                label = ((List<String>) entry.getValue()).get(0);
                 combinedMethod = ((List<String>) entry.getValue()).get(2);
             } else {
                 log.error(entry.getValue().toString());
@@ -47,19 +47,22 @@ public class BuildJsonResult {
                     PatchJson.builder().patchName(patchName).bugid(bugid).lable(label).combinedMethod(combinedMethod)
                             .build());
         }
+
         for (PatchJson patchJson : patches) {
-            if (!patchJson.getPatchName().equals("patch1-Math-78-Nopol-plausible.patch")) {
-                continue;
-            }
+            //            if (!patchJson.getPatchName().equals("patch1-Math-78-Nopol-plausible.patch")) {
+            //                continue;
+            //            }
 
             String buggyLine = BuildPath.buildDymicAllFile(dir, patchJson.getPatchName(), true);
-            String fixedFile = BuildPath.buildDymicAllFile(dir, patchJson.getPatchName(), false);
+            String fixedLine = BuildPath.buildDymicAllFile(dir, patchJson.getPatchName(), false);
             String failingTestContent = FileIO.readFileToString(
                     BuildPath.buildDymicAllFile(dir, patchJson.getPatchName(), true) + ".failing");
             patchJson.setFailingTests(Arrays.stream(failingTestContent.split("\n")).filter(Objects::nonNull).collect(
                     Collectors.toList()));
-            patchJson.setBuggyTraceInfo(obtainTrace(FileIO.readFileToString(buggyLine)));
-            patchJson.setFixedTraceInfo(obtainTrace(FileIO.readFileToString(fixedFile)));
+            Map<String, Set<String>> buggyMap = obtainTrace(FileIO.readFileToString(buggyLine));
+            Map<String, Set<String>> fixedMap = obtainTrace(FileIO.readFileToString(fixedLine));
+            patchJson.setBuggyTraceInfo(buggyMap);
+            patchJson.setFixedTraceInfo(fixedMap);
         }
         //FileIO.writeStringToFile("./" + dir, JSON.toJSONString(patches));
         multiPcoessCheck(patches);
@@ -89,7 +92,6 @@ public class BuildJsonResult {
             if (failingTest.stream().anyMatch(line -> !buggyMap.containsKey(line) || !fixedMap.containsKey(line))) {
                 failingTestProblemList.putIfAbsent(patchJson.getPatchName(), "");
             }
-
             String combineMethod = patchJson.getCombinedMethod();
             if (!(checkMapTrace(combineMethod,
                     buggyMap.values().stream().flatMap(Set::stream).collect(Collectors.toSet()), true) &&
@@ -115,6 +117,9 @@ public class BuildJsonResult {
 
     private static Map<String, Set<String>> obtainTrace(String content) {
         Map<String, Set<String>> map = new LinkedHashMap<>();
+        if (StringUtils.isEmpty(content)) {
+            return map;
+        }
         for (String line : content.split("\n")) {
             if (StringUtils.isEmpty(line.trim())) {
                 continue;
