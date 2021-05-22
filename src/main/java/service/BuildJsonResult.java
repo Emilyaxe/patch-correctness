@@ -50,16 +50,17 @@ public class BuildJsonResult {
         }
         log.info("Obtain Dynamic Info ...");
         for (PatchJson patchJson : patches) {
-            if (!patchJson.getPatchName().equals("patch1-Math-63-SimFix-plausible.patch")) {
-                continue;
-            }
+            //            if (!patchJson.getPatchName().equals("patch1-Math-63-SimFix-plausible.patch")) {
+            //                continue;
+            //            }
             log.info("Patch {} dynamic info collecting ...", patchJson.getPatchName());
             String buggyLine = BuildPath.buildDymicAllFile(dir, patchJson.getPatchName(), true);
             String fixedLine = BuildPath.buildDymicAllFile(dir, patchJson.getPatchName(), false);
             String failingTestContent = FileIO.readFileToString(
                     BuildPath.buildDymicAllFile(dir, patchJson.getPatchName(), true) + ".failing");
-            patchJson.setFailingTests(Arrays.stream(failingTestContent.split("\n")).filter(Objects::nonNull).collect(
-                    Collectors.toList()));
+            patchJson.setFailingTests(
+                    Arrays.stream(failingTestContent.split("\n")).filter(Objects::nonNull).filter(StringUtils::nonBlank)
+                            .collect(Collectors.toList()));
             Map<String, Set<String>> buggyMap = obtainTrace(FileIO.readFileToString(buggyLine));
             Map<String, Set<String>> fixedMap = obtainTrace(FileIO.readFileToString(fixedLine));
             patchJson.setBuggyTraceInfo(buggyMap);
@@ -84,9 +85,9 @@ public class BuildJsonResult {
 
 
         for (PatchJson patchJson : patchJsons) {
-            if (!patchJson.getPatchName().equals("patch1-Math-63-SimFix-plausible.patch")) {
-                continue;
-            }
+            //            if (!patchJson.getPatchName().equals("patch1-Math-63-SimFix-plausible.patch")) {
+            //                continue;
+            //            }
             // check all failing tests have traces
             log.info("Check Patch {}", patchJson.getPatchName());
             List<String> failingTest = patchJson.getFailingTests();

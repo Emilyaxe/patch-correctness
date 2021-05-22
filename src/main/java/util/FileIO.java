@@ -282,12 +282,12 @@ public class FileIO {
     }
 
     public static CompilationUnit genASTFromFile(String fileName) {
-        return (CompilationUnit) genASTFromSource(readFileToString(fileName),
+        return genASTFromSource(readFileToString(fileName),
                 ASTParser.K_COMPILATION_UNIT);
     }
 
     public static CompilationUnit genASTFromFile(File file) {
-        return (CompilationUnit) genASTFromSource(readFileToString(file),
+        return genASTFromSource(readFileToString(file),
                 ASTParser.K_COMPILATION_UNIT);
     }
 
