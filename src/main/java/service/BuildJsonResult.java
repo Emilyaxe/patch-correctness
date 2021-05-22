@@ -51,27 +51,32 @@ public class BuildJsonResult {
                             .build());
         }
         log.info("Obtain Dynamic Info ...");
+        List<CompletableFuture<Void>> completableFutures = new LinkedList<>();
         for (PatchJson patchJson : patches) {
             //            if (!patchJson.getPatchName().equals("patch1-Closure-21-AVATAR-plausible.patch")) {
             //                continue;
             //            }
-            log.info("Patch {} dynamic info collecting ...", patchJson.getPatchName());
-            String buggyLine = BuildPath.buildDymicAllFile(dir, patchJson.getPatchName(), true);
-            String fixedLine = BuildPath.buildDymicAllFile(dir, patchJson.getPatchName(), false);
-            String failingTestContent = FileIO.readFileToString(
-                    BuildPath.buildDymicAllFile(dir, patchJson.getPatchName(), true) + ".failing");
-            patchJson.setFailingTests(
-                    Arrays.stream(failingTestContent.split("\n")).filter(Objects::nonNull)
-                            .filter(StringUtils::isNotBlank)
-                            .collect(Collectors.toSet()));
-            String passingTest = FileIO.readFileToString(Constant.PROJ_INFO + "/passing_tests/" + patchJson.getBugId()
-                    .split("-")[0] + "/" + patchJson.getBugId().split("-")[1]);
-            Set<String> testSet = new LinkedHashSet<>(Arrays.asList(passingTest.split("\n")));
-            testSet.addAll(patchJson.getFailingTests());
-            Map<String, Set<String>> buggyMap = obtainTrace(FileIO.readFileToString(buggyLine), testSet);
-            Map<String, Set<String>> fixedMap = obtainTrace(FileIO.readFileToString(fixedLine), testSet);
-            patchJson.setBuggyTraceInfo(buggyMap);
-            patchJson.setFixedTraceInfo(fixedMap);
+            completableFutures.add(CompletableFuture.runAsync(() -> {
+                log.info("Patch {} dynamic info collecting ...", patchJson.getPatchName());
+                String buggyLine = BuildPath.buildDymicAllFile(dir, patchJson.getPatchName(), true);
+                String fixedLine = BuildPath.buildDymicAllFile(dir, patchJson.getPatchName(), false);
+                String failingTestContent = FileIO.readFileToString(
+                        BuildPath.buildDymicAllFile(dir, patchJson.getPatchName(), true) + ".failing");
+                patchJson.setFailingTests(
+                        Arrays.stream(failingTestContent.split("\n")).filter(Objects::nonNull)
+                                .filter(StringUtils::isNotBlank)
+                                .collect(Collectors.toSet()));
+                String passingTest =
+                        FileIO.readFileToString(Constant.PROJ_INFO + "/passing_tests/" + patchJson.getBugId()
+                                .split("-")[0] + "/" + patchJson.getBugId().split("-")[1]);
+                Set<String> testSet = new LinkedHashSet<>(Arrays.asList(passingTest.split("\n")));
+                testSet.addAll(patchJson.getFailingTests());
+                Map<String, Set<String>> buggyMap = obtainTrace(FileIO.readFileToString(buggyLine), testSet);
+                Map<String, Set<String>> fixedMap = obtainTrace(FileIO.readFileToString(fixedLine), testSet);
+                patchJson.setBuggyTraceInfo(buggyMap);
+                patchJson.setFixedTraceInfo(fixedMap);
+            }, EXECUTOR));
+            CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).join();
         }
         FileIO.writeStringToFile("./" + dir, JSON.toJSONString(patches));
         log.info("Build Patch Set: {} for Dir {}", patches.size(), dir);
