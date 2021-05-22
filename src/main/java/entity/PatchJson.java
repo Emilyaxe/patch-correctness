@@ -3,6 +3,8 @@ package entity;
 import java.util.Map;
 import java.util.Set;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +22,8 @@ public class PatchJson {
     private String label;
     private String bugId;
     private String combinedMethod;
+    @JSONField(serialize = false)
+    private String patchPath;
     private Set<String> failingTests;
     private Map<String, Set<String>> buggyTraceInfo;
     private Map<String, Set<String>> fixedTraceInfo;

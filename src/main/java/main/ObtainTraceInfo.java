@@ -141,9 +141,9 @@ public class ObtainTraceInfo {
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
         for (Patch patch : entry.getValue()) {
 
-            if (!patch.getPatchName().equals("patch1-Closure-21-AVATAR-plausible.patch")) {
-                continue;
-            }
+            //            if (!patch.getPatchName().equals("patch1-Closure-21-AVATAR-plausible.patch")) {
+            //                continue;
+            //            }
 
             boolean isPurify = !unPurifyPatches.contains(patch.getPatchName());
             //Set<String> illegalTests = new LinkedHashSet<>();
