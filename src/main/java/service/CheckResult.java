@@ -97,10 +97,7 @@ public class CheckResult {
     }
 
     private static boolean checkTest(Set<String> testSet, String test) {
-        if (testSet.contains(test)) {
-            return true;
-        }
-        return testSet.stream().allMatch(key -> {
+        return testSet.stream().anyMatch(key -> {
             if (!key.contains("$")) {
                 return key.equals(test);
             } else {
