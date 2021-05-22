@@ -37,13 +37,13 @@ public class ObtainMethods4All {
             String[] infoArray = info.split("_");
 
             String bugId = infoArray[1];
-            patches.add(Patch.builder().lable(label).patchName(info)
-                    .bugid(bugId).patchPath(patchDir + "/" + info).id(i)
+            patches.add(Patch.builder().label(label).patchName(info)
+                    .bugId(bugId).patchPath(patchDir + "/" + info).id(i)
                     .build());
         }
 
         Map<String, List<Patch>> subjectPatchMap =
-                patches.stream().collect(Collectors.groupingBy(Patch::getBugid));
+                patches.stream().collect(Collectors.groupingBy(Patch::getBugId));
         log.info("Totol Subject {}", subjectPatchMap.size());
         log.info("Total Patches {}", subjectPatchMap.values().stream().mapToLong(List::size).sum());
         return subjectPatchMap;
@@ -66,13 +66,13 @@ public class ObtainMethods4All {
             String id = StringUtils.getDigits(infoArray[0]);
             String name = infoArray[0].split(id)[0];
 
-            patches.add(Patch.builder().lable(label).patchName(info)
-                    .bugid(name + "-" + id).patchPath(patchDir + "/" + infoArray[1]).id(i)
+            patches.add(Patch.builder().label(label).patchName(info)
+                    .bugId(name + "-" + id).patchPath(patchDir + "/" + infoArray[1]).id(i)
                     .build());
         }
 
         Map<String, List<Patch>> subjectPatchMap =
-                patches.stream().collect(Collectors.groupingBy(Patch::getBugid));
+                patches.stream().collect(Collectors.groupingBy(Patch::getBugId));
         log.info("Totol Subject {}", subjectPatchMap.size());
         log.info("Total Patches {}", subjectPatchMap.values().stream().mapToLong(List::size).sum());
         return subjectPatchMap;
@@ -92,14 +92,14 @@ public class ObtainMethods4All {
             String id = infoArray[1].split("\\.")[0];
             String name = infoArray[0];
 
-            patches.add(Patch.builder().lable(label).patchName(info)
-                    .bugid(name + "-" + id).patchPath(correctDir + "/" + name + "/patches/" + id + ".src.patch")
+            patches.add(Patch.builder().label(label).patchName(info)
+                    .bugId(name + "-" + id).patchPath(correctDir + "/" + name + "/patches/" + id + ".src.patch")
                     .id(i)
                     .build());
         }
 
         Map<String, List<Patch>> subjectPatchMap =
-                patches.stream().collect(Collectors.groupingBy(Patch::getBugid));
+                patches.stream().collect(Collectors.groupingBy(Patch::getBugId));
         log.info("Totol Subject {}", subjectPatchMap.size());
         log.info("Total Patches {}", subjectPatchMap.values().stream().mapToLong(List::size).sum());
         return subjectPatchMap;
@@ -114,13 +114,13 @@ public class ObtainMethods4All {
                 continue;
             }
             String[] name = f.getName().split(".patch")[0].split("-");
-            patches.add(Patch.builder().lable("1").patchName(f.getName())
-                    .bugid(name[1] + "-" + name[2]).patchPath(f.getAbsolutePath()).tool(name[3])
+            patches.add(Patch.builder().label("1").patchName(f.getName())
+                    .bugId(name[1] + "-" + name[2]).patchPath(f.getAbsolutePath()).tool(name[3])
                     .id(0)
                     .build());
         }
         Map<String, List<Patch>> subjectPatchMap =
-                patches.stream().collect(Collectors.groupingBy(Patch::getBugid));
+                patches.stream().collect(Collectors.groupingBy(Patch::getBugId));
         log.info("Totol Subject {}", subjectPatchMap.size());
         log.info("Total Patches {}", subjectPatchMap.values().stream().mapToLong(List::size).sum());
         return subjectPatchMap;
@@ -134,13 +134,13 @@ public class ObtainMethods4All {
                 continue;
             }
             String[] name = f.getName().split(".patch")[0].split("-");
-            patches.add(Patch.builder().lable("0").patchName(f.getName())
-                    .bugid(name[1] + "-" + name[2]).patchPath(f.getAbsolutePath()).tool(name[3])
+            patches.add(Patch.builder().label("0").patchName(f.getName())
+                    .bugId(name[1] + "-" + name[2]).patchPath(f.getAbsolutePath()).tool(name[3])
                     .id(0)
                     .build());
         }
         Map<String, List<Patch>> subjectPatchMap =
-                patches.stream().collect(Collectors.groupingBy(Patch::getBugid));
+                patches.stream().collect(Collectors.groupingBy(Patch::getBugId));
         log.info("Totol Subject {}", subjectPatchMap.size());
         log.info("Total Patches {}", subjectPatchMap.values().stream().mapToLong(List::size).sum());
         return subjectPatchMap;

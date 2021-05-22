@@ -42,9 +42,9 @@ import util.FileIO;
 public class PlausibleCheck {
 
     public static void moveTestSet() {
-        String[] testSet = { "Math88b_Patch74", "Lang46b_Patch22", "Math79b_Patch77",
+        String[] testSet = {"Math88b_Patch74", "Lang46b_Patch22", "Math79b_Patch77",
                 "Math22b_PatchHDRepair3", "Math4b_Patch155", "Chart13b_Patch9",
-                "Lang57b_PatchHDRepair1", "Time11b_Patch182", "Time12b_Patch183" };
+                "Lang57b_PatchHDRepair1", "Time11b_Patch182", "Time12b_Patch183"};
         String sourceDir = Constant.HOME + "/Patches/experiment3/TestSet/";
         String targetDir = Constant.HOME + "/Patches/DataSet/tmp/";
         for (String patch : testSet) {
@@ -177,12 +177,12 @@ public class PlausibleCheck {
                 String id = StringUtils.getDigits(res);
                 String name = res.split(id)[0];
                 String bugid = name + "-" + id;
-                tmpPatch.add(Patch.builder().patchName(fileName).patchPath(filePath).bugid(bugid)
+                tmpPatch.add(Patch.builder().patchName(fileName).patchPath(filePath).bugId(bugid)
                         .build());
             } else {
                 String[] result = fileName.split("-");
                 String bugid = result[1] + "-" + result[2];
-                tmpPatch.add(Patch.builder().patchName(fileName).patchPath(filePath).bugid(bugid)
+                tmpPatch.add(Patch.builder().patchName(fileName).patchPath(filePath).bugId(bugid)
                         .build());
             }
         }
@@ -191,7 +191,7 @@ public class PlausibleCheck {
         allPatches.addAll(testPatch);
         allPatches.addAll(tmpPatch);
         log.info("All Patches {}", allPatches.size());
-        return allPatches.stream().collect(Collectors.groupingBy(Patch::getBugid));
+        return allPatches.stream().collect(Collectors.groupingBy(Patch::getBugId));
     }
 
     private static void checkResult() {
@@ -234,8 +234,9 @@ public class PlausibleCheck {
         log.info("total map {} common map {} retain map {}", totalInPlausibleSet.size(),
                 commonInPlausibleSet.size(), retainMap.size());
 
-        String inplausibleDir = "/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/Patches/DataSet"
-                + "/inplausible/";
+        String inplausibleDir =
+                "/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/Patches/DataSet"
+                        + "/inplausible/";
         for (String patchPath : commonInPlausibleSet) {
             patchPath = patchPath.replaceAll("/home/jjliang", "/Users/liangjingjing");
             String[] result = patchPath.split("/");
@@ -291,7 +292,7 @@ public class PlausibleCheck {
             String id = StringUtils.getDigits(infoArray[0]);
             String name = infoArray[0].split(id)[0];
 
-            patches.add(Patch.builder().lable(label).patchName(info).bugid(name + "-" + id)
+            patches.add(Patch.builder().label(label).patchName(info).bugId(name + "-" + id)
                     .patchPath(patchDir + "/" + infoArray[1]).id(i).build());
         }
 
@@ -306,8 +307,8 @@ public class PlausibleCheck {
                     for (Patch patch1 : patches) {
                         if (patch1.getPatchName().equals(fileName)) {
                             List<String> list = new LinkedList<>();
-                            list.add(patch1.getBugid());
-                            list.add(patch1.getLable());
+                            list.add(patch1.getBugId());
+                            list.add(patch1.getLabel());
                             inplausibleObject.put(fileName, list);
                             break;
                         }

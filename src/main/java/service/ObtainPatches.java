@@ -30,7 +30,7 @@ public class ObtainPatches {
             } else {
                 log.error(entry.getValue().toString());
             }
-            patches.add(Patch.builder().patchName(patchName).bugid(bugid).lable(label)
+            patches.add(Patch.builder().patchName(patchName).bugId(bugid).label(label)
                     .patchPath(patchDir + patchName).build());
         }
 
@@ -57,7 +57,7 @@ public class ObtainPatches {
             } else {
                 log.error(entry.getValue().toString());
             }
-            patches.add(Patch.builder().patchName(patchName).bugid(bugid).lable(label)
+            patches.add(Patch.builder().patchName(patchName).bugId(bugid).label(label)
                     .patchPath(patchDir + patchName).build());
         }
 
@@ -84,7 +84,7 @@ public class ObtainPatches {
             } else {
                 log.error(entry.getValue().toString());
             }
-            patches.add(Patch.builder().patchName(patchName).bugid(bugid).lable(label)
+            patches.add(Patch.builder().patchName(patchName).bugId(bugid).label(label)
                     .patchPath(patchDir + patchName).build());
         }
         return patches;

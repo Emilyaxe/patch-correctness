@@ -81,9 +81,9 @@ public class ObtainPassingTests {
         List<Patch> trainPatches = ObtainPatches.readTrainPatches();
         List<Patch> correctPatches = ObtainPatches.readCorPatches();
         Set<String> subjects = new LinkedHashSet<>();
-        subjects.addAll(testPatches.stream().map(Patch::getBugid).collect(Collectors.toSet()));
-        subjects.addAll(trainPatches.stream().map(Patch::getBugid).collect(Collectors.toSet()));
-        subjects.addAll(correctPatches.stream().map(Patch::getBugid).collect(Collectors.toSet()));
+        subjects.addAll(testPatches.stream().map(Patch::getBugId).collect(Collectors.toSet()));
+        subjects.addAll(trainPatches.stream().map(Patch::getBugId).collect(Collectors.toSet()));
+        subjects.addAll(correctPatches.stream().map(Patch::getBugId).collect(Collectors.toSet()));
         for (String str : subjects) {
             futureList.add(CompletableFuture.runAsync(() -> {
                 try {
@@ -103,9 +103,9 @@ public class ObtainPassingTests {
         List<Patch> trainPatches = ObtainPatches.readTrainPatches();
         List<Patch> correctPatches = ObtainPatches.readCorPatches();
         Set<String> subjects = new LinkedHashSet<>();
-        subjects.addAll(testPatches.stream().map(Patch::getBugid).collect(Collectors.toSet()));
-        subjects.addAll(trainPatches.stream().map(Patch::getBugid).collect(Collectors.toSet()));
-        subjects.addAll(correctPatches.stream().map(Patch::getBugid).collect(Collectors.toSet()));
+        subjects.addAll(testPatches.stream().map(Patch::getBugId).collect(Collectors.toSet()));
+        subjects.addAll(trainPatches.stream().map(Patch::getBugId).collect(Collectors.toSet()));
+        subjects.addAll(correctPatches.stream().map(Patch::getBugId).collect(Collectors.toSet()));
         for (String str : subjects) {
             futureList.add(CompletableFuture.runAsync(() -> {
                 try {

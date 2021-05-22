@@ -45,14 +45,14 @@ public class BuildJsonResult {
                 log.error(entry.getValue().toString());
             }
             patches.add(
-                    PatchJson.builder().patchName(patchName).bugid(bugid).lable(label).combinedMethod(combinedMethod)
+                    PatchJson.builder().patchName(patchName).bugId(bugid).label(label).combinedMethod(combinedMethod)
                             .build());
         }
         log.info("Obtain Dynamic Info ...");
         for (PatchJson patchJson : patches) {
-            //            if (!patchJson.getPatchName().equals("patch1-Math-78-Nopol-plausible.patch")) {
-            //                continue;
-            //            }
+            if (!patchJson.getPatchName().equals("patch1-Math-63-SimFix-plausible.patch")) {
+                continue;
+            }
             log.info("Patch {} dynamic info collecting ...", patchJson.getPatchName());
             String buggyLine = BuildPath.buildDymicAllFile(dir, patchJson.getPatchName(), true);
             String fixedLine = BuildPath.buildDymicAllFile(dir, patchJson.getPatchName(), false);
@@ -84,9 +84,9 @@ public class BuildJsonResult {
 
 
         for (PatchJson patchJson : patchJsons) {
-            //            if (!patchJson.getPatchName().equals("patch1-Math-78-Nopol-plausible.patch")) {
-            //                continue;
-            //            }
+            if (!patchJson.getPatchName().equals("patch1-Math-63-SimFix-plausible.patch")) {
+                continue;
+            }
             // check all failing tests have traces
             log.info("Check Patch {}", patchJson.getPatchName());
             List<String> failingTest = patchJson.getFailingTests();
@@ -111,7 +111,7 @@ public class BuildJsonResult {
         String[] methods = combinedMethod.split("\n");
         String illegalStart = isbuggy ? "+" : "-";
         for (String line : trace) {
-            Integer lineNumber = Integer.parseInt(line.split("#")[1]);
+            int lineNumber = Integer.parseInt(line.split("#")[1]);
             if (lineNumber >= methods.length || methods[lineNumber].startsWith("//") || methods[lineNumber]
                     .startsWith(illegalStart)) {
                 return false;

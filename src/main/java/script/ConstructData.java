@@ -45,8 +45,8 @@ public class ConstructData {
                         exception.printStackTrace();
                     }
                     List<String> list = new LinkedList<>();
-                    list.add(patch.getBugid());
-                    list.add(patch.getLable());
+                    list.add(patch.getBugId());
+                    list.add(patch.getLabel());
 
                     jsonObject.put(patch.getPatchName(), list);
                 }
@@ -67,13 +67,13 @@ public class ConstructData {
 
         List<Patch> testPatch = ObtainPatches.readTestPatches();
         Set<String> testContentPatch = testPatch.stream().map(patch ->
-                patch.getBugid() + "#" + processPatch(FileIO.readFileToString(patch.getPatchPath())))
+                patch.getBugId() + "#" + processPatch(FileIO.readFileToString(patch.getPatchPath())))
                 .collect(Collectors.toSet());
         log.info("List size: {}, Set Size:{}", testPatch.size(), testContentPatch.size());
         List<Patch> duplicatePatches = new LinkedList<>();
         //for (Entry<String, List<Patch>> entry : patchMap.entrySet()) {
         for (Patch patch : trainPatch) {
-            String match = patch.getBugid() + "#" + processPatch(FileIO.readFileToString(patch.getPatchPath()));
+            String match = patch.getBugId() + "#" + processPatch(FileIO.readFileToString(patch.getPatchPath()));
             if (!testContentPatch.contains(match)) {
                 try {
                     FileUtils.copyFile(new File(patch.getPatchPath()), new File
@@ -82,8 +82,8 @@ public class ConstructData {
                     exception.printStackTrace();
                 }
                 List<String> list = new LinkedList<>();
-                list.add(patch.getBugid());
-                list.add(patch.getLable());
+                list.add(patch.getBugId());
+                list.add(patch.getLabel());
                 jsonObject.put(patch.getPatchName(), list);
             } else {
                 duplicatePatches.add(patch);
@@ -105,9 +105,9 @@ public class ConstructData {
         //                .collect(Collectors.toSet());
         for (Patch patch : trainPatch) {
             if (!trainContentPatch
-                    .contains(patch.getBugid() + "#" + processPatch(FileIO.readFileToString(patch.getPatchPath())))) {
+                    .contains(patch.getBugId() + "#" + processPatch(FileIO.readFileToString(patch.getPatchPath())))) {
                 trainContentPatch
-                        .add(patch.getBugid() + "#" + processPatch(FileIO.readFileToString(patch.getPatchPath())));
+                        .add(patch.getBugId() + "#" + processPatch(FileIO.readFileToString(patch.getPatchPath())));
                 //                try {
                 //
                 //                                        FileUtils.copyFile(new File(patch.getPatchPath()), new File
@@ -116,8 +116,8 @@ public class ConstructData {
                 //                    exception.printStackTrace();
                 //                }
                 List<String> list = new LinkedList<>();
-                list.add(patch.getBugid());
-                list.add(patch.getLable());
+                list.add(patch.getBugId());
+                list.add(patch.getLabel());
                 jsonObject.put(patch.getPatchName(), list);
             } else {
                 duplicatePatches.add(patch);
@@ -238,10 +238,10 @@ public class ConstructData {
         List<Patch> testSet = ObtainPatches.readTestPatches();
         List<Patch> trainSet = ObtainPatches.readTrainPatches();
         Set<String> testContentPatch = testSet.stream().map(patch ->
-                patch.getBugid() + "#" + processPatch(FileIO.readFileToString(patch.getPatchPath())))
+                patch.getBugId() + "#" + processPatch(FileIO.readFileToString(patch.getPatchPath())))
                 .collect(Collectors.toSet());
         Set<String> trainContentPatch = trainSet.stream().map(patch ->
-                patch.getBugid() + "#" + processPatch(FileIO.readFileToString(patch.getPatchPath())))
+                patch.getBugId() + "#" + processPatch(FileIO.readFileToString(patch.getPatchPath())))
                 .collect(Collectors.toSet());
         Set<String> allContent = new LinkedHashSet<>();
         allContent.addAll(testContentPatch);

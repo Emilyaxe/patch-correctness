@@ -426,17 +426,17 @@ public class ObtainTraceInfo {
     public static void main(String[] args) {
         List<Patch> trainPatch = ObtainPatches.readTrainPatches();
         Map<String, List<Patch>> trainPatchMap = trainPatch.stream()
-                .collect(Collectors.groupingBy(Patch::getBugid));
+                .collect(Collectors.groupingBy(Patch::getBugId));
         obtainTrace(trainPatchMap, false, "trainSet");
 
         List<Patch> testPatches = ObtainPatches.readTestPatches();
         Map<String, List<Patch>> testSubjectPatchMap =
-                testPatches.stream().collect(Collectors.groupingBy(Patch::getBugid));
+                testPatches.stream().collect(Collectors.groupingBy(Patch::getBugId));
         obtainTrace(testSubjectPatchMap, false, "testSet");
 
         List<Patch> correctPatches = ObtainPatches.readCorPatches();
         Map<String, List<Patch>> correctSubjectPatchMap =
-                correctPatches.stream().collect(Collectors.groupingBy(Patch::getBugid));
+                correctPatches.stream().collect(Collectors.groupingBy(Patch::getBugId));
         obtainTrace(correctSubjectPatchMap, true, "correctSet");
         //processCornerCase("correctSet", "Closure_16.src.patch");
 

@@ -53,8 +53,8 @@ public class checkData {
                 String name = infoArray[0].split(id)[0];
                 JSONObject jsonObject =
                         JSON.parseObject(FileIO.readFileToString(testPatchInfoDir + "/" + infoArray[1] + ".json"));
-                Patch.PatchBuilder builder = Patch.builder().lable(label).patchName(infoArray[1])
-                        .bugid(name + "-" + id).patchPath(testPatchDir + "/" + infoArray[1]).id(index + 1);
+                Patch.PatchBuilder builder = Patch.builder().label(label).patchName(infoArray[1])
+                        .bugId(name + "-" + id).patchPath(testPatchDir + "/" + infoArray[1]).id(index + 1);
                 if (!jsonObject.isEmpty()) {
                     builder.tool(jsonObject.getString("tool"))
                             .correctness(jsonObject.getString("correctness"));
@@ -67,18 +67,18 @@ public class checkData {
                 String[] infoArray = info.split("_");
 
                 String bugId = infoArray[1];
-                trainPatchInfoList.add(Patch.builder().lable(label).patchName(infoArray[1])
-                        .bugid(bugId).patchPath(trainPatchDir + "/" + info).id(index + 1)
+                trainPatchInfoList.add(Patch.builder().label(label).patchName(infoArray[1])
+                        .bugId(bugId).patchPath(trainPatchDir + "/" + info).id(index + 1)
                         .tool(infoArray[0]).correctness(label.equals("0") ? "Incorrect" : "Correct")
                         .build());
             }
         }
         Map<String, List<Patch>> testPatchMap =
                 testPatchInfoList.stream().filter(Objects::nonNull).filter(patch -> patch.getTool().equals("ACS"))
-                        .collect(Collectors.groupingBy(patch -> patch.getBugid() + patch.getTool()));
+                        .collect(Collectors.groupingBy(patch -> patch.getBugId() + patch.getTool()));
         Map<String, List<Patch>> trainPatchMap =
                 trainPatchInfoList.stream().filter(Objects::nonNull).filter(patch -> patch.getTool().equals("ACS"))
-                        .collect(Collectors.groupingBy(patch -> patch.getBugid() + patch.getTool()));
+                        .collect(Collectors.groupingBy(patch -> patch.getBugId() + patch.getTool()));
         Set<String> intersection = new HashSet<>(trainPatchMap.keySet());
         intersection.retainAll(testPatchMap.keySet());
         Map<String, Map<String, List<Patch>>> totalMap = new HashMap<>();

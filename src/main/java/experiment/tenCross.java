@@ -32,7 +32,7 @@ public class tenCross {
         allPatches.addAll(correctPatches);
 
         Map<String, List<Patch>> subjectpatchMap =
-                allPatches.stream().collect(Collectors.groupingBy(Patch::getBugid));
+                allPatches.stream().collect(Collectors.groupingBy(Patch::getBugId));
 
         List<String> keyList = new ArrayList<>(subjectpatchMap.keySet());
 

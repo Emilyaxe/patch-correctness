@@ -37,9 +37,9 @@ import util.FileIO;
 public class Patch {
 
     private Integer id;
-    private String lable;
+    private String label;
     private String tool;
-    private String bugid;
+    private String bugId;
     private String patchName;
     private String content;
     private String patchPath;
@@ -61,7 +61,7 @@ public class Patch {
         String[] diffParagraphs = diffFile.split("@@ -");
         String firstParagraphs = diffParagraphs[0];
         String[] lines = firstParagraphs.split("\n");
-        String prefix = patch.getBugid().replaceAll("-", "");
+        String prefix = patch.getBugId().replaceAll("-", "");
         if (lines[0].trim().startsWith(prefix)) {
             String fixedFile = Arrays.stream(lines[0].split("\\.java")[0].split("/"))
                     .filter(StringUtils::isNotBlank).skip(1)
@@ -153,8 +153,8 @@ public class Patch {
                 if (patch.isDeleteAll()) {
                     patch.setCombinedMethod(constructMethod("deleteAllFile"));
                     List<String> tmpList = new LinkedList<>();
-                    tmpList.add(patch.getLable());
-                    tmpList.add(patch.getBugid());
+                    tmpList.add(patch.getLabel());
+                    tmpList.add(patch.getBugId());
                     tmpList.add(patch.getCombinedMethod());
                     nameValueMap.put(patch.getPatchName(), tmpList);
                     continue;
@@ -202,8 +202,8 @@ public class Patch {
                 }
                 if (StringUtils.isNotEmpty(patch.getCombinedMethod())) {
                     List<String> tmpList = new LinkedList<>();
-                    tmpList.add(patch.getLable());
-                    tmpList.add(patch.getBugid());
+                    tmpList.add(patch.getLabel());
+                    tmpList.add(patch.getBugId());
                     tmpList.add(patch.getCombinedMethod());
                     nameValueMap.put(patch.getPatchName(), tmpList);
                 } else {

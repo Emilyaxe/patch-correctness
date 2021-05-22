@@ -40,7 +40,7 @@ public class ObtainMethods4Kui {
             String lable = name[2];
             Patch4Kui patch = new Patch4Kui(patchFile.getAbsolutePath());
             patch.setPatchName(patchFile.getName());
-            patch.setLable(lable);
+            patch.setLabel(lable);
             //patch.recordChangeLines();
 
             if (subjectPatchMap.containsKey(subStr)) {

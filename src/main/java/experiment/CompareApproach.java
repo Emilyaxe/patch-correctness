@@ -20,7 +20,7 @@ public class CompareApproach {
                 + "HDRepair8, HDRepair9";
 
         List<Patch> testPatches = ObtainPatches.readTestPatches();
-        Set<String> incorPatches = testPatches.stream().filter(patch -> patch.getLable().equals("0"))
+        Set<String> incorPatches = testPatches.stream().filter(patch -> patch.getLabel().equals("0"))
                 .map(patch -> patch.getPatchName().split("_")[1].split("Patch")[1]).collect(
                         Collectors.toSet());
         Set<String> result = new LinkedHashSet<>();

@@ -18,7 +18,7 @@ public class ObtainMethods4DataSet {
         //        Patch.findMethods(subjectPatchMap, "trainSet", false);
         List<Patch> testPatches = ObtainPatches.readTestPatches();
         Map<String, List<Patch>> testSubjectPatchMap =
-                testPatches.stream().collect(Collectors.groupingBy(Patch::getBugid));
+                testPatches.stream().collect(Collectors.groupingBy(Patch::getBugId));
         Patch.findMethods(testSubjectPatchMap, "testSet", false);
 
         //        List<Patch> corPatches = ObtainPatches.readCorPatches();

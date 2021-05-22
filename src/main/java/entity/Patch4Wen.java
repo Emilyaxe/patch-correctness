@@ -56,7 +56,7 @@ public class Patch4Wen {
         // String fixedFile = lines[0].split("--- ")[1];
         for (int i = 1; i < diffParagraphs.length; i++) {
             String diffParagraph = diffParagraphs[i];
-            String lines[] = diffParagraph.split("\n");
+            String[] lines = diffParagraph.split("\n");
             int lineNumber = Integer.parseInt(lines[0].split(",")[1].split(" +")[1]);
             for (int j = 1; j < lines.length; j++) {
                 String line = lines[j];

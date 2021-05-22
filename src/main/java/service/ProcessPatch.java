@@ -40,7 +40,7 @@ public class ProcessPatch {
         Map<String, String> patchRecord = new LinkedHashMap<>();
 
         for (String diffFile : diffFiles) {
-            String prefix = patch.getBugid().replaceAll("-", "");
+            String prefix = patch.getBugId().replaceAll("-", "");
             String oneFixedFile = obtainOneFixedFile(diffFile.split("\n")[0], prefix);
             String[] diffParagraphs = diffFile.split("@@ -");
             for (int i = 1; i < diffParagraphs.length; i++) {
@@ -73,7 +73,7 @@ public class ProcessPatch {
     public static void createCombinedBuggy4AllFiles(Patch patch, boolean reverse) {
         log.info("Change to buggy version ... ");
         Map<String, String> patchMap = recordChanges4AllFiles(patch, reverse);
-        String[] subject = patch.getBugid().split("-");
+        String[] subject = patch.getBugId().split("-");
 
         Map<String, Set<Integer>> fileLineMap = patchMap.keySet().stream().filter(Objects::nonNull)
                 .collect(Collectors.groupingBy(line -> line.split("#")[0], Collectors.mapping(
@@ -118,7 +118,7 @@ public class ProcessPatch {
     public static void createCombinedFixed4AllFiles(Patch patch, boolean reverse) {
         log.info("Change to fixed version ... ");
         Map<String, String> patchMap = recordChanges4AllFiles(patch, reverse);
-        String[] subject = patch.getBugid().split("-");
+        String[] subject = patch.getBugId().split("-");
 
         Map<String, Set<Integer>> fileLineMap = patchMap.keySet().stream().filter(Objects::nonNull)
                 .collect(Collectors.groupingBy(line -> line.split("#")[0], Collectors.mapping(

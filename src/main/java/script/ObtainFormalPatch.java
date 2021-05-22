@@ -33,7 +33,7 @@ public class ObtainFormalPatch {
                 String fileName[] = patchFile.getName().split(".patch")[0].split("-");
                 String subject = fileName[1] + "-" + fileName[2];
                 String tool = fileName[3];
-                Patch patch = Patch.builder().lable(label).tool(tool).bugid(subject)
+                Patch patch = Patch.builder().label(label).tool(tool).bugId(subject)
                         .patchName(patchFile.getName()).build();
                 patch.setPatchPath(patchFile.getAbsolutePath());
                 wenPatchList.add(patch);
@@ -52,7 +52,7 @@ public class ObtainFormalPatch {
             if (i > 130 && i < 665) {
                 String tool = patchName.split("_")[0];
                 String subject = patchName.split("_")[1];
-                Patch patch1 = Patch.builder().lable(lable).tool(tool).bugid(subject)
+                Patch patch1 = Patch.builder().label(lable).tool(tool).bugId(subject)
                         .patchName(patchName).build();
                 trainPatches.add(patch1);
             }
@@ -78,8 +78,8 @@ public class ObtainFormalPatch {
             boolean findOne = false;
 
             for (Patch wPatch : wenPatchList) {
-                if (wPatch.getTool().equals(tool) && wPatch.getLable().equals(patch.getLable()) && wPatch.getBugid()
-                        .equals(patch.getBugid())) {
+                if (wPatch.getTool().equals(tool) && wPatch.getLabel().equals(patch.getLabel()) && wPatch.getBugId()
+                        .equals(patch.getBugId())) {
                     if (map.containsKey(patch.getPatchName())) {
                         log.info("patch {} has multiple corresponding files", patch.toString());
 

@@ -18,8 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 public class PatchJson {
 
     private String patchName;
-    private String lable;
-    private String bugid;
+    private String label;
+    private String bugId;
     private String combinedMethod;
     private List<String> failingTests;
     private Map<String, Set<String>> buggyTraceInfo;
