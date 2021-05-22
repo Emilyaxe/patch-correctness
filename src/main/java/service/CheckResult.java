@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -61,7 +62,7 @@ public class CheckResult {
         // 1. all tests have no trace
         String allFailingTestNoTrace = Arrays.stream(problemPatchList).map(patchMap::get).filter(Objects::nonNull)
                 .filter(patchJson -> patchJson.getFailingTests().stream()
-                        .noneMatch(patchJson.getBuggyTraceInfo().keySet()::contains))
+                        .noneMatch(test -> checkTest(patchJson.getBuggyTraceInfo().keySet(), test)))
                 .map(PatchJson::getPatchName)
                 .collect(Collectors.joining(","));
         log.error("all falling test have no trace on buggy version: {}", allFailingTestNoTrace);
@@ -69,7 +70,7 @@ public class CheckResult {
         // 2. all  tests have no trace
         String allFailingTestNoTraceFixed = Arrays.stream(problemPatchList).map(patchMap::get).filter(Objects::nonNull)
                 .filter(patchJson -> patchJson.getFailingTests().stream()
-                        .noneMatch(patchJson.getFixedTraceInfo().keySet()::contains))
+                        .noneMatch(test -> checkTest(patchJson.getFixedTraceInfo().keySet(), test)))
                 .map(PatchJson::getPatchName)
                 .collect(Collectors.joining(","));
         log.error("all falling test have no trace on fixed version: {}", allFailingTestNoTraceFixed);
@@ -93,6 +94,19 @@ public class CheckResult {
                                         .getFixedTraceInfo().containsKey(test)).collect(
                                         Collectors.toList())))).collect(Collectors.joining(","));
         log.error("other test have no trace: {}", other);
+    }
+
+    private static boolean checkTest(Set<String> testSet, String test) {
+        if (testSet.contains(test)) {
+            return true;
+        }
+        return testSet.stream().allMatch(key -> {
+            if (!key.contains("$")) {
+                return key.equals(test);
+            } else {
+                return (key.split("\\$")[0] + "::" + key.split("::")[1]).equals(test);
+            }
+        });
     }
 
     public static void main(String[] args) {
