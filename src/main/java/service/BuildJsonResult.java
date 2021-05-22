@@ -59,7 +59,8 @@ public class BuildJsonResult {
             String failingTestContent = FileIO.readFileToString(
                     BuildPath.buildDymicAllFile(dir, patchJson.getPatchName(), true) + ".failing");
             patchJson.setFailingTests(
-                    Arrays.stream(failingTestContent.split("\n")).filter(Objects::nonNull).filter(StringUtils::nonBlank)
+                    Arrays.stream(failingTestContent.split("\n")).filter(Objects::nonNull)
+                            .filter(StringUtils::isNotBlank)
                             .collect(Collectors.toList()));
             Map<String, Set<String>> buggyMap = obtainTrace(FileIO.readFileToString(buggyLine));
             Map<String, Set<String>> fixedMap = obtainTrace(FileIO.readFileToString(fixedLine));
