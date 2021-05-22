@@ -4,6 +4,7 @@ import static util.AsyExecutor.EXECUTOR;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
+import config.Constant;
 import entity.PatchJson;
 import lombok.extern.slf4j.Slf4j;
 import util.BuildPath;
@@ -50,7 +52,7 @@ public class BuildJsonResult {
         }
         log.info("Obtain Dynamic Info ...");
         for (PatchJson patchJson : patches) {
-            //            if (!patchJson.getPatchName().equals("patch1-Math-63-SimFix-plausible.patch")) {
+            //            if (!patchJson.getPatchName().equals("patch1-Closure-21-AVATAR-plausible.patch")) {
             //                continue;
             //            }
             log.info("Patch {} dynamic info collecting ...", patchJson.getPatchName());
@@ -61,9 +63,13 @@ public class BuildJsonResult {
             patchJson.setFailingTests(
                     Arrays.stream(failingTestContent.split("\n")).filter(Objects::nonNull)
                             .filter(StringUtils::isNotBlank)
-                            .collect(Collectors.toList()));
-            Map<String, Set<String>> buggyMap = obtainTrace(FileIO.readFileToString(buggyLine));
-            Map<String, Set<String>> fixedMap = obtainTrace(FileIO.readFileToString(fixedLine));
+                            .collect(Collectors.toSet()));
+            String passingTest = FileIO.readFileToString(Constant.PROJ_INFO + "/passing_tests/" + patchJson.getBugId()
+                    .split("-")[0] + "/" + patchJson.getBugId().split("-")[1]);
+            Set<String> testSet = new LinkedHashSet<>(Arrays.asList(passingTest.split("\n")));
+            testSet.addAll(patchJson.getFailingTests());
+            Map<String, Set<String>> buggyMap = obtainTrace(FileIO.readFileToString(buggyLine), testSet);
+            Map<String, Set<String>> fixedMap = obtainTrace(FileIO.readFileToString(fixedLine), testSet);
             patchJson.setBuggyTraceInfo(buggyMap);
             patchJson.setFixedTraceInfo(fixedMap);
         }
@@ -86,12 +92,12 @@ public class BuildJsonResult {
 
 
         for (PatchJson patchJson : patchJsons) {
-            //            if (!patchJson.getPatchName().equals("patch1-Math-63-SimFix-plausible.patch")) {
+            //            if (!patchJson.getPatchName().equals("patch1-Closure-21-AVATAR-plausible.patch")) {
             //                continue;
             //            }
             // check all failing tests have traces
             log.info("Check Patch {}", patchJson.getPatchName());
-            List<String> failingTest = patchJson.getFailingTests();
+            Set<String> failingTest = patchJson.getFailingTests();
             Map<String, Set<String>> buggyMap = patchJson.getBuggyTraceInfo();
             Map<String, Set<String>> fixedMap = patchJson.getFixedTraceInfo();
             if (failingTest.stream().anyMatch(line -> !buggyMap.containsKey(line) || !fixedMap.containsKey(line))) {
@@ -122,25 +128,73 @@ public class BuildJsonResult {
         return true;
     }
 
-    private static Map<String, Set<String>> obtainTrace(String content) {
+    private static Map<String, Set<String>> obtainTrace(String content, Set<String> testSet) {
         Map<String, Set<String>> map = new LinkedHashMap<>();
         if (StringUtils.isEmpty(content)) {
             return map;
         }
-        for (String line : content.split("\n")) {
+        String[] contentArray = content.split("\n");
+        int i = 0;
+        while (i < contentArray.length) {
+            String line = contentArray[i];
             if (StringUtils.isEmpty(line.trim())) {
+                ++i;
                 continue;
             }
-            String key = line.split("\t", 2)[0].split("#")[0];
-            Set<String> values =
-                    Arrays.stream(line.split("\t", 2)[1].split("\t")).filter(Objects::nonNull)
+            String[] lineArray = line.split("\t", 2);
+            String key = lineArray[0].split("#")[0];
+            if (!checkTest(testSet, key)) {
+                ++i;
+                continue;
+            }
+            if (StringUtils.isBlank(lineArray[1])) {
+                ++i;
+                boolean find = false;
+                while (i < contentArray.length) {
+                    line = contentArray[i];
+                    String[] currentLineArray = line.split("\t", 2);
+                    String currentKey = currentLineArray[0].split("#")[0];
+                    if (checkTest(testSet, currentKey)) {
+                        break;
+                    } else {
+                        if (StringUtils.isBlank(currentLineArray[1])) {
+                            ++i;
+                        } else {
+                            find = true;
+                            break;
+                        }
+                    }
+                }
+                if (find) {
+                    Set<String> values = Arrays.stream(line.split("\t", 2)[1].split("\t")).filter(Objects::nonNull)
                             .filter(StringUtils::isNotBlank).collect(
-                            Collectors.toSet());
-            if (values.size() > 0) {
-                map.put(key, values);
+                                    Collectors.toSet());
+                    if (values.size() > 0) {
+                        map.put(key, values);
+                    }
+                }
+            } else {
+                Set<String> values =
+                        Arrays.stream(line.split("\t", 2)[1].split("\t")).filter(Objects::nonNull)
+                                .filter(StringUtils::isNotBlank).collect(
+                                Collectors.toSet());
+                if (values.size() > 0) {
+                    map.put(key, values);
+                }
+                ++i;
             }
         }
         return map;
+    }
+
+    private static boolean checkTest(Set<String> testSet, String testLine) {
+        if (testSet.contains(testLine)) {
+            return true;
+        }
+        if (!testLine.contains("$")) {
+            return false;
+        }
+        return testSet.contains(testLine.split("\\$")[0] + "::" + testLine.split("::")[1]);
     }
 
     public static void main(String[] args) {

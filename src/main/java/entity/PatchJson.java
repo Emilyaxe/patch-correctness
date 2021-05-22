@@ -1,6 +1,5 @@
 package entity;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,7 +20,7 @@ public class PatchJson {
     private String label;
     private String bugId;
     private String combinedMethod;
-    private List<String> failingTests;
+    private Set<String> failingTests;
     private Map<String, Set<String>> buggyTraceInfo;
     private Map<String, Set<String>> fixedTraceInfo;
 }
