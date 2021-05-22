@@ -47,16 +47,15 @@ public class CheckResult {
 
         // 1. all tests have no trace
         String allTestNoTrace = Arrays.stream(problemPatchList).map(patchMap::get).filter(Objects::nonNull)
-                .filter(patchJson -> MapUtils.isEmpty(patchJson.getBuggyTraceInfo()) || MapUtils
-                        .isEmpty(patchJson.getFixedTraceInfo())).map(PatchJson::getPatchName)
+                .filter(patchJson -> MapUtils.isEmpty(patchJson.getBuggyTraceInfo())).map(PatchJson::getPatchName)
                 .collect(Collectors.joining(","));
-        log.error("all test have no trace: {}", allTestNoTrace);
+        log.error("all test have no trace on buggy version: {}", allTestNoTrace);
 
         // 2. all failing tests have no trace
         String allFailingTestNoTrace = Arrays.stream(problemPatchList).map(patchMap::get).filter(Objects::nonNull)
                 .filter(patchJson -> MapUtils.isEmpty(patchJson.getFixedTraceInfo())).map(PatchJson::getPatchName)
                 .collect(Collectors.joining(","));
-        log.error("all failing test have no trace: {}", allFailingTestNoTrace);
+        log.error("all test have no trace on fixed version: {}", allFailingTestNoTrace);
 
         // 3. patch has multiple modification
         String multipleModification =
