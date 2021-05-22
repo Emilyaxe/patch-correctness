@@ -51,11 +51,29 @@ public class CheckResult {
                 .collect(Collectors.joining(","));
         log.error("all test have no trace on buggy version: {}", allTestNoTrace);
 
-        // 2. all failing tests have no trace
-        String allFailingTestNoTrace = Arrays.stream(problemPatchList).map(patchMap::get).filter(Objects::nonNull)
+        // 2. all  tests have no trace
+        String allTestNoTraceFixed = Arrays.stream(problemPatchList).map(patchMap::get).filter(Objects::nonNull)
                 .filter(patchJson -> MapUtils.isEmpty(patchJson.getFixedTraceInfo())).map(PatchJson::getPatchName)
                 .collect(Collectors.joining(","));
-        log.error("all test have no trace on fixed version: {}", allFailingTestNoTrace);
+        log.error("all test have no trace on fixed version: {}", allTestNoTraceFixed);
+
+
+        // 1. all tests have no trace
+        String allFailingTestNoTrace = Arrays.stream(problemPatchList).map(patchMap::get).filter(Objects::nonNull)
+                .filter(patchJson -> patchJson.getFailingTests().stream()
+                        .noneMatch(patchJson.getBuggyTraceInfo().keySet()::contains))
+                .map(PatchJson::getPatchName)
+                .collect(Collectors.joining(","));
+        log.error("all falling test have no trace on buggy version: {}", allFailingTestNoTrace);
+
+        // 2. all  tests have no trace
+        String allFailingTestNoTraceFixed = Arrays.stream(problemPatchList).map(patchMap::get).filter(Objects::nonNull)
+                .filter(patchJson -> patchJson.getFailingTests().stream()
+                        .noneMatch(patchJson.getFixedTraceInfo().keySet()::contains))
+                .map(PatchJson::getPatchName)
+                .collect(Collectors.joining(","));
+        log.error("all falling test have no trace on fixed version: {}", allFailingTestNoTraceFixed);
+
 
         // 3. patch has multiple modification
         String multipleModification =
