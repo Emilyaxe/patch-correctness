@@ -53,9 +53,9 @@ public class BuildJsonResult {
         log.info("Obtain Dynamic Info ...");
         List<CompletableFuture<Void>> completableFutures = new LinkedList<>();
         for (PatchJson patchJson : patches) {
-            //            if (!patchJson.getPatchName().equals("patch1-Lang-10-kPAR-plausible.patch")) {
-            //                continue;
-            //            }
+            if (!patchJson.getPatchName().equals("patch1-Lang-10-kPAR-plausible.patch")) {
+                continue;
+            }
             completableFutures.add(CompletableFuture.runAsync(() -> {
                 log.info("Patch {} dynamic info collecting ...", patchJson.getPatchName());
                 String buggyLine = BuildPath.buildDymicAllFile(dir, patchJson.getPatchName(), true);
@@ -142,16 +142,12 @@ public class BuildJsonResult {
         int i = 0;
         while (i < contentArray.length) {
             String line = contentArray[i];
-            if (line.startsWith("END")) {
-                ++i;
-                continue;
-            }
             if (StringUtils.isEmpty(line.trim())) {
                 ++i;
                 continue;
             }
             String[] lineArray = line.split("\t", 2);
-            String key = lineArray[1].split("#")[0];
+            String key = lineArray[0].split("#")[0];
             if (StringUtils.isBlank(checkTest(testSet, key))) {
                 ++i;
                 continue;
