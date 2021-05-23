@@ -20,7 +20,7 @@ public class Dumper {
     private static URLClassLoader classLoader = null;
 
     private static boolean removeNewLine = true;
-    private final static long MAX_OUTPUT_FILE_SIZE = 1000;
+    private final static long MAX_OUTPUT_FILE_SIZE = 10000;
     private final static int MAX_DEPTH = 3;
     private final static int ARRAY_MAX_LENGTH = 5;
 

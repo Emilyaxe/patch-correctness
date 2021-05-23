@@ -70,15 +70,11 @@ public class ObtainTraceInfo {
                     + "Time16b_Patch185,"
                     + "Chart_26.src.patch,Math_67.src.patch,Lang_53.src.patch,patch1-Lang-57-TBar.patch,"
                     + "patch1-Lang-57-kPAR-plausible.patch,patch1-Lang-57-kPAR-plausible.patch,patch2-Lang-57-CapGen"
-                    + ".patch,patch1-Lang-57-CapGen.patch,patch3-Lang-57-CapGen.patch";
+                    + ".patch,patch1-Lang-57-CapGen.patch,patch3-Lang-57-CapGen.patch,Lang57b_PatchHDRepair1";
 
-    private static final String reRunPatches = "Math_39.src.patch,patch1-Lang-57-TBar.patch,Math_41.src.patch,Time_22"
-            + ".src.patch,patch1-Math-41-SimFix.patch,Lang_15.src.patch,patch1-Lang-57-kPAR-plausible.patch,"
-            + "patch1-Math-29-jKali-plausible.patch,patch1-Math-20-FixMiner-plausible.patch,Math41b_Patch162,"
-            + "patch1-Lang-7-Arja-plausible.patch,patch1-Math-15-kPAR-plausible.patch,Lang_42.src.patch,"
-            + "patch1-Math-41-DynaMoth-plausible.patch,patch1-Lang-57-kPAR-plausible.patch,"
-            + "patch1-Lang-13-AVATAR-plausible.patch,Chart_8.src.patch,patch1-Lang-13-RSRepair-plausible.patch,"
-            + "Closure_60.src.patch,patch2-Lang-57-CapGen.patch,patch1-Lang-57-CapGen.patch,Math_22.src.patch,Math_29"
+    private static final String reRunPatches = "Math_39.src.patch,"
+            + "patch1-Math-15-kPAR-plausible.patch,Lang_42.src.patch,"
+            + "Closure_60.src.patch,Math_22.src.patch,Math_29"
             + ".src.patch,Math_67.src.patch,Lang57b_PatchHDRepair1,patch1-Math-41-Nopol-plausible.patch,Math_49.src"
             + ".patch,Math_15.src.patch,patch1-Chart-8-CapGen.patch,patch1-Math-15-TBar-plausible.patch,Math_71.src"
             + ".patch,Math_101.src.patch,Chart_15.src.patch,patch3-Lang-57-CapGen.patch,Lang_13.src.patch";
@@ -164,7 +160,7 @@ public class ObtainTraceInfo {
             //            } catch (IOException e) {
             //                e.printStackTrace();
             //            }
-            if (!patch.getPatchName().equals("patch1-Math-41-SimFix.patch")) {
+            if (!patch.getPatchName().equals("Closure_60.src.patch")) {
                 continue;
             }
 
