@@ -14,6 +14,7 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.SuperConstructorInvocation;
+import org.eclipse.jdt.core.dom.TryStatement;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import instrument.gen.GenStatement;
@@ -97,6 +98,9 @@ public class InstruTestFileVisitor extends TraversalVisitor {
                 .equals("suite"))) {
             return true;
         }
+        if (node.isConstructor()) {
+            return true;
+        }
         if (_clazzName.contains("$")) {
             if (_clazzName.split("\\$")[_clazzName.split("\\$").length - 1].equals(name)) {
                 return true;
@@ -115,7 +119,7 @@ public class InstruTestFileVisitor extends TraversalVisitor {
         if (node.getBody() != null) {
             Block methodBody = node.getBody();
             List<ASTNode> blockStatement = new ArrayList<>();
-
+            //List<ASTNode> tryBodyStatement = new LinkedList<>();
             AST ast = AST.newAST(AST.JLS8);
             int i = 0;
             if (methodBody.statements().size() > 0) {
@@ -126,21 +130,31 @@ public class InstruTestFileVisitor extends TraversalVisitor {
                     blockStatement.add(astNode);
                 }
             }
-            String message = "\n" + _clazzName + "::" + name;
+            Block tryBodyStatement = ast.newBlock();
 
-            Integer lineNumber = _cu.getLineNumber(node.getStartPosition());
+            String message = "\nSTART\t" + _clazzName + "::" + name;
+            int lineNumber = _cu.getLineNumber(node.getStartPosition());
             Statement insert = GenStatement.genDumpLine(writeFile, message, lineNumber);
-            blockStatement.add(insert);
-
+            tryBodyStatement.statements().add(ASTNode.copySubtree(ast, insert));
 
             for (; i < methodBody.statements().size(); i++) {
                 ASTNode astNode = (ASTNode) methodBody.statements().get(i);
-                blockStatement.add(ASTNode.copySubtree(ast, astNode));
+                tryBodyStatement.statements().add(ASTNode.copySubtree(ast, astNode));
             }
+
+            TryStatement tryStatement = ast.newTryStatement();
+            tryStatement.setBody(tryBodyStatement);
+            message = "\nEND\t" + _clazzName + "::" + name;
+            Block finallyBody = ast.newBlock();
+            finallyBody.statements().add(ASTNode
+                    .copySubtree(ast, GenStatement.genDumpLine(writeFile, message, lineNumber)));
+            tryStatement.setFinally(finallyBody);
+
             methodBody.statements().clear();
             for (ASTNode statement : blockStatement) {
                 methodBody.statements().add(ASTNode.copySubtree(methodBody.getAST(), statement));
             }
+            methodBody.statements().add(ASTNode.copySubtree(methodBody.getAST(), tryStatement));
         }
         return true;
     }
@@ -152,7 +166,7 @@ public class InstruTestFileVisitor extends TraversalVisitor {
         //                        + "commons/lang/enum/Broken4OperationEnum.java";
 
         String file =
-                "/Users/liangjingjing/WorkSpace/Data/Defects4J/projects_buggy/Lang/Lang13/src/test/java/org/apache"
+                "/Users/liangjingjing/WorkSpace/Data/Defects4J/projects_buggy/Lang/Lang13/src/test/java.bak/org/apache"
                         + "/commons/lang3/SerializationUtilsTest.java";
         InstruTestFileVisitor instruTestFileVisitor = new InstruTestFileVisitor();
         CompilationUnit compilationUnit = FileIO.genASTFromFile(file);

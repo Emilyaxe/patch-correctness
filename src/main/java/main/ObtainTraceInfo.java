@@ -1,6 +1,7 @@
 package main;
 
 import static entity.Patch.getMethodInfo;
+import static service.BuildJsonResult.BuildPatchJson;
 import static util.AsyExecutor.EXECUTOR;
 
 import java.io.File;
@@ -34,6 +35,7 @@ import instrument.IntruMethodsVisitors;
 import lombok.extern.slf4j.Slf4j;
 import purification.Purification;
 import run.Runner;
+import service.BuildJsonResult;
 import service.ObtainPassingTests;
 import service.ObtainPatches;
 import service.ProcessPatch;
@@ -43,7 +45,7 @@ import util.FileIO;
 @Slf4j
 public class ObtainTraceInfo {
 
-    public static List<String> illeglePatches = new LinkedList<>();
+    public static Map<String, String> illeglePatches = new ConcurrentHashMap<>();
     public static Map<String, String> shoulPass = new ConcurrentHashMap<>();
     public static Map<String, String> shouldFail = new ConcurrentHashMap<>();
 
@@ -72,11 +74,11 @@ public class ObtainTraceInfo {
                     + "patch1-Lang-57-kPAR-plausible.patch,patch1-Lang-57-kPAR-plausible.patch,patch2-Lang-57-CapGen"
                     + ".patch,patch1-Lang-57-CapGen.patch,patch3-Lang-57-CapGen.patch,Lang57b_PatchHDRepair1";
 
-    private static final String reRunPatches =
-            "Math_39.src.patch,patch1-Math-15-kPAR-plausible.patch,Lang_42.src.patch,Math_29.src.patch,"
-                    + "Lang57b_PatchHDRepair1,"
-                    + "Math_49.src.patch,Math_15.src.patch,patch1-Math-15-TBar-plausible.patch,"
-                    + "Math_71.src.patch,Chart_15.src.patch";
+    //    private static final String reRunPatches =
+    //            "Math_39.src.patch,patch1-Math-15-kPAR-plausible.patch,Lang_42.src.patch,Math_29.src.patch,"
+    //                    + "Lang57b_PatchHDRepair1,"
+    //                    + "Math_49.src.patch,Math_15.src.patch,patch1-Math-15-TBar-plausible.patch,"
+    //                    + "Math_71.src.patch,Chart_15.src.patch";
 
     public static boolean compileAndRun(Subject subject, String oneTest) {
         String srcPath = subject.getHome() + subject.get_ssrc();
@@ -117,8 +119,6 @@ public class ObtainTraceInfo {
             futureList.add(CompletableFuture.runAsync(() -> {
                 try {
                     processAllTrace(reverse, reDir, entry);
-                    //processTrace(reverse, reDir, entry);
-                    //processPassingTrace(reverse, reDir, entry);
                 } catch (Exception e) {
                     log.error("obtain trace failed! subject {}", entry.getKey(), e);
                 }
@@ -149,27 +149,26 @@ public class ObtainTraceInfo {
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
         for (Patch patch : entry.getValue()) {
 
-            if (!reRunPatches.contains(patch.getPatchName())) {
-                continue;
-            }
-            try {
-                log.info("Delete Dir for Patch {}", patch.getPatchName());
-                FileUtils.deleteDirectory(new File(Constant.dynamicResult + "/" + reDir + "/" + patch
-                        .getPatchName()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            //            if (!patch.getPatchName().equals("Closure_60.src.patch")) {
+            //            if (!reRunPatches.contains(patch.getPatchName())) {
+            //                continue;
+            //            }
+            //            try {
+            //                log.info("Delete Dir for Patch {}", patch.getPatchName());
+            //                FileUtils.deleteDirectory(new File(Constant.dynamicResult + "/" + reDir + "/" + patch
+            //                        .getPatchName()));
+            //            } catch (IOException e) {
+            //                e.printStackTrace();
+            //            }
+            //            if (!patch.getPatchName().equals("patch1-Lang-10-kPAR-plausible.patch")) {
             //                continue;
             //            }
 
             boolean isPurify = !unPurifyPatches.contains(patch.getPatchName());
-            //Set<String> illegalTests = new LinkedHashSet<>();
             cleanSubject(subject.getHome() + subject.get_ssrc());
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
             int fixedLine = getOneChangeLine(subject, patch, reverse);
             if (fixedLine == 0) {
-                illeglePatches.add(patch.getPatchName());
+                illeglePatches.put(patch.getPatchName(), "");
                 continue;
             }
             try {
@@ -217,7 +216,6 @@ public class ObtainTraceInfo {
                 List<String> message = Runner.runTestSuite(subject);
                 if (CollectionUtils.isEmpty(message) || message.stream().filter(Objects::nonNull)
                         .noneMatch(element -> element.contains(Runner.SUCCESSTEST))) {
-                    //shouldPass.add(patch.getPatchName());
                     shoulPass.putIfAbsent(patch.getPatchName(), "");
                     log.error("Patch {}, Should Pass! \n {} ", patch.getPatchName(),
                             StringUtils.join(message, "\n"));
@@ -246,7 +244,6 @@ public class ObtainTraceInfo {
                 }
                 InstruTestFileVisitor instruTestFileVisitor = new InstruTestFileVisitor();
                 instruTestFileVisitor.setWriteFile(writeFile);
-                //log.info(testFile.getAbsolutePath());
                 CompilationUnit compilationUnit = FileIO.genASTFromSource(
                         FileIO.readFileToString(testFile), ASTParser.K_COMPILATION_UNIT);
                 compilationUnit.accept(instruTestFileVisitor);
@@ -266,7 +263,7 @@ public class ObtainTraceInfo {
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
             int fixedLine = getOneChangeLine(subject, patch, reverse);
             if (fixedLine == 0) {
-                illeglePatches.add(patch.getPatchName());
+                illeglePatches.put(patch.getPatchName(), "");
                 continue;
             }
             // run passing tests on buggy version
@@ -338,7 +335,7 @@ public class ObtainTraceInfo {
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
             int fixedLine = getOneChangeLine(subject, patch, reverse);
             if (fixedLine == 0) {
-                illeglePatches.add(patch.getPatchName());
+                illeglePatches.put(patch.getPatchName(), "");
                 continue;
             }
             // run failing tests on buggy version
@@ -458,11 +455,17 @@ public class ObtainTraceInfo {
         obtainTrace(correctSubjectPatchMap, true, "correctSet");
         //processCornerCase("correctSet", "Closure_16.src.patch");
 
-
         log.info("Should Pass Patches: {}", String.join(",", shoulPass.keySet()));
         log.info("Should Fail Patches: {}", String.join(",", shouldFail.keySet()));
-        log.info("Illegle Patches: {}", String.join(",", illeglePatches));
+        log.info("Illegle Patches: {}", String.join(",", illeglePatches.keySet()));
         log.info("finish obtain trace!");
+
+        BuildPatchJson("trainSet");
+        BuildPatchJson("testSet");
+        BuildPatchJson("correctSet");
+
+        log.info("failingTestProblemList: {}", StringUtils.join(BuildJsonResult.failingTestProblemList.keySet(), ","));
+        log.info("traceProblemList: {}", StringUtils.join(BuildJsonResult.traceProblemList.keySet(), ","));
 
     }
 }

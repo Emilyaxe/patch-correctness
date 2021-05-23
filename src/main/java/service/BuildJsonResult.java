@@ -28,8 +28,8 @@ import util.FileIO;
 
 @Slf4j
 public class BuildJsonResult {
-    static Map<String, String> failingTestProblemList = new ConcurrentHashMap<>();
-    static Map<String, String> traceProblemList = new ConcurrentHashMap<>();
+    public static Map<String, String> failingTestProblemList = new ConcurrentHashMap<>();
+    public static Map<String, String> traceProblemList = new ConcurrentHashMap<>();
 
     public static void BuildPatchJson(String dir) {
         List<PatchJson> patches = new LinkedList<>();
@@ -53,9 +53,9 @@ public class BuildJsonResult {
         log.info("Obtain Dynamic Info ...");
         List<CompletableFuture<Void>> completableFutures = new LinkedList<>();
         for (PatchJson patchJson : patches) {
-            //            if (!patchJson.getPatchName().equals("Lang_13.src.patch")) {
-            //                continue;
-            //            }
+            if (!patchJson.getPatchName().equals("patch1-Lang-10-kPAR-plausible.patch")) {
+                continue;
+            }
             completableFutures.add(CompletableFuture.runAsync(() -> {
                 log.info("Patch {} dynamic info collecting ...", patchJson.getPatchName());
                 String buggyLine = BuildPath.buildDymicAllFile(dir, patchJson.getPatchName(), true);
@@ -97,7 +97,7 @@ public class BuildJsonResult {
 
 
         for (PatchJson patchJson : patchJsons) {
-            //            if (!patchJson.getPatchName().equals("Lang_13.src.patch")) {
+            //            if (!patchJson.getPatchName().equals("patch1-Lang-10-kPAR-plausible.patch")) {
             //                continue;
             //            }
             // check all failing tests have traces
@@ -142,12 +142,16 @@ public class BuildJsonResult {
         int i = 0;
         while (i < contentArray.length) {
             String line = contentArray[i];
+            if (line.startsWith("END")) {
+                ++i;
+                continue;
+            }
             if (StringUtils.isEmpty(line.trim())) {
                 ++i;
                 continue;
             }
-            String[] lineArray = line.split("\t", 2);
-            String key = lineArray[0].split("#")[0];
+            String[] lineArray = line.split("\t", 3);
+            String key = lineArray[1].split("#")[0];
             if (StringUtils.isBlank(checkTest(testSet, key))) {
                 ++i;
                 continue;
@@ -157,8 +161,8 @@ public class BuildJsonResult {
                 boolean find = false;
                 while (i < contentArray.length) {
                     line = contentArray[i];
-                    String[] currentLineArray = line.split("\t", 2);
-                    String currentKey = checkTest(testSet, currentLineArray[0].split("#")[0]);
+                    String[] currentLineArray = line.split("\t", 3);
+                    String currentKey = checkTest(testSet, currentLineArray[1].split("#")[0]);
                     if (StringUtils.isNotBlank(currentKey)) {
                         break;
                     } else {
@@ -171,7 +175,7 @@ public class BuildJsonResult {
                     }
                 }
                 if (find) {
-                    Set<String> values = Arrays.stream(line.split("\t", 2)[1].split("\t")).filter(Objects::nonNull)
+                    Set<String> values = Arrays.stream(line.split("\t", 3)[2].split("\t")).filter(Objects::nonNull)
                             .filter(StringUtils::isNotBlank).collect(
                                     Collectors.toSet());
                     if (values.size() > 0) {
@@ -180,7 +184,7 @@ public class BuildJsonResult {
                 }
             } else {
                 Set<String> values =
-                        Arrays.stream(line.split("\t", 2)[1].split("\t")).filter(Objects::nonNull)
+                        Arrays.stream(line.split("\t", 3)[2].split("\t")).filter(Objects::nonNull)
                                 .filter(StringUtils::isNotBlank).collect(
                                 Collectors.toSet());
                 if (values.size() > 0) {

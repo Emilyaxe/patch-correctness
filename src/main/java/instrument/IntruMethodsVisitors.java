@@ -81,18 +81,18 @@ public class IntruMethodsVisitors extends TraversalVisitor {
         return true;
     }
 
-    @Override
-    public boolean visit(TypeDeclaration node) {
-        if (!Modifier.isPublic(node.getModifiers())) {
-            if (_clazzFileName.equals("")) {
-                _clazzFileName = _clazzName;
-                _clazzName = _clazzFileName + "." + node.getName().getFullyQualifiedName();
-            } else {
-                _clazzName = _clazzFileName + "$" + node.getName().getFullyQualifiedName();
-            }
-        }
-        return true;
-    }
+    //    @Override
+    //    public boolean visit(TypeDeclaration node) {
+    //        if (!Modifier.isPublic(node.getModifiers())) {
+    //            if (_clazzFileName.equals("")) {
+    //                _clazzFileName = _clazzName;
+    //                _clazzName = _clazzFileName + "." + node.getName().getFullyQualifiedName();
+    //            } else {
+    //                _clazzName = _clazzFileName + "$" + node.getName().getFullyQualifiedName();
+    //            }
+    //        }
+    //        return true;
+    //    }
 
     @Override
     public boolean visit(MethodDeclaration node) {
@@ -134,6 +134,9 @@ public class IntruMethodsVisitors extends TraversalVisitor {
                         || astNode instanceof SuperConstructorInvocation) {
                     i = 1;
                     blockStatement.add(astNode);
+                    int lineNumber = _cu.getLineNumber(astNode.getStartPosition()) - lineStartNumber;
+                    Statement insert = GenStatement.genDumpLine(writeFile, _clazzFileName, lineNumber);
+                    blockStatement.add(insert);
                 }
             }
 
