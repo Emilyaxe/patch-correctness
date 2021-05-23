@@ -433,6 +433,54 @@ public class Dumper {
         return true;
     }
 
+    public static boolean write(String OUT_FILE_NAME, Object currentObject, String obj) {
+        if (obj == null) {
+            return false;
+        }
+        File file = new File(OUT_FILE_NAME);
+        //System.out.println(file.getName());
+        if (!file.exists()) {
+            try {
+                file.getParentFile().mkdirs();
+                file.createNewFile();
+            } catch (IOException e) {
+                return false;
+            }
+        }
+
+        if ((file.length() >> 20) > MAX_OUTPUT_FILE_SIZE) {
+            return false;
+        }
+
+        BufferedWriter bufferedWriter = null;
+        try {
+            bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, true), "UTF-8"));
+        } catch (IOException e) {
+            return false;
+        }
+
+        try {
+            if (currentObject != null) {
+                String[] array = obj.split("::");
+                obj = "\n" + currentObject.getClass().getName() + "::" + array[1];
+            }
+            bufferedWriter.write(obj);
+            bufferedWriter.write("\t");
+            bufferedWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (bufferedWriter != null) {
+                try {
+                    bufferedWriter.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return true;
+    }
+
     public static String dump(Object o) {
         return dump(o, MAX_DEPTH, ARRAY_MAX_LENGTH);
     }

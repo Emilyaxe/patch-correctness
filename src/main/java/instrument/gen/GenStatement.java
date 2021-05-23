@@ -31,6 +31,19 @@ public class GenStatement {
         return expressionStatement;
     }
 
+    private static Statement genPrinter4Test(Expression writeFile, Expression expression) {
+        // auxiliary.Dumper.write(writeFile,expression);
+        MethodInvocation methodInvocation = ast.newMethodInvocation();
+        methodInvocation.setExpression(ast.newName("auxiliary.Dumper"));
+        methodInvocation.setName(ast.newSimpleName("write"));
+        methodInvocation.arguments().add(writeFile);
+        methodInvocation.arguments().add(ast.newThisExpression());
+        methodInvocation.arguments().add(expression);
+        ExpressionStatement expressionStatement = ast.newExpressionStatement(methodInvocation);
+        return expressionStatement;
+    }
+
+
     /**
      * generate "System.out.println()" {@code Statement} with the arguments as given {@code
      * locMessage} and {@code line}
@@ -44,6 +57,17 @@ public class GenStatement {
         fileLiteral.setLiteralValue(writeFile);
 
         return genPrinter(fileLiteral, stringLiteral);
+    }
+
+    public static Statement genDumpLine4Test(String writeFile, String locMessage, int line) {
+
+        StringLiteral stringLiteral = ast.newStringLiteral();
+        stringLiteral.setLiteralValue(locMessage + "#" + line);
+
+        StringLiteral fileLiteral = ast.newStringLiteral();
+        fileLiteral.setLiteralValue(writeFile);
+
+        return genPrinter4Test(fileLiteral, stringLiteral);
     }
 
     // public static Statement
@@ -275,5 +299,5 @@ public class GenStatement {
         return methodInvocation;
     }
 
-  
+
 }
