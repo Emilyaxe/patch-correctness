@@ -49,15 +49,10 @@ public class InstruTestFileVisitor extends TraversalVisitor {
         for (Object object : node.types()) {
             if (object instanceof TypeDeclaration) {
                 TypeDeclaration type = (TypeDeclaration) object;
-                if (!Modifier.isPublic(type.getModifiers())) {
-                    return false;
+                if (Modifier.isPublic(type.getModifiers())) {
+                    _clazzName += "." + type.getName().getFullyQualifiedName();
+                    _clazzFileName = _clazzName;
                 }
-                //                if (!type.getName().getFullyQualifiedName().startsWith("Test") && !type.getName()
-                //                        .getFullyQualifiedName().endsWith("Test")) {
-                //                    return false;
-                //                }
-                _clazzName += "." + type.getName().getFullyQualifiedName();
-                _clazzFileName = _clazzName;
             }
         }
         return true;
@@ -157,8 +152,8 @@ public class InstruTestFileVisitor extends TraversalVisitor {
         //                        + "commons/lang/enum/Broken4OperationEnum.java";
 
         String file =
-                "/Users/liangjingjing/WorkSpace/Data/Defects4J/projects_buggy/Lang/Lang53/src/test/org/apache"
-                        + "/commons/lang/AllLangTestSuite.java";
+                "/Users/liangjingjing/WorkSpace/Data/Defects4J/projects_buggy/Lang/Lang13/src/test/java/org/apache"
+                        + "/commons/lang3/SerializationUtilsTest.java";
         InstruTestFileVisitor instruTestFileVisitor = new InstruTestFileVisitor();
         CompilationUnit compilationUnit = FileIO.genASTFromFile(file);
         compilationUnit.accept(instruTestFileVisitor);

@@ -68,7 +68,20 @@ public class ObtainTraceInfo {
                     + "patch1-Chart-26-TBar-plausible.patch,patch1-Chart-26-AVATAR-plausible.patch,Math_56.src.patch,"
                     + "Time_16.src.patch,patch1-Chart-26-FixMiner-plausible.patch,patch1-Chart-26-Jaid.patch,"
                     + "Time16b_Patch185,"
-                    + "Chart_26.src.patch,Math_67.src.patch,Lang_53.src.patch";
+                    + "Chart_26.src.patch,Math_67.src.patch,Lang_53.src.patch,patch1-Lang-57-TBar.patch,"
+                    + "patch1-Lang-57-kPAR-plausible.patch,patch1-Lang-57-kPAR-plausible.patch,patch2-Lang-57-CapGen"
+                    + ".patch,patch1-Lang-57-CapGen.patch,patch3-Lang-57-CapGen.patch";
+
+    private static final String reRunPatches = "Math_39.src.patch,patch1-Lang-57-TBar.patch,Math_41.src.patch,Time_22"
+            + ".src.patch,patch1-Math-41-SimFix.patch,Lang_15.src.patch,patch1-Lang-57-kPAR-plausible.patch,"
+            + "patch1-Math-29-jKali-plausible.patch,patch1-Math-20-FixMiner-plausible.patch,Math41b_Patch162,"
+            + "patch1-Lang-7-Arja-plausible.patch,patch1-Math-15-kPAR-plausible.patch,Lang_42.src.patch,"
+            + "patch1-Math-41-DynaMoth-plausible.patch,patch1-Lang-57-kPAR-plausible.patch,"
+            + "patch1-Lang-13-AVATAR-plausible.patch,Chart_8.src.patch,patch1-Lang-13-RSRepair-plausible.patch,"
+            + "Closure_60.src.patch,patch2-Lang-57-CapGen.patch,patch1-Lang-57-CapGen.patch,Math_22.src.patch,Math_29"
+            + ".src.patch,Math_67.src.patch,Lang57b_PatchHDRepair1,patch1-Math-41-Nopol-plausible.patch,Math_49.src"
+            + ".patch,Math_15.src.patch,patch1-Chart-8-CapGen.patch,patch1-Math-15-TBar-plausible.patch,Math_71.src"
+            + ".patch,Math_101.src.patch,Chart_15.src.patch,patch3-Lang-57-CapGen.patch,Lang_13.src.patch"
 
     public static boolean compileAndRun(Subject subject, String oneTest) {
         String srcPath = subject.getHome() + subject.get_ssrc();
@@ -141,9 +154,18 @@ public class ObtainTraceInfo {
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
         for (Patch patch : entry.getValue()) {
 
-            if (!patch.getPatchName().equals("patch1-Chart-25-Arja-plausible.patch")) {
+            if (!reRunPatches.contains(patch.getPatchName())) {
                 continue;
             }
+            try {
+                log.info("Delete Dir for Patch {}", patch.getPatchName());
+                FileUtils.deleteDirectory(new File(Constant.dynamicResult + "/" + reDir + "/" + patch.getPatchName()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            //            if (!patch.getPatchName().equals("Math_39.src.patch")) {
+            //                continue;
+            //            }
 
             boolean isPurify = !unPurifyPatches.contains(patch.getPatchName());
             //Set<String> illegalTests = new LinkedHashSet<>();
