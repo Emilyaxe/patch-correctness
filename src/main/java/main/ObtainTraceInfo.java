@@ -154,18 +154,19 @@ public class ObtainTraceInfo {
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
         for (Patch patch : entry.getValue()) {
 
-            if (!reRunPatches.contains(patch.getPatchName())) {
-                continue;
-            }
-            try {
-                log.info("Delete Dir for Patch {}", patch.getPatchName());
-                FileUtils.deleteDirectory(new File(Constant.dynamicResult + "/" + reDir + "/" + patch.getPatchName()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            //            if (!patch.getPatchName().equals("Math_39.src.patch")) {
+            //            if (!reRunPatches.contains(patch.getPatchName())) {
             //                continue;
             //            }
+            //            try {
+            //                log.info("Delete Dir for Patch {}", patch.getPatchName());
+            //                FileUtils.deleteDirectory(new File(Constant.dynamicResult + "/" + reDir + "/" + patch
+            //                .getPatchName()));
+            //            } catch (IOException e) {
+            //                e.printStackTrace();
+            //            }
+            if (!patch.getPatchName().equals("patch1-Math-41-SimFix.patch")) {
+                continue;
+            }
 
             boolean isPurify = !unPurifyPatches.contains(patch.getPatchName());
             //Set<String> illegalTests = new LinkedHashSet<>();

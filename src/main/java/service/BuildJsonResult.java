@@ -53,9 +53,9 @@ public class BuildJsonResult {
         log.info("Obtain Dynamic Info ...");
         List<CompletableFuture<Void>> completableFutures = new LinkedList<>();
         for (PatchJson patchJson : patches) {
-            //            if (!patchJson.getPatchName().equals("patch1-Closure-21-AVATAR-plausible.patch")) {
-            //                continue;
-            //            }
+            if (!patchJson.getPatchName().equals("Lang_15.src.patch")) {
+                continue;
+            }
             completableFutures.add(CompletableFuture.runAsync(() -> {
                 log.info("Patch {} dynamic info collecting ...", patchJson.getPatchName());
                 String buggyLine = BuildPath.buildDymicAllFile(dir, patchJson.getPatchName(), true);
@@ -97,9 +97,9 @@ public class BuildJsonResult {
 
 
         for (PatchJson patchJson : patchJsons) {
-            //            if (!patchJson.getPatchName().equals("patch1-Closure-21-AVATAR-plausible.patch")) {
-            //                continue;
-            //            }
+            if (!patchJson.getPatchName().equals("Lang_15.src.patch")) {
+                continue;
+            }
             // check all failing tests have traces
             log.info("Check Patch {}", patchJson.getPatchName());
             Set<String> failingTest = patchJson.getFailingTests();
@@ -148,7 +148,7 @@ public class BuildJsonResult {
             }
             String[] lineArray = line.split("\t", 2);
             String key = lineArray[0].split("#")[0];
-            if (!checkTest(testSet, key)) {
+            if (StringUtils.isBlank(checkTest(testSet, key))) {
                 ++i;
                 continue;
             }
@@ -158,8 +158,8 @@ public class BuildJsonResult {
                 while (i < contentArray.length) {
                     line = contentArray[i];
                     String[] currentLineArray = line.split("\t", 2);
-                    String currentKey = currentLineArray[0].split("#")[0];
-                    if (checkTest(testSet, currentKey)) {
+                    String currentKey = checkTest(testSet, currentLineArray[0].split("#")[0]);
+                    if (StringUtils.isNotBlank(currentKey)) {
                         break;
                     } else {
                         if (StringUtils.isBlank(currentLineArray[1])) {
@@ -175,7 +175,7 @@ public class BuildJsonResult {
                             .filter(StringUtils::isNotBlank).collect(
                                     Collectors.toSet());
                     if (values.size() > 0) {
-                        map.put(key, values);
+                        map.put(checkTest(testSet, key), values);
                     }
                 }
             } else {
@@ -184,7 +184,7 @@ public class BuildJsonResult {
                                 .filter(StringUtils::isNotBlank).collect(
                                 Collectors.toSet());
                 if (values.size() > 0) {
-                    map.put(key, values);
+                    map.put(checkTest(testSet, key), values);
                 }
                 ++i;
             }
@@ -192,14 +192,15 @@ public class BuildJsonResult {
         return map;
     }
 
-    private static boolean checkTest(Set<String> testSet, String testLine) {
+    private static String checkTest(Set<String> testSet, String testLine) {
         if (testSet.contains(testLine)) {
-            return true;
+            return testLine;
         }
         if (!testLine.contains("$")) {
-            return false;
+            return "";
         }
-        return testSet.contains(testLine.split("\\$")[0] + "::" + testLine.split("::")[1]);
+        String test = testLine.split("\\$")[0] + "::" + testLine.split("::")[1];
+        return testSet.contains(test) ? test : "";
     }
 
     public static void main(String[] args) {
