@@ -97,9 +97,9 @@ public class BuildJsonResult {
 
 
         for (PatchJson patchJson : patchJsons) {
-            //            if (!patchJson.getPatchName().equals("patch1-Lang-10-kPAR-plausible.patch")) {
-            //                continue;
-            //            }
+            if (!patchJson.getPatchName().equals("patch1-Lang-10-kPAR-plausible.patch")) {
+                continue;
+            }
             // check all failing tests have traces
             log.info("Check Patch {}", patchJson.getPatchName());
             Set<String> failingTest = patchJson.getFailingTests();

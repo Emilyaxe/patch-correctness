@@ -159,9 +159,9 @@ public class ObtainTraceInfo {
             //            } catch (IOException e) {
             //                e.printStackTrace();
             //            }
-            //            if (!patch.getPatchName().equals("patch1-Lang-10-kPAR-plausible.patch")) {
-            //                continue;
-            //            }
+            if (!patch.getPatchName().equals("patch1-Lang-10-kPAR-plausible.patch")) {
+                continue;
+            }
 
             boolean isPurify = !unPurifyPatches.contains(patch.getPatchName());
             cleanSubject(subject.getHome() + subject.get_ssrc());
