@@ -81,7 +81,7 @@ public class ObtainTraceInfo {
             + "Closure_60.src.patch,patch2-Lang-57-CapGen.patch,patch1-Lang-57-CapGen.patch,Math_22.src.patch,Math_29"
             + ".src.patch,Math_67.src.patch,Lang57b_PatchHDRepair1,patch1-Math-41-Nopol-plausible.patch,Math_49.src"
             + ".patch,Math_15.src.patch,patch1-Chart-8-CapGen.patch,patch1-Math-15-TBar-plausible.patch,Math_71.src"
-            + ".patch,Math_101.src.patch,Chart_15.src.patch,patch3-Lang-57-CapGen.patch,Lang_13.src.patch"
+            + ".patch,Math_101.src.patch,Chart_15.src.patch,patch3-Lang-57-CapGen.patch,Lang_13.src.patch";
 
     public static boolean compileAndRun(Subject subject, String oneTest) {
         String srcPath = subject.getHome() + subject.get_ssrc();
