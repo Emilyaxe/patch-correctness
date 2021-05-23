@@ -72,12 +72,11 @@ public class ObtainTraceInfo {
                     + "patch1-Lang-57-kPAR-plausible.patch,patch1-Lang-57-kPAR-plausible.patch,patch2-Lang-57-CapGen"
                     + ".patch,patch1-Lang-57-CapGen.patch,patch3-Lang-57-CapGen.patch,Lang57b_PatchHDRepair1";
 
-    private static final String reRunPatches = "Math_39.src.patch,"
-            + "patch1-Math-15-kPAR-plausible.patch,Lang_42.src.patch,"
-            + "Closure_60.src.patch,Math_22.src.patch,Math_29"
-            + ".src.patch,Math_67.src.patch,Lang57b_PatchHDRepair1,patch1-Math-41-Nopol-plausible.patch,Math_49.src"
-            + ".patch,Math_15.src.patch,patch1-Chart-8-CapGen.patch,patch1-Math-15-TBar-plausible.patch,Math_71.src"
-            + ".patch,Math_101.src.patch,Chart_15.src.patch,patch3-Lang-57-CapGen.patch,Lang_13.src.patch";
+    private static final String reRunPatches =
+            "Math_39.src.patch,patch1-Math-15-kPAR-plausible.patch,Lang_42.src.patch,Math_29.src.patch,"
+                    + "Lang57b_PatchHDRepair1,"
+                    + "Math_49.src.patch,Math_15.src.patch,patch1-Math-15-TBar-plausible.patch,"
+                    + "Math_71.src.patch,Chart_15.src.patch";
 
     public static boolean compileAndRun(Subject subject, String oneTest) {
         String srcPath = subject.getHome() + subject.get_ssrc();
@@ -150,19 +149,19 @@ public class ObtainTraceInfo {
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
         for (Patch patch : entry.getValue()) {
 
-            //            if (!reRunPatches.contains(patch.getPatchName())) {
-            //                continue;
-            //            }
-            //            try {
-            //                log.info("Delete Dir for Patch {}", patch.getPatchName());
-            //                FileUtils.deleteDirectory(new File(Constant.dynamicResult + "/" + reDir + "/" + patch
-            //                .getPatchName()));
-            //            } catch (IOException e) {
-            //                e.printStackTrace();
-            //            }
-            if (!patch.getPatchName().equals("Closure_60.src.patch")) {
+            if (!reRunPatches.contains(patch.getPatchName())) {
                 continue;
             }
+            try {
+                log.info("Delete Dir for Patch {}", patch.getPatchName());
+                FileUtils.deleteDirectory(new File(Constant.dynamicResult + "/" + reDir + "/" + patch
+                        .getPatchName()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            //            if (!patch.getPatchName().equals("Closure_60.src.patch")) {
+            //                continue;
+            //            }
 
             boolean isPurify = !unPurifyPatches.contains(patch.getPatchName());
             //Set<String> illegalTests = new LinkedHashSet<>();
