@@ -12,8 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AsyExecutor {
 
-    public static final int THREAD_NUM = 6;
-    //Runtime.getRuntime().availableProcessors();
+    public static final int THREAD_NUM = Runtime.getRuntime().availableProcessors();
 
     public static final ExecutorService EXECUTOR = new ThreadPoolExecutor(THREAD_NUM, THREAD_NUM,
             10, TimeUnit.SECONDS, new LinkedBlockingQueue<>(10000),
