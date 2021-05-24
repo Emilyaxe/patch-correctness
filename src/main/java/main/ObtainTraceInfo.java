@@ -178,7 +178,7 @@ public class ObtainTraceInfo {
                 ProcessPatch.createCombinedBuggy4AllFiles(patch, reverse);
                 instrument(fixedLine, writeFile, oneFixedFile);
                 instrumentTests(subject, writeFile, isPurify);
-                TimeUnit.SECONDS.sleep(10);
+                TimeUnit.SECONDS.sleep(2);
 
                 if (!compile(subject)) {
                     log.error("Patch {}, Compile Error on buggy version!", patch.getPatchName());
@@ -208,7 +208,7 @@ public class ObtainTraceInfo {
                 ProcessPatch.createCombinedFixed4AllFiles(patch, reverse);
                 instrument(fixedLine, writeFile, oneFixedFile);
                 instrumentTests(subject, writeFile, isPurify);
-                TimeUnit.SECONDS.sleep(10);
+                TimeUnit.SECONDS.sleep(2);
 
                 if (!compile(subject)) {
                     log.error("Patch {}, Compile Error on fixed version!", patch.getPatchName());
@@ -347,7 +347,7 @@ public class ObtainTraceInfo {
                             + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
                     ProcessPatch.createCombinedBuggy4AllFiles(patch, reverse);
                     instrument(fixedLine, writeFile, oneFixedFile);
-                    TimeUnit.SECONDS.sleep(10);
+                    TimeUnit.SECONDS.sleep(2);
                     if (compileAndRun(subject, test)) {
                         log.error("Patch {}, Should Fail!", patch.getPatchName());
                     }
