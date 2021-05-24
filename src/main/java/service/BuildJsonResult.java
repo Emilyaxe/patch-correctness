@@ -105,10 +105,12 @@ public class BuildJsonResult {
             Set<String> failingTest = patchJson.getFailingTests();
             Map<String, Set<String>> buggyMap = patchJson.getBuggyTraceInfo();
             Map<String, Set<String>> fixedMap = patchJson.getFixedTraceInfo();
-            if (!failingTest.stream().allMatch(line -> buggyMap.containsKey(line) && fixedMap.containsKey(line))) {
-                log.error("Patch {} does not have failing test trace", patchJson.getPatchName());
-                failingTestProblemList.putIfAbsent(patchJson.getPatchName(), "");
-            }
+
+            //            if (!failingTest.stream().allMatch(line -> buggyMap.containsKey(line) && fixedMap
+            //            .containsKey(line))) {
+            //                log.error("Patch {} does not have failing test trace", patchJson.getPatchName());
+            //                failingTestProblemList.putIfAbsent(patchJson.getPatchName(), "");
+            //            }
             String combineMethod = patchJson.getCombinedMethod();
             if (!(checkMapTrace(combineMethod,
                     buggyMap.values().stream().flatMap(Set::stream).collect(Collectors.toSet()), true) &&
