@@ -75,7 +75,7 @@ public class Runner {
         //subject.deleteBin();
         try {
             log.info("TESTING : " + subject.get_name() + "_" + subject.get_id());
-            message = Executor.execute(CmdFactory.createTestSubjectCmd(subject, 60 * 60));
+            message = Executor.execute(CmdFactory.createTestSubjectCmd(subject, 30 * 60));
         } catch (Exception e) {
             // LevelLogger.fatal(__name__ + "#buildSubject run test single test case failed !", e);
         }
