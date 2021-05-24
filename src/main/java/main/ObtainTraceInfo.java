@@ -1,7 +1,6 @@
 package main;
 
 import static entity.Patch.getMethodInfo;
-import static service.BuildJsonResult.BuildPatchJson;
 import static util.AsyExecutor.EXECUTOR;
 
 import java.io.File;
@@ -75,8 +74,7 @@ public class ObtainTraceInfo {
                     + ".patch,patch1-Lang-57-CapGen.patch,patch3-Lang-57-CapGen.patch,Lang57b_PatchHDRepair1";
 
     private static final String reRunPatches =
-            "patch1-Math-60-jGenProg-plausible.patch,patch1-Math-31-Kali-plausible.patch,"
-                    + "patch1-Math-20-DynaMoth-plausible.patch";
+            "patch1-Math-60-jGenProg-plausible.patch,patch1-Math-31-Kali-plausible.patch";
 
     public static boolean compileAndRun(Subject subject, String oneTest) {
         String srcPath = subject.getHome() + subject.get_ssrc();
@@ -458,9 +456,9 @@ public class ObtainTraceInfo {
         log.info("Illegle Patches: {}", String.join(",", illeglePatches.keySet()));
         log.info("finish obtain trace!");
 
-        BuildPatchJson("trainSet");
-        BuildPatchJson("testSet");
-        BuildPatchJson("correctSet");
+        //        BuildPatchJson("trainSet");
+        //        BuildPatchJson("testSet");
+        //        BuildPatchJson("correctSet");
 
         log.info("failingTestProblemList: {}", StringUtils.join(BuildJsonResult.failingTestProblemList.keySet(), ","));
         log.info("traceProblemList: {}", StringUtils.join(BuildJsonResult.traceProblemList.keySet(), ","));
