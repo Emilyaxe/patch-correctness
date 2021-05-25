@@ -62,6 +62,7 @@ public class CheckResult {
 
         // 1. all failing tests have no trace
         String allFailingTestNoTrace = patchJsons.stream().filter(Objects::nonNull)
+                .filter(patchJson -> MapUtils.isNotEmpty(patchJson.getBuggyTraceInfo()))
                 .filter(patchJson -> patchJson.getFailingTests().stream()
                         .noneMatch(test -> patchJson.getBuggyTraceInfo().containsKey(test)))
                 .map(PatchJson::getPatchName)
@@ -70,6 +71,7 @@ public class CheckResult {
 
         // 2. all  failing tests have no trace
         String allFailingTestNoTraceFixed = patchJsons.stream().filter(Objects::nonNull)
+                .filter(patchJson -> MapUtils.isNotEmpty(patchJson.getFixedTraceInfo()))
                 .filter(patchJson -> patchJson.getFailingTests().stream()
                         .noneMatch(test -> patchJson.getFixedTraceInfo().containsKey(test)))
                 .map(PatchJson::getPatchName)

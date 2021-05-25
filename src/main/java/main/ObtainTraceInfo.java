@@ -32,7 +32,6 @@ import entity.Subject;
 import instrument.InstruTestFileVisitor;
 import instrument.IntruMethodsVisitors;
 import lombok.extern.slf4j.Slf4j;
-import purification.Purification;
 import run.Runner;
 import service.BuildJsonResult;
 import service.ObtainPassingTests;
@@ -155,7 +154,7 @@ public class ObtainTraceInfo {
             //            } catch (IOException e) {
             //                e.printStackTrace();
             //            }
-            //            if (!patch.getPatchName().equals("patch1-Lang-10-kPAR-plausible.patch")) {
+            //            if (!patch.getPatchName().equals("Math_67.src.patch")) {
             //                continue;
             //            }
 
@@ -227,10 +226,10 @@ public class ObtainTraceInfo {
         synchronized (lock) {
             String testDir = subject.getHome() + subject.get_tsrc();
             FileIO.backupDir(testDir);
-            if (isPurify) {
-                Purification purification = new Purification(subject);
-                purification.purifyWithoutValidate();
-            }
+            //            if (isPurify) {
+            //                Purification purification = new Purification(subject);
+            //                purification.purifyWithoutValidate();
+            //            }
 
             List<File> allTestFiles = new LinkedList<>();
             FileIO.getAllFile(new File(testDir), allTestFiles);

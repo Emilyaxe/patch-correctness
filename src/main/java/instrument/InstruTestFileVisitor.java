@@ -12,6 +12,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ConstructorInvocation;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
+import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.SuperConstructorInvocation;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
@@ -82,72 +83,85 @@ public class InstruTestFileVisitor extends TraversalVisitor {
         if (!Modifier.isPublic(node.getModifiers())) {
             return true;
         }
-        boolean isStatic = false;
-        if (Modifier.isStatic(node.getModifiers())) {
-            isStatic = true;
-        }
-        ASTNode parent = node.getParent();
-        while (parent != null && !(parent instanceof TypeDeclaration)) {
-            if (parent instanceof ClassInstanceCreation) {
-                return true;
-            }
-            parent = parent.getParent();
-        }
-        String name = node.getName().getFullyQualifiedName();
-        if ((name.equals("setUp") || name.equals("countTestCases") || name.equals("createResult") || name
-                .equals("run")
-                || name.equals("runBare") || name.equals("runTest") || name.equals("tearDown")
-                || name.equals("toString") || name.equals("getName") || name.equals("setName") || name
-                .equals("suite"))) {
-            return true;
-        }
         if (node.isConstructor()) {
             return true;
         }
-        if (_clazzName.contains("$")) {
-            if (_clazzName.split("\\$")[_clazzName.split("\\$").length - 1].equals(name)) {
+        if (Objects.isNull(node.getReturnType2())) {
+            return true;
+        }
+        if (node.getReturnType2() instanceof PrimitiveType
+                && ((PrimitiveType) node.getReturnType2()).getPrimitiveTypeCode()
+                == PrimitiveType.VOID) {
+            if (node.parameters().size() > 0) {
                 return true;
             }
-        }
-        if (_clazzName.split("\\.")[_clazzName.split("\\.").length - 1].equals(name)) {
-            return true;
-        }
-        if (Objects.isNull(node.getBody())) {
-            return true;
-        }
-        //        if (node.modifiers().stream().noneMatch(current -> current.toString().equals("public"))) {
-        //            return true;
-        //        }
+            boolean isStatic = false;
+            if (Modifier.isStatic(node.getModifiers())) {
+                isStatic = true;
+            }
+            ASTNode parent = node.getParent();
+            while (parent != null && !(parent instanceof TypeDeclaration)) {
+                if (parent instanceof ClassInstanceCreation) {
+                    return true;
+                }
+                parent = parent.getParent();
+            }
+            String name = node.getName().getFullyQualifiedName();
+            if ((name.equals("setUp") || name.equals("countTestCases") || name.equals("createResult") || name
+                    .equals("run")
+                    || name.equals("runBare") || name.equals("runTest") || name.equals("tearDown")
+                    || name.equals("toString") || name.equals("getName") || name.equals("setName") || name
+                    .equals("suite"))) {
+                return true;
+            }
 
-        if (node.getBody() != null) {
-            Block methodBody = node.getBody();
-            List<ASTNode> blockStatement = new ArrayList<>();
-            //List<ASTNode> tryBodyStatement = new LinkedList<>();
-            AST ast = AST.newAST(AST.JLS8);
-            int i = 0;
-            if (methodBody.statements().size() > 0) {
-                ASTNode astNode = (ASTNode) methodBody.statements().get(0);
-                if (astNode instanceof ConstructorInvocation
-                        || astNode instanceof SuperConstructorInvocation) {
-                    i = 1;
-                    blockStatement.add(astNode);
+            if (_clazzName.contains("$")) {
+                if (_clazzName.split("\\$")[_clazzName.split("\\$").length - 1].equals(name)) {
+                    return true;
                 }
             }
-
-            String message = "\n" + _clazzName + "::" + name;
-            int lineNumber = _cu.getLineNumber(node.getStartPosition());
-
-            Statement insert = isStatic ? GenStatement.genDumpLine(writeFile, message, lineNumber)
-                                        : GenStatement.genDumpLine4Test(writeFile, message, lineNumber);
-            blockStatement.add(insert);
-
-            for (; i < methodBody.statements().size(); i++) {
-                ASTNode astNode = (ASTNode) methodBody.statements().get(i);
-                blockStatement.add(astNode);
+            if (_clazzName.split("\\.")[_clazzName.split("\\.").length - 1].equals(name)) {
+                return true;
             }
-            methodBody.statements().clear();
-            for (ASTNode statement : blockStatement) {
-                methodBody.statements().add(ASTNode.copySubtree(methodBody.getAST(), statement));
+
+
+            if (Objects.isNull(node.getBody())) {
+                return true;
+            }
+            //        if (node.modifiers().stream().noneMatch(current -> current.toString().equals("public"))) {
+            //            return true;
+            //        }
+
+            if (node.getBody() != null) {
+                Block methodBody = node.getBody();
+                List<ASTNode> blockStatement = new ArrayList<>();
+                //List<ASTNode> tryBodyStatement = new LinkedList<>();
+                AST ast = AST.newAST(AST.JLS8);
+                int i = 0;
+                if (methodBody.statements().size() > 0) {
+                    ASTNode astNode = (ASTNode) methodBody.statements().get(0);
+                    if (astNode instanceof ConstructorInvocation
+                            || astNode instanceof SuperConstructorInvocation) {
+                        i = 1;
+                        blockStatement.add(astNode);
+                    }
+                }
+
+                String message = "\n" + _clazzName + "::" + name;
+                int lineNumber = _cu.getLineNumber(node.getStartPosition());
+
+                Statement insert = isStatic ? GenStatement.genDumpLine(writeFile, message, lineNumber)
+                                            : GenStatement.genDumpLine4Test(writeFile, message, lineNumber);
+                blockStatement.add(insert);
+
+                for (; i < methodBody.statements().size(); i++) {
+                    ASTNode astNode = (ASTNode) methodBody.statements().get(i);
+                    blockStatement.add(astNode);
+                }
+                methodBody.statements().clear();
+                for (ASTNode statement : blockStatement) {
+                    methodBody.statements().add(ASTNode.copySubtree(methodBody.getAST(), statement));
+                }
             }
         }
         return true;
