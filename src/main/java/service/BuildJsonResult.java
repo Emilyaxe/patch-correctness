@@ -36,6 +36,7 @@ public class BuildJsonResult {
     public static Map<String, String> failingTestProblemList = new ConcurrentHashMap<>();
     public static Map<String, String> traceProblemList = new ConcurrentHashMap<>();
 
+
     public static void BuildPatchJson(String dir) {
         List<PatchJson> patches = new LinkedList<>();
         JSONObject jsonObject =
@@ -58,9 +59,9 @@ public class BuildJsonResult {
         log.info("Obtain Dynamic Info ...");
         List<CompletableFuture<Void>> completableFutures = new LinkedList<>();
         for (PatchJson patchJson : patches) {
-            if (patchJson.getPatchName().equals("patch1-Math-31-Kali-plausible.patch")) {
-                continue;
-            }
+            //            if (patchJson.getPatchName().equals("patch1-Math-31-Kali-plausible.patch")) {
+            //                continue;
+            //            }
             completableFutures.add(CompletableFuture.runAsync(() -> {
                 log.info("Patch {} dynamic info collecting ...", patchJson.getPatchName());
                 String buggyLine = BuildPath.buildDymicAllFile(dir, patchJson.getPatchName(), true);
@@ -79,23 +80,35 @@ public class BuildJsonResult {
 
 
                 Map<String, Set<String>> buggyMap = null, fixedMap = null;
-                if (new File(buggyLine).length() / 1024.0 / 1024.0 / 1024.0 > 5.0) {
+                if (new File(buggyLine).length() / 1024.0 / 1024.0 / 1024.0 > 3.0) {
                     try {
                         buggyMap = obtainTraceByFile(buggyLine, testSet);
                     } catch (IOException e) {
                         e.printStackTrace();
+                    } catch (Exception e) {
+                        traceProblemList.put(patchJson.getPatchName(), "");
                     }
                 } else {
-                    buggyMap = obtainTrace(FileIO.readFileToString(buggyLine), testSet);
+                    try {
+                        buggyMap = obtainTrace(FileIO.readFileToString(buggyLine), testSet);
+                    } catch (Exception e) {
+                        traceProblemList.put(patchJson.getPatchName(), "");
+                    }
                 }
-                if (new File(fixedLine).length() / 1024 / 1024 / 1024 > 5) {
+                if (new File(fixedLine).length() / 1024.0 / 1024.0 / 1024.0 > 3.0) {
                     try {
                         fixedMap = obtainTraceByFile(fixedLine, testSet);
                     } catch (IOException e) {
                         e.printStackTrace();
+                    } catch (Exception e) {
+                        traceProblemList.put(patchJson.getPatchName(), "");
                     }
                 } else {
-                    fixedMap = obtainTrace(FileIO.readFileToString(fixedLine), testSet);
+                    try {
+                        fixedMap = obtainTrace(FileIO.readFileToString(fixedLine), testSet);
+                    } catch (Exception e) {
+                        traceProblemList.put(patchJson.getPatchName(), "");
+                    }
                 }
                 patchJson.setBuggyTraceInfo(buggyMap);
                 patchJson.setFixedTraceInfo(fixedMap);
@@ -104,11 +117,12 @@ public class BuildJsonResult {
         }
         FileIO.writeStringToFile("./" + dir, JSON.toJSONString(patches));
         log.info("Build Patch Set: {} for Dir {}", patches.size(), dir);
+        log.info("Out of Memory: {}", StringUtils.join("\n", traceProblemList.keySet()));
         //multiPcoessCheck(patches);
     }
 
     private static Map<String, Set<String>> obtainTraceByFile(String file, Set<String> testSet)
-            throws IOException {
+            throws IOException, OutOfMemoryError {
 
         Map<String, Set<String>> map = new LinkedHashMap<>();
         FileInputStream inputStream = new FileInputStream(file);
@@ -161,7 +175,6 @@ public class BuildJsonResult {
                 }
             }
         }
-
         //close
         inputStream.close();
         bufferedReader.close();
