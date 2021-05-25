@@ -2,6 +2,11 @@ package service;
 
 import static util.AsyExecutor.EXECUTOR;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -53,9 +58,9 @@ public class BuildJsonResult {
         log.info("Obtain Dynamic Info ...");
         List<CompletableFuture<Void>> completableFutures = new LinkedList<>();
         for (PatchJson patchJson : patches) {
-            //            if (!patchJson.getPatchName().equals("patch1-Lang-10-kPAR-plausible.patch")) {
-            //                continue;
-            //            }
+            if (!patchJson.getPatchName().equals("patch1-Math-31-Kali-plausible.patch")) {
+                continue;
+            }
             completableFutures.add(CompletableFuture.runAsync(() -> {
                 log.info("Patch {} dynamic info collecting ...", patchJson.getPatchName());
                 String buggyLine = BuildPath.buildDymicAllFile(dir, patchJson.getPatchName(), true);
@@ -71,8 +76,27 @@ public class BuildJsonResult {
                                 .split("-")[0] + "/" + patchJson.getBugId().split("-")[1]);
                 Set<String> testSet = new LinkedHashSet<>(Arrays.asList(passingTest.split("\n")));
                 testSet.addAll(patchJson.getFailingTests());
-                Map<String, Set<String>> buggyMap = obtainTrace(FileIO.readFileToString(buggyLine), testSet);
-                Map<String, Set<String>> fixedMap = obtainTrace(FileIO.readFileToString(fixedLine), testSet);
+
+
+                Map<String, Set<String>> buggyMap = null, fixedMap = null;
+                if (new File(buggyLine).length() / 1024.0 / 1024.0 / 1024.0 > 5.0) {
+                    try {
+                        buggyMap = obtainTraceByFile(buggyLine, testSet);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    buggyMap = obtainTrace(FileIO.readFileToString(buggyLine), testSet);
+                }
+                if (new File(fixedLine).length() / 1024 / 1024 / 1024 > 5) {
+                    try {
+                        fixedMap = obtainTraceByFile(fixedLine, testSet);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    fixedMap = obtainTrace(FileIO.readFileToString(fixedLine), testSet);
+                }
                 patchJson.setBuggyTraceInfo(buggyMap);
                 patchJson.setFixedTraceInfo(fixedMap);
             }, EXECUTOR));
@@ -81,6 +105,67 @@ public class BuildJsonResult {
         FileIO.writeStringToFile("./" + dir, JSON.toJSONString(patches));
         log.info("Build Patch Set: {} for Dir {}", patches.size(), dir);
         //multiPcoessCheck(patches);
+    }
+
+    private static Map<String, Set<String>> obtainTraceByFile(String file, Set<String> testSet)
+            throws IOException {
+
+        Map<String, Set<String>> map = new LinkedHashMap<>();
+        FileInputStream inputStream = new FileInputStream(file);
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+        String line = null;
+        while ((line = bufferedReader.readLine()) != null) {
+            //System.out.println(str);
+            if (StringUtils.isEmpty(line.trim())) {
+                continue;
+            }
+            String[] lineArray = line.split("\t", 2);
+            String key = lineArray[0].split("#")[0];
+            if (StringUtils.isBlank(checkTest(testSet, key))) {
+                continue;
+            }
+            if (StringUtils.isBlank(lineArray[1])) {
+                boolean find = false;
+                String str = null;
+                while ((str = bufferedReader.readLine()) != null) {
+
+                    String[] currentLineArray = str.split("\t", 2);
+                    String currentKey = checkTest(testSet, currentLineArray[0].split("#")[0]);
+                    if (StringUtils.isNotBlank(currentKey)) {
+                        break;
+                    } else {
+                        if (StringUtils.isBlank(currentLineArray[1])) {
+                            continue;
+                        } else {
+                            find = true;
+                            break;
+                        }
+                    }
+                }
+                if (find) {
+                    Set<String> values = Arrays.stream(line.split("\t", 2)[1].split("\t")).filter(Objects::nonNull)
+                            .filter(StringUtils::isNotBlank).collect(
+                                    Collectors.toSet());
+                    if (values.size() > 0) {
+                        map.put(checkTest(testSet, key), values);
+                    }
+                }
+            } else {
+                Set<String> values =
+                        Arrays.stream(line.split("\t", 2)[1].split("\t")).filter(Objects::nonNull)
+                                .filter(StringUtils::isNotBlank).collect(
+                                Collectors.toSet());
+                if (values.size() > 0) {
+                    map.put(checkTest(testSet, key), values);
+                }
+            }
+        }
+
+        //close
+        inputStream.close();
+        bufferedReader.close();
+        return map;
     }
 
     public static void multiPcoessCheck(List<PatchJson> patches) {
