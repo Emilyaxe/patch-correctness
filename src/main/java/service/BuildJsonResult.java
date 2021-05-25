@@ -2,7 +2,10 @@ package service;
 
 import static util.AsyExecutor.EXECUTOR;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -16,8 +19,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.fastjson.JSON;
@@ -117,13 +118,11 @@ public class BuildJsonResult {
     private static Map<String, Set<String>> obtainTraceByFile(String file, Set<String> testSet)
             throws OutOfMemoryError {
         Map<String, Set<String>> map = new LinkedHashMap<>();
-        LineIterator it = null;
-        try {
-            it = FileUtils.lineIterator(new File(file), "UTF-8");
-            String line = null;
-            while (it.hasNext()) {
-                //System.out.println(str);
-                line = it.nextLine();
+        try (FileInputStream inputStream = new FileInputStream(file);
+                BufferedReader bufferedReader = new BufferedReader(
+                        new InputStreamReader(inputStream))) {
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
                 if (StringUtils.isEmpty(line.trim())) {
                     continue;
                 }
@@ -134,9 +133,8 @@ public class BuildJsonResult {
                 }
                 if (StringUtils.isBlank(lineArray[1])) {
                     boolean find = false;
-                    String str = null;
-                    while (it.hasNext()) {
-                        str = it.nextLine();
+                    String str;
+                    while ((str = bufferedReader.readLine()) != null) {
                         String[] currentLineArray = str.split("\t", 2);
                         String currentKey = checkTest(testSet, currentLineArray[0].split("#")[0]);
                         if (StringUtils.isNotBlank(currentKey)) {
@@ -165,10 +163,9 @@ public class BuildJsonResult {
                     }
                 }
             }
+
         } catch (Exception e) {
             log.error("file {} obtain trace failed!", file, e);
-        } finally {
-            LineIterator.closeQuietly(it);
         }
         return map;
     }
