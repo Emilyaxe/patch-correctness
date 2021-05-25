@@ -58,7 +58,7 @@ public class BuildJsonResult {
         log.info("Obtain Dynamic Info ...");
         List<CompletableFuture<Void>> completableFutures = new LinkedList<>();
         for (PatchJson patchJson : patches) {
-            if (!patchJson.getPatchName().equals("patch1-Math-31-Kali-plausible.patch")) {
+            if (patchJson.getPatchName().equals("patch1-Math-31-Kali-plausible.patch")) {
                 continue;
             }
             completableFutures.add(CompletableFuture.runAsync(() -> {
