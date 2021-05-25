@@ -80,7 +80,7 @@ public class BuildJsonResult {
         }
         FileIO.writeStringToFile("./" + dir, JSON.toJSONString(patches));
         log.info("Build Patch Set: {} for Dir {}", patches.size(), dir);
-        multiPcoessCheck(patches);
+        //multiPcoessCheck(patches);
     }
 
     public static void multiPcoessCheck(List<PatchJson> patches) {
