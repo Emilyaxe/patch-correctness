@@ -85,13 +85,13 @@ public class BuildJsonResult {
                         buggyMap = obtainTraceByFile(buggyLine, testSet);
                     } catch (IOException e) {
                         e.printStackTrace();
-                    } catch (Exception e) {
+                    } catch (OutOfMemoryError e) {
                         traceProblemList.put(patchJson.getPatchName(), "");
                     }
                 } else {
                     try {
                         buggyMap = obtainTrace(FileIO.readFileToString(buggyLine), testSet);
-                    } catch (Exception e) {
+                    } catch (OutOfMemoryError e) {
                         traceProblemList.put(patchJson.getPatchName(), "");
                     }
                 }
@@ -100,13 +100,13 @@ public class BuildJsonResult {
                         fixedMap = obtainTraceByFile(fixedLine, testSet);
                     } catch (IOException e) {
                         e.printStackTrace();
-                    } catch (Exception e) {
+                    } catch (OutOfMemoryError e) {
                         traceProblemList.put(patchJson.getPatchName(), "");
                     }
                 } else {
                     try {
                         fixedMap = obtainTrace(FileIO.readFileToString(fixedLine), testSet);
-                    } catch (Exception e) {
+                    } catch (OutOfMemoryError e) {
                         traceProblemList.put(patchJson.getPatchName(), "");
                     }
                 }
