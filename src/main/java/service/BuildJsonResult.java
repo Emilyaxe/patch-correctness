@@ -57,9 +57,9 @@ public class BuildJsonResult {
         log.info("Obtain Dynamic Info ...");
         List<CompletableFuture<Void>> completableFutures = new LinkedList<>();
         for (PatchJson patchJson : patches) {
-            //            if (patchJson.getPatchName().equals("patch1-Math-31-Kali-plausible.patch")) {
-            //                continue;
-            //            }
+            if (!patchJson.getPatchName().equals("patch1-Math-31-Kali-plausible.patch")) {
+                continue;
+            }
             completableFutures.add(CompletableFuture.runAsync(() -> {
                 log.info("Patch {} dynamic info collecting ...", patchJson.getPatchName());
                 String buggyLine = BuildPath.buildDymicAllFile(dir, patchJson.getPatchName(), true);
@@ -82,7 +82,7 @@ public class BuildJsonResult {
                     try {
                         buggyMap = obtainTraceByFile(buggyLine, testSet);
                     } catch (OutOfMemoryError e) {
-                        e.printStackTrace();
+                        traceProblemList.put(patchJson.getPatchName(), "");
                     }
                 } else {
                     try {
@@ -95,7 +95,7 @@ public class BuildJsonResult {
                     try {
                         fixedMap = obtainTraceByFile(fixedLine, testSet);
                     } catch (OutOfMemoryError e) {
-                        e.printStackTrace();
+                        traceProblemList.put(patchJson.getPatchName(), "");
                     }
                 } else {
                     try {
@@ -183,9 +183,9 @@ public class BuildJsonResult {
     private static void checkPatches(List<PatchJson> patchJsons) {
 
         for (PatchJson patchJson : patchJsons) {
-            //            if (!patchJson.getPatchName().equals("patch1-Lang-10-kPAR-plausible.patch")) {
-            //                continue;
-            //            }
+            if (!patchJson.getPatchName().equals("patch1-Math-31-Kali-plausible.patch")) {
+                continue;
+            }
             // check all failing tests have traces
             log.info("Check Patch {}", patchJson.getPatchName());
             Set<String> failingTest = patchJson.getFailingTests();
@@ -202,7 +202,7 @@ public class BuildJsonResult {
                     buggyMap.values().stream().flatMap(Set::stream).collect(Collectors.toSet()),
                     true)
                     && checkMapTrace(combineMethod, fixedMap.values().stream().flatMap(Set::stream)
-                            .collect(Collectors.toSet()), false))) {
+                    .collect(Collectors.toSet()), false))) {
                 log.error("Patch {} has a wrong map", patchJson.getPatchName());
                 traceProblemList.put(patchJson.getPatchName(), "");
             }
