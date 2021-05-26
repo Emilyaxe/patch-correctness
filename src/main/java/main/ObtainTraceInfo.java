@@ -73,7 +73,7 @@ public class ObtainTraceInfo {
                     + ".patch,patch1-Lang-57-CapGen.patch,patch3-Lang-57-CapGen.patch,Lang57b_PatchHDRepair1";
 
     private static final String reRunPatches =
-            "patch1-Math-60-jGenProg-plausible.patch,patch1-Math-31-Kali-plausible.patch";
+            "patch1-Math-20-DynaMoth-plausible.patch";
 
     public static boolean compileAndRun(Subject subject, String oneTest) {
         String srcPath = subject.getHome() + subject.get_ssrc();
@@ -144,19 +144,19 @@ public class ObtainTraceInfo {
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
         for (Patch patch : entry.getValue()) {
 
-            //            if (!reRunPatches.contains(patch.getPatchName())) {
-            //                continue;
-            //            }
-            //            try {
-            //                log.info("Delete Dir for Patch {}", patch.getPatchName());
-            //                FileUtils.deleteDirectory(new File(Constant.dynamicResult + "/" + reDir + "/" + patch
-            //                        .getPatchName()));
-            //            } catch (IOException e) {
-            //                e.printStackTrace();
-            //            }
-            //            if (!patch.getPatchName().equals("Math_67.src.patch")) {
-            //                continue;
-            //            }
+            if (!reRunPatches.contains(patch.getPatchName())) {
+                continue;
+            }
+            try {
+                log.info("Delete Dir for Patch {}", patch.getPatchName());
+                FileUtils.deleteDirectory(new File(Constant.dynamicResult + "/" + reDir + "/" + patch
+                        .getPatchName()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            //                        if (!patch.getPatchName().equals("Math_67.src.patch")) {
+            //                            continue;
+            //                        }
 
             boolean isPurify = !unPurifyPatches.contains(patch.getPatchName());
             cleanSubject(subject.getHome() + subject.get_ssrc());
