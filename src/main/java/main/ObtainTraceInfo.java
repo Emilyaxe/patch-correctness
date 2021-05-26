@@ -32,6 +32,7 @@ import entity.Subject;
 import instrument.InstruTestFileVisitor;
 import instrument.IntruMethodsVisitors;
 import lombok.extern.slf4j.Slf4j;
+import purification.Purification;
 import run.Runner;
 import service.BuildJsonResult;
 import service.ObtainPassingTests;
@@ -73,7 +74,9 @@ public class ObtainTraceInfo {
                     + ".patch,patch1-Lang-57-CapGen.patch,patch3-Lang-57-CapGen.patch,Lang57b_PatchHDRepair1";
 
     private static final String reRunPatches =
-            "patch1-Math-20-DynaMoth-plausible.patch";
+            "Lang57b_PatchHDRepair1,patch1-Lang-57-TBar.patch,patch1-Lang-57-CapGen.patch,patch3-Lang-57-CapGen"
+                    + ".patch,patch1-Lang-57-kPAR-plausible.patch,patch2-Lang-57-CapGen.patch,patch1-Lang-57-AVATAR"
+                    + ".patch";
 
     public static boolean compileAndRun(Subject subject, String oneTest) {
         String srcPath = subject.getHome() + subject.get_ssrc();
@@ -154,9 +157,9 @@ public class ObtainTraceInfo {
             //            } catch (IOException e) {
             //                e.printStackTrace();
             //            }
-            //                        if (!patch.getPatchName().equals("Math_67.src.patch")) {
-            //                            continue;
-            //                        }
+            //            if (!patch.getPatchName().equals("Chart_15.src.patch")) {
+            //                continue;
+            //            }
 
             boolean isPurify = !unPurifyPatches.contains(patch.getPatchName());
             cleanSubject(subject.getHome() + subject.get_ssrc());
@@ -226,11 +229,10 @@ public class ObtainTraceInfo {
         synchronized (lock) {
             String testDir = subject.getHome() + subject.get_tsrc();
             FileIO.backupDir(testDir);
-            //            if (isPurify) {
-            //                Purification purification = new Purification(subject);
-            //                purification.purifyWithoutValidate();
-            //            }
-
+            if (isPurify) {
+                Purification purification = new Purification(subject);
+                purification.purifyWithoutValidate();
+            }
             List<File> allTestFiles = new LinkedList<>();
             FileIO.getAllFile(new File(testDir), allTestFiles);
             for (File testFile : allTestFiles) {
