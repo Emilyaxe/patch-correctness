@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -77,7 +78,8 @@ public class BuildJsonResult {
                 Set<String> testSet = new LinkedHashSet<>(Arrays.asList(passingTest.split("\n")));
                 testSet.addAll(patchJson.getFailingTests());
 
-                Map<String, Set<String>> buggyMap = null, fixedMap = null;
+                Map<String, Set<String>> buggyMap = Collections.emptyMap(),
+                        fixedMap = Collections.emptyMap();
                 if (new File(buggyLine).length() / 1024.0 / 1024.0 / 1024.0 > 3.0) {
                     try {
                         buggyMap = obtainTraceByFile(buggyLine, testSet);
@@ -202,7 +204,7 @@ public class BuildJsonResult {
                     buggyMap.values().stream().flatMap(Set::stream).collect(Collectors.toSet()),
                     true)
                     && checkMapTrace(combineMethod, fixedMap.values().stream().flatMap(Set::stream)
-                    .collect(Collectors.toSet()), false))) {
+                            .collect(Collectors.toSet()), false))) {
                 log.error("Patch {} has a wrong map", patchJson.getPatchName());
                 traceProblemList.put(patchJson.getPatchName(), "");
             }
