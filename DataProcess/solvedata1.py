@@ -5,7 +5,7 @@ import javalang
 
 from Searchnode import Node
 
-lst = ['trainSet']
+lst = ['trainSet_unpurify']
 linenodename = ['Statement_ter', 'BreakStatement_ter', 'ReturnStatement_ter', 'ContinueStatement',
                 'ContinueStatement_ter', 'LocalVariableDeclaration', 'condition', 'control', 'BreakStatement',
                 'ContinueStatement', 'ReturnStatement', "parameters", 'StatementExpression', 'return_type']
@@ -584,8 +584,8 @@ for x in lst:
     wf = open('%s.pkl' % x, 'wb')
     newdata = {}
     for datas in tqdm(data):
-        if datas['patchName'] != 'patch1-Math-31-Kali-plausible.patch':
-            continue
+        # if datas['patchName'] != 'patch1-Chart-26-jMutRepair-plausible.patch':
+        #     continue
         # datas = data[patchid]
         # if key1 != '642':
         #    continue
@@ -742,6 +742,8 @@ for x in lst:
             print(datas['combinedMethod'])
             traceback.print_exc()
             if 'Closure-92' in datas['patchName'] or 'Closure-93' in datas['patchName']:
+                continue
+            if datas['patchName'] == 'patch1-Chart-26-jMutRepair-plausible.patch':
                 continue
             assert (0)
             # print(patchid[key1])
