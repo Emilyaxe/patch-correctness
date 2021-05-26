@@ -157,9 +157,9 @@ public class ObtainTraceInfo {
             //            } catch (IOException e) {
             //                e.printStackTrace();
             //            }
-            if (!patch.getPatchName().equals("Closure_3.src.patch")) {
-                continue;
-            }
+            //            if (!patch.getPatchName().equals("Closure_3.src.patch")) {
+            //                continue;
+            //            }
 
             boolean isPurify = !unPurifyPatches.contains(patch.getPatchName());
             cleanSubject(subject.getHome() + subject.get_ssrc());
@@ -457,9 +457,6 @@ public class ObtainTraceInfo {
         log.info("Illegle Patches: {}", String.join(",", illeglePatches.keySet()));
         log.info("finish obtain trace!");
 
-        //        BuildPatchJson("trainSet");
-        //        BuildPatchJson("testSet");
-        //        BuildPatchJson("correctSet");
 
         log.info("failingTestProblemList: {}", StringUtils.join(BuildJsonResult.failingTestProblemList.keySet(), ","));
         log.info("traceProblemList: {}", StringUtils.join(BuildJsonResult.traceProblemList.keySet(), ","));
