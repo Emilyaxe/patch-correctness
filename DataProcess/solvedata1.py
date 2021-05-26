@@ -5,7 +5,7 @@ import javalang
 
 from Searchnode import Node
 
-lst = ['testSet']
+lst = ['trainSet']
 linenodename = ['Statement_ter', 'BreakStatement_ter', 'ReturnStatement_ter', 'ContinueStatement',
                 'ContinueStatement_ter', 'LocalVariableDeclaration', 'condition', 'control', 'BreakStatement',
                 'ContinueStatement', 'ReturnStatement', "parameters", 'StatementExpression', 'return_type']
@@ -584,8 +584,8 @@ for x in lst:
     wf = open('%s.pkl' % x, 'wb')
     newdata = {}
     for datas in tqdm(data):
-        # if datas['patchName'] != 'Time19b_Patch187':
-        #     continue
+        if datas['patchName'] != 'patch1-Math-31-Kali-plausible.patch':
+            continue
         # datas = data[patchid]
         # if key1 != '642':
         #    continue

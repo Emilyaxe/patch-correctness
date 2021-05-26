@@ -111,7 +111,7 @@ public class BuildJsonResult {
             }, EXECUTOR));
             CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).join();
         }
-        FileIO.writeStringToFile("./" + dir, JSON.toJSONString(patches));
+        FileIO.writeStringToFile("../result/" + dir + "_unpurify", JSON.toJSONString(patches));
         log.info("Build Patch Set: {} for Dir {}", patches.size(), dir);
         log.info("Out of Memory: {}", StringUtils.join("\n", traceProblemList.keySet()));
         //multiPcoessCheck(patches);
@@ -204,7 +204,7 @@ public class BuildJsonResult {
                     buggyMap.values().stream().flatMap(Set::stream).collect(Collectors.toSet()),
                     true)
                     && checkMapTrace(combineMethod, fixedMap.values().stream().flatMap(Set::stream)
-                            .collect(Collectors.toSet()), false))) {
+                    .collect(Collectors.toSet()), false))) {
                 log.error("Patch {} has a wrong map", patchJson.getPatchName());
                 traceProblemList.put(patchJson.getPatchName(), "");
             }
