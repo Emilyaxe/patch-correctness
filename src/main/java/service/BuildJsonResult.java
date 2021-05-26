@@ -295,14 +295,36 @@ public class BuildJsonResult {
     }
 
     public static void main(String[] args) {
-        BuildPatchJson("trainSet");
-        BuildPatchJson("testSet");
-        BuildPatchJson("correctSet");
+        //        BuildPatchJson("trainSet");
+        //        BuildPatchJson("testSet");
+        //        BuildPatchJson("correctSet");
+        processCornerCase();
 
         log.info("failingTestProblemList: {}",
                 StringUtils.join(failingTestProblemList.keySet(), ","));
         log.info("traceProblemList: {}", StringUtils.join(traceProblemList.keySet(), ","));
         //        String trainStatic = FileIO.readFileToString(BuildPath.buildMethodReFile("trainSet"));
         //        String correctStatic = FileIO.readFileToString(BuildPath.buildMethodReFile("correctSet"));
+    }
+
+    private static Map<String, Set<String>> updateLineNumber(Map<String, Set<String>> map) {
+        return map.entrySet().stream().peek(entry -> entry.setValue(entry.getValue().stream()
+                .map(line -> line.split("#")[0] + "#" + (Integer.parseInt(line.split("#")[1]) + 1))
+                .collect(Collectors.toSet())))
+                .collect(Collectors.toMap(Entry::getKey, Entry::getValue, (v1, v2) -> v2));
+    }
+
+    private static void processCornerCase() {
+        List<PatchJson> patchJsons =
+                JSON.parseArray(FileIO.readFileToString(Constant.HOME + "/result/correctSet_unpurify"),
+                        PatchJson.class);
+        patchJsons.stream().filter(patchJson -> patchJson.getPatchName().equals("Closure_16.src.patch"))
+                .forEach(patchJson -> {
+                    patchJson.setBuggyTraceInfo(updateLineNumber(patchJson.getBuggyTraceInfo()));
+                    patchJson.setFixedTraceInfo(updateLineNumber(patchJson.getFixedTraceInfo()));
+                });
+        FileIO.writeStringToFile("../result/correctSet_unpurify_1", JSON.toJSONString(patchJsons));
+
+        log.info("finish process corner case");
     }
 }

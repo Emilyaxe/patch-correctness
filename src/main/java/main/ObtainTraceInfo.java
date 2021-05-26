@@ -157,9 +157,9 @@ public class ObtainTraceInfo {
             //            } catch (IOException e) {
             //                e.printStackTrace();
             //            }
-            //            if (!patch.getPatchName().equals("Chart_15.src.patch")) {
-            //                continue;
-            //            }
+            if (!patch.getPatchName().equals("Closure_3.src.patch")) {
+                continue;
+            }
 
             boolean isPurify = !unPurifyPatches.contains(patch.getPatchName());
             cleanSubject(subject.getHome() + subject.get_ssrc());
