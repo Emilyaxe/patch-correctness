@@ -5,7 +5,7 @@ import javalang
 
 from Searchnode import Node
 
-lst = ['correctSet_unpurify']
+lst = ['trainSet_unpurify', 'testSet_unpurify', 'correctSet_unpurify']
 linenodename = ['Statement_ter', 'BreakStatement_ter', 'ReturnStatement_ter', 'ContinueStatement',
                 'ContinueStatement_ter', 'LocalVariableDeclaration', 'condition', 'control', 'BreakStatement',
                 'ContinueStatement', 'ReturnStatement', "parameters", 'StatementExpression', 'return_type']
@@ -432,7 +432,8 @@ def changetree(root1, root2):
                     print('add3 ' + root2.getTreestr())
                     break
                 else:
-                    print('test2', root1.child[i].getTreestr())
+                    print('test2 root1', root1.child[i].getTreestr())
+                    # print('test2 root2', root2.child[i].getTreestr())
                     a, b = changetree(root1.child[i], root2.child[i])
                     if a is not None:
                         tmpNode = Node('Modify_S', 0)
@@ -584,7 +585,7 @@ for x in lst:
     wf = open('%s.pkl' % x, 'wb')
     newdata = {}
     for datas in tqdm(data):
-        # if datas['patchName'] != 'Closure_65.src.patch':
+        # if datas['patchName'] != 'patch1-Chart-25-jMutRepair-plausible.patch':
         #     continue
         # datas = data[patchid]
         # if key1 != '642':
@@ -743,8 +744,7 @@ for x in lst:
             traceback.print_exc()
             if 'Closure-92' in datas['patchName'] or 'Closure-93' in datas['patchName']:
                 continue
-            if datas['patchName'] == 'patch1-Chart-26-jMutRepair-plausible.patch' or datas[
-                'patchName'] == 'Closure_65.src.patch':
+            if datas['patchName'] == 'Closure_65.src.patch':
                 continue
             assert (0)
             # print(patchid[key1])
