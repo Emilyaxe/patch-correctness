@@ -111,7 +111,7 @@ public class BuildJsonResult {
             }, EXECUTOR));
             CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).join();
         }
-        FileIO.writeStringToFile("../result/" + dir + "_purify", JSON.toJSONString(patches));
+        FileIO.writeStringToFile("../result/" + dir + "_unpurify", JSON.toJSONString(patches));
         log.info("Build Patch Set: {} for Dir {}", patches.size(), dir);
         log.info("Out of Memory: {}", StringUtils.join("\n", traceProblemList.keySet()));
         //multiPcoessCheck(patches);
