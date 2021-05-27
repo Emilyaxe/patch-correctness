@@ -74,9 +74,7 @@ public class ObtainTraceInfo {
                     + ".patch,patch1-Lang-57-CapGen.patch,patch3-Lang-57-CapGen.patch,Lang57b_PatchHDRepair1";
 
     private static final String reRunPatches =
-            "Lang57b_PatchHDRepair1,patch1-Lang-57-TBar.patch,patch1-Lang-57-CapGen.patch,patch3-Lang-57-CapGen"
-                    + ".patch,patch1-Lang-57-kPAR-plausible.patch,patch2-Lang-57-CapGen.patch,patch1-Lang-57-AVATAR"
-                    + ".patch";
+            "Math28b_Patch32,patch6-Math-80-CapGen-plausible.patch";
 
     public static boolean compileAndRun(Subject subject, String oneTest) {
         String srcPath = subject.getHome() + subject.get_ssrc();
@@ -147,16 +145,16 @@ public class ObtainTraceInfo {
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
         for (Patch patch : entry.getValue()) {
 
-            //            if (!reRunPatches.contains(patch.getPatchName())) {
-            //                continue;
-            //            }
-            //            try {
-            //                log.info("Delete Dir for Patch {}", patch.getPatchName());
-            //                FileUtils.deleteDirectory(new File(Constant.dynamicResult + "/" + reDir + "/" + patch
-            //                        .getPatchName()));
-            //            } catch (IOException e) {
-            //                e.printStackTrace();
-            //            }
+            if (!reRunPatches.contains(patch.getPatchName())) {
+                continue;
+            }
+            try {
+                log.info("Delete Dir for Patch {}", patch.getPatchName());
+                FileUtils.deleteDirectory(new File(Constant.dynamicResult + "/" + reDir + "/" + patch
+                        .getPatchName()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             //            if (!patch.getPatchName().equals("Closure_3.src.patch")) {
             //                continue;
             //            }
