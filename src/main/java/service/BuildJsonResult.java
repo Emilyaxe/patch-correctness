@@ -111,7 +111,7 @@ public class BuildJsonResult {
             }, EXECUTOR));
             CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).join();
         }
-        FileIO.writeStringToFile("../result/" + dir + "_unpurify", JSON.toJSONString(patches));
+        FileIO.writeStringToFile("../result/" + dir + "_purify", JSON.toJSONString(patches));
         log.info("Build Patch Set: {} for Dir {}", patches.size(), dir);
         log.info("Out of Memory: {}", StringUtils.join("\n", traceProblemList.keySet()));
         //multiPcoessCheck(patches);
@@ -295,9 +295,9 @@ public class BuildJsonResult {
     }
 
     public static void main(String[] args) {
-        //        BuildPatchJson("trainSet");
-        //        BuildPatchJson("testSet");
-        //        BuildPatchJson("correctSet");
+        BuildPatchJson("trainSet");
+        BuildPatchJson("testSet");
+        BuildPatchJson("correctSet");
         processCornerCase();
 
         log.info("failingTestProblemList: {}",
@@ -316,14 +316,14 @@ public class BuildJsonResult {
 
     private static void processCornerCase() {
         List<PatchJson> patchJsons =
-                JSON.parseArray(FileIO.readFileToString(Constant.HOME + "/result/correctSet_unpurify"),
+                JSON.parseArray(FileIO.readFileToString(Constant.HOME + "/result/correctSet_purify"),
                         PatchJson.class);
         patchJsons.stream().filter(patchJson -> patchJson.getPatchName().equals("Closure_16.src.patch"))
                 .forEach(patchJson -> {
                     patchJson.setBuggyTraceInfo(updateLineNumber(patchJson.getBuggyTraceInfo()));
                     patchJson.setFixedTraceInfo(updateLineNumber(patchJson.getFixedTraceInfo()));
                 });
-        FileIO.writeStringToFile("../result/correctSet_unpurify_1", JSON.toJSONString(patchJsons));
+        FileIO.writeStringToFile(Constant.HOME + "/result/correctSet_purify", JSON.toJSONString(patchJsons));
 
         log.info("finish process corner case");
     }
