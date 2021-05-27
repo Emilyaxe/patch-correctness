@@ -744,8 +744,7 @@ for x in lst:
             traceback.print_exc()
             if 'Closure-92' in datas['patchName'] or 'Closure-93' in datas['patchName']:
                 continue
-            if datas['patchName'] == 'Closure_65.src.patch' or datas[
-                'patchName'] == 'patch1-Chart-26-jMutRepair-plausible.patch':
+            if datas['patchName'] == 'Closure_65.src.patch':
                 continue
             assert (0)
             # print(patchid[key1])
