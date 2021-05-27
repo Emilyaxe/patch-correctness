@@ -296,9 +296,9 @@ public class BuildJsonResult {
 
     public static void main(String[] args) {
         BuildPatchJson("trainSet");
-        BuildPatchJson("testSet");
-        BuildPatchJson("correctSet");
-        processCornerCase();
+        //BuildPatchJson("testSet");
+        //BuildPatchJson("correctSet");
+        //processCornerCase();
 
         log.info("failingTestProblemList: {}",
                 StringUtils.join(failingTestProblemList.keySet(), ","));
