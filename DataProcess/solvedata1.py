@@ -587,8 +587,8 @@ for x in lst:
     newdata = {}
     infodata = {}
     for datas in tqdm(data):
-        # if datas['patchName'] != 'Lang58b_Patch26':
-        #     continue
+        if datas['patchName'] != 'patch1-Chart-1-Jaid.patch':
+            continue
         # datas = data[patchid]
         # if key1 != '642':
         #    continue
@@ -659,6 +659,9 @@ for x in lst:
             fcover = {}
             plinecover = {}
             failingTests = datas['failingTests']
+            failintFiles = []
+            for test in failingTests:
+                failintFiles.append(test.split('::')[0])
             buggyTraceInfo = datas['buggyTraceInfo']
             fixedTraceInfo = datas['fixedTraceInfo']
             for key in buggyTraceInfo:
@@ -688,7 +691,7 @@ for x in lst:
                     # print(line, codelines[int(lst[1])])
                     # print(root.printTreeWithLine(root))
                     tmp.append(linenode.id)
-                # cover['buggy'] = tmp
+
                 if key in failingTests:
                     if key in fcover:
                         fcover[key]['buggy'] = tmp
@@ -698,12 +701,15 @@ for x in lst:
                 else:
                     if key in pcover:
                         pcover[key]['buggy'] = tmp
-                        plinecover[key]['buggy'] = commonline
+                        if key.split('::')[0] in failintFiles:
+                            plinecover[key]['buggy'] = commonline
                     else:
                         pcover[key] = {}
                         plinecover[key] = {}
                         pcover[key]['buggy'] = tmp
-                        plinecover[key]['buggy'] = commonline
+                        if key.split('::')[0] in failintFiles:
+                            plinecover[key]['buggy'] = commonline
+
             for key in fixedTraceInfo:
                 commonline = []
                 tmp = []
@@ -738,12 +744,14 @@ for x in lst:
                 else:
                     if key in pcover:
                         pcover[key]['fixed'] = tmp
-                        plinecover[key]['fixed'] = commonline
+                        if key.split('::')[0] in failintFiles:
+                            plinecover[key]['fixed'] = commonline
                     else:
                         pcover[key] = {}
                         plinecover[key] = {}
                         pcover[key]['fixed'] = tmp
-                        plinecover[key]['fixed'] = commonline
+                        if key.split('::')[0] in failintFiles:
+                            plinecover[key]['fixed'] = commonline
             psame = 0
             pdiff = 0
             for key in plinecover:
