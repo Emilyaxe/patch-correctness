@@ -587,8 +587,8 @@ for x in lst:
     newdata = {}
     infodata = {}
     for datas in tqdm(data):
-        if datas['patchName'] != 'patch1-Chart-1-Jaid.patch':
-            continue
+        # if datas['patchName'] != 'patch1-Chart-1-Jaid.patch':
+        #     continue
         # datas = data[patchid]
         # if key1 != '642':
         #    continue
@@ -701,14 +701,12 @@ for x in lst:
                 else:
                     if key in pcover:
                         pcover[key]['buggy'] = tmp
-                        if key.split('::')[0] in failintFiles:
-                            plinecover[key]['buggy'] = commonline
+                        plinecover[key]['buggy'] = commonline
                     else:
                         pcover[key] = {}
                         plinecover[key] = {}
                         pcover[key]['buggy'] = tmp
-                        if key.split('::')[0] in failintFiles:
-                            plinecover[key]['buggy'] = commonline
+                        plinecover[key]['buggy'] = commonline
 
             for key in fixedTraceInfo:
                 commonline = []
@@ -744,17 +742,17 @@ for x in lst:
                 else:
                     if key in pcover:
                         pcover[key]['fixed'] = tmp
-                        if key.split('::')[0] in failintFiles:
-                            plinecover[key]['fixed'] = commonline
+                        plinecover[key]['fixed'] = commonline
                     else:
                         pcover[key] = {}
                         plinecover[key] = {}
                         pcover[key]['fixed'] = tmp
-                        if key.split('::')[0] in failintFiles:
-                            plinecover[key]['fixed'] = commonline
+                        plinecover[key]['fixed'] = commonline
             psame = 0
             pdiff = 0
             for key in plinecover:
+                if not key.split('::')[0] in failintFiles:
+                    continue
                 if 'buggy' in plinecover[key] and 'fixed' in plinecover[key]:
                     if plinecover[key]['buggy'] == plinecover[key]['fixed']:
                         psame = psame + 1
