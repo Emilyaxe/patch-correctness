@@ -582,13 +582,13 @@ def collectLine2(root):
 
 for x in lst:
     data = json.loads(open('../result/%s' % x, 'r').read())
-    wf = open('../result/%s.pkl' % x, 'wb')
-    infofile = open('../result/%s.info' % x, 'w')
+    wf = open('../result/pkldir/%s.pkl' % x, 'wb')
+    infofile = open('../result/pkldir/%s.info' % x, 'w')
     newdata = {}
     infodata = {}
     for datas in tqdm(data):
-        if datas['patchName'] != 'Lang58b_Patch26':
-            continue
+        # if datas['patchName'] != 'Lang58b_Patch26':
+        #     continue
         # datas = data[patchid]
         # if key1 != '642':
         #    continue
@@ -657,16 +657,19 @@ for x in lst:
 
             pcover = {}
             fcover = {}
+            plinecover = {}
             failingTests = datas['failingTests']
             buggyTraceInfo = datas['buggyTraceInfo']
             fixedTraceInfo = datas['fixedTraceInfo']
             for key in buggyTraceInfo:
                 # cover = {}
                 tmp = []
+                commonline = []
                 for line in buggyTraceInfo[key]:
                     lst = line.split('#')
                     lineid = int(lst[1])
                     if lineid in normallines:
+                        commonline.append(lineid)
                         lineid = normallines[lineid]
                         if lineid not in alineb:
                             continue
@@ -695,15 +698,20 @@ for x in lst:
                 else:
                     if key in pcover:
                         pcover[key]['buggy'] = tmp
+                        plinecover[key]['buggy'] = commonline
                     else:
                         pcover[key] = {}
+                        plinecover[key] = {}
                         pcover[key]['buggy'] = tmp
+                        plinecover[key]['buggy'] = commonline
             for key in fixedTraceInfo:
+                commonline = []
                 tmp = []
                 for line in fixedTraceInfo[key]:
                     lst = line.split('#')
                     lineid = int(lst[1])
                     if lineid in normallines:
+                        commonline.append(lineid)
                         lineid = normallines[lineid]
                         if lineid not in alineb:
                             continue
@@ -730,18 +738,21 @@ for x in lst:
                 else:
                     if key in pcover:
                         pcover[key]['fixed'] = tmp
+                        plinecover[key]['fixed'] = commonline
                     else:
                         pcover[key] = {}
+                        plinecover[key] = {}
                         pcover[key]['fixed'] = tmp
+                        plinecover[key]['fixed'] = commonline
             psame = 0
             pdiff = 0
-            for key in pcover:
-                if 'buggy' in pcover[key] and 'fixed' in pcover[key]:
-                    if pcover[key]['buggy'] == pcover[key]['fixed']:
+            for key in plinecover:
+                if 'buggy' in plinecover[key] and 'fixed' in plinecover[key]:
+                    if plinecover[key]['buggy'] == plinecover[key]['fixed']:
                         psame = psame + 1
                     else:
                         pdiff = pdiff + 1
-                if 'buggy' in pcover[key] or 'fixed' in pcover[key]:
+                else:
                     pdiff = pdiff + 1
 
             newdata[datas['patchName']] = (
