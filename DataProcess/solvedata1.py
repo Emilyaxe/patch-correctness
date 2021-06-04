@@ -583,6 +583,7 @@ def collectLine2(root):
 for x in lst:
     data = json.loads(open('../result/%s' % x, 'r').read())
     wf = open('%s.pkl' % x, 'wb')
+    infofile = open('%s.info' % x, 'wb')
     newdata = {}
     for datas in tqdm(data):
         # if datas['patchName'] != 'patch1-Chart-26-jMutRepair-plausible.patch':
@@ -731,10 +732,17 @@ for x in lst:
                     else:
                         pcover[key] = {}
                         pcover[key]['fixed'] = tmp
-
+            psame = 0
+            pdiff = 0
+            for key in pcover:
+                if pcover[key]['buggy'] == pcover[key]['fixed']:
+                    psame = psame + 1
+                else:
+                    pdiff = pdiff + 1
             newdata[datas['patchName']] = (
                 {'tree': root.printTreeWithVar(root, vardic), 'label': datas['label'], 'prob': root.getTreeProb(root),
-                 'pcover': pcover, 'fcover': fcover})
+                 'pcover': pcover, 'fcover': fcover, 'psame': psame, 'pdiff': pdiff})
+            infodata[datas['patchName']] = ({'label': datas['label'], 'psame': psame, 'pdiff': pdiff})
             # assert(0)
             # if patchid == 'Math93b_Patch207':
             #    assert(0)
@@ -754,5 +762,6 @@ for x in lst:
             errors.setdefault(x, []).append(patchid)
     print('%s  Size %s : ', x, len(newdata))
     wf.write(pickle.dumps(newdata, protocol=1))
+    infofile.write(infodata)
 print(errors)
 print(fnames)
