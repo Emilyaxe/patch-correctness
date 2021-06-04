@@ -585,6 +585,7 @@ for x in lst:
     wf = open('%s.pkl' % x, 'wb')
     infofile = open('%s.info' % x, 'wb')
     newdata = {}
+    infodata = {}
     for datas in tqdm(data):
         # if datas['patchName'] != 'patch1-Chart-26-jMutRepair-plausible.patch':
         #     continue
