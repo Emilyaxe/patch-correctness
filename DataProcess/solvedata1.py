@@ -736,10 +736,14 @@ for x in lst:
             psame = 0
             pdiff = 0
             for key in pcover:
-                if pcover[key]['buggy'] == pcover[key]['fixed']:
-                    psame = psame + 1
-                else:
+                if 'buggy' in pcover[key] and 'fixed' in pcover[key]:
+                    if pcover[key]['buggy'] == pcover[key]['fixed']:
+                        psame = psame + 1
+                    else:
+                        pdiff = pdiff + 1
+                if 'buggy' in pcover[key] or 'fixed' in pcover[key]:
                     pdiff = pdiff + 1
+
             newdata[datas['patchName']] = (
                 {'tree': root.printTreeWithVar(root, vardic), 'label': datas['label'], 'prob': root.getTreeProb(root),
                  'pcover': pcover, 'fcover': fcover, 'psame': psame, 'pdiff': pdiff})
