@@ -5,7 +5,7 @@ import javalang
 
 from Searchnode import Node
 
-lst = ['trainSet_unpurify', 'testSet_unpurify', 'correctSet_unpurify']
+lst = ['trainSet_purify', 'testSet_purify', 'correctSet_purify']
 linenodename = ['Statement_ter', 'BreakStatement_ter', 'ReturnStatement_ter', 'ContinueStatement',
                 'ContinueStatement_ter', 'LocalVariableDeclaration', 'condition', 'control', 'BreakStatement',
                 'ContinueStatement', 'ReturnStatement', "parameters", 'StatementExpression', 'return_type']
@@ -582,13 +582,13 @@ def collectLine2(root):
 
 for x in lst:
     data = json.loads(open('../result/%s' % x, 'r').read())
-    wf = open('%s.pkl' % x, 'wb')
-    infofile = open('%s.info' % x, 'w')
+    wf = open('../result/%s.pkl' % x, 'wb')
+    infofile = open('../result/%s.info' % x, 'w')
     newdata = {}
     infodata = {}
     for datas in tqdm(data):
-        # if datas['patchName'] != 'patch1-Chart-26-jMutRepair-plausible.patch':
-        #     continue
+        if datas['patchName'] != 'Lang58b_Patch26':
+            continue
         # datas = data[patchid]
         # if key1 != '642':
         #    continue
