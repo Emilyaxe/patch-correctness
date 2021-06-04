@@ -583,7 +583,7 @@ def collectLine2(root):
 for x in lst:
     data = json.loads(open('../result/%s' % x, 'r').read())
     wf = open('%s.pkl' % x, 'wb')
-    infofile = open('%s.info' % x, 'wb')
+    infofile = open('%s.info' % x, 'w')
     newdata = {}
     infodata = {}
     for datas in tqdm(data):
@@ -767,6 +767,6 @@ for x in lst:
             errors.setdefault(x, []).append(patchid)
     print('%s  Size %s : ', x, len(newdata))
     wf.write(pickle.dumps(newdata, protocol=1))
-    infofile.write(infodata)
+    infofile.write(json.dumps(infodata))
 print(errors)
 print(fnames)
