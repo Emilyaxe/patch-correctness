@@ -603,101 +603,9 @@ def most_change(plinecover):
     return pcover_score
 
 
-def obtain_cover(root, datas):
-    pcover = {}
-    fcover = {}
-    plinecover = {}
-    failingTests = datas['failingTests']
-    # failintFiles = []
-    # for test in failingTests:
-    #     failintFiles.append(test.split('::')[0])
-    buggyTraceInfo = datas['buggyTraceInfo']
-    fixedTraceInfo = datas['fixedTraceInfo']
-    for key in buggyTraceInfo:
-        # cover = {}
-        tmp = []
-        commonline = []
-        for line in buggyTraceInfo[key]:
-            lst = line.split('#')
-            lineid = int(lst[1])
-            if lineid in normallines:
-                commonline.append(lineid)
-                lineid = normallines[lineid]
-                if lineid not in alineb:
-                    continue
-                node = getNodeById(root, lineid)
-            elif lineid in addlines:
-                assert (0)
-            elif lineid in deletelines:
-                lineid = deletelines[lineid]
-                if lineid not in alineb:
-                    continue
-                node = getNodeById(root, lineid)
-            # print(lineid)
-            linenode, _ = getSubroot(node)
-            if linenode is None:
-                continue
-            # print(line, codelines[int(lst[1])])
-            # print(root.printTreeWithLine(root))
-            tmp.append(linenode.id)
+# def obtain_cover(root, datas):
 
-        if key in failingTests:
-            if key in fcover:
-                fcover[key]['buggy'] = tmp
-            else:
-                fcover[key] = {}
-                fcover[key]['buggy'] = tmp
-        else:
-            if key in pcover:
-                pcover[key]['buggy'] = tmp
-                plinecover[key]['buggy'] = commonline
-            else:
-                pcover[key] = {}
-                plinecover[key] = {}
-                pcover[key]['buggy'] = tmp
-                plinecover[key]['buggy'] = commonline
-
-    for key in fixedTraceInfo:
-        commonline = []
-        tmp = []
-        for line in fixedTraceInfo[key]:
-            lst = line.split('#')
-            lineid = int(lst[1])
-            if lineid in normallines:
-                commonline.append(lineid)
-                lineid = normallines[lineid]
-                if lineid not in alineb:
-                    continue
-                node = getNodeById(root, lineid)
-            elif lineid in addlines:
-                lineid = addlines[lineid]
-                if lineid not in alinef:
-                    continue
-                node = getNodeById2(root, lineid)
-            elif lineid in deletelines:
-                assert (0)
-            # node = getNodeById2(root, lineid)
-            linenode, _ = getSubroot(node)
-            if linenode is None:
-                continue
-            tmp.append(linenode.id)
-        # cover['fixed'] = tmp
-        if key in failingTests:
-            if key in fcover:
-                fcover[key]['fixed'] = tmp
-            else:
-                fcover[key] = {}
-                fcover[key]['fixed'] = tmp
-        else:
-            if key in pcover:
-                pcover[key]['fixed'] = tmp
-                plinecover[key]['fixed'] = commonline
-            else:
-                pcover[key] = {}
-                plinecover[key] = {}
-                pcover[key]['fixed'] = tmp
-                plinecover[key]['fixed'] = commonline
-    return pcover, fcover, plinecover
+# return pcover, fcover, plinecover
 
 
 for x in lst:
@@ -707,8 +615,8 @@ for x in lst:
     newdata = {}
     infodata = {}
     for datas in tqdm(data):
-        # if datas['patchName'] != 'patch1-Closure-73-SequenceR.patch':
-        #     continue
+        if datas['patchName'] != 'patch1-Chart-25-TBar-plausible.patch':
+            continue
         # datas = data[patchid]
         # if key1 != '642':
         #    continue
@@ -773,8 +681,6 @@ for x in lst:
             #     continue
             alineb = collectLine(root)
             alinef = collectLine2(root)
-            # lst = os.listdir(filepre)
-            # tcover = {}
 
             # psame = 0
             # pdiff = 0
@@ -789,19 +695,109 @@ for x in lst:
             #     else:
             #         pdiff = pdiff + 1
 
-            pcover, fcover, plinecover = obtain_cover(root, datas)
-            # pcover_score = most_change(plinecover)
-            # pcover_limit = {}
-            # num = 300
-            # if len(pcover_score) <= num:
-            #     pcover_limit = pcover
-            # else:
-            #     i = 1
-            #     for key in pcover_score:
-            #         if i > num:
-            #             break
-            #         pcover_limit[key[0]] = pcover[key[0]]
-            #         i = + 1
+            # pcover, fcover, plinecover = obtain_cover(root, datas)
+            pcover = {}
+            fcover = {}
+            plinecover = {}
+            failingTests = datas['failingTests']
+            # failintFiles = []
+            # for test in failingTests:
+            #     failintFiles.append(test.split('::')[0])
+            buggyTraceInfo = datas['buggyTraceInfo']
+            fixedTraceInfo = datas['fixedTraceInfo']
+            for key in buggyTraceInfo:
+                # cover = {}
+                tmp = []
+                commonline = []
+                for line in buggyTraceInfo[key]:
+                    lst = line.split('#')
+                    lineid = int(lst[1])
+                    if lineid in normallines:
+                        commonline.append(lineid)
+                        lineid = normallines[lineid]
+                        if lineid not in alineb:
+                            continue
+                        node = getNodeById(root, lineid)
+                    elif lineid in addlines:
+                        assert (0)
+                    elif lineid in deletelines:
+                        lineid = deletelines[lineid]
+                        if lineid not in alineb:
+                            continue
+                        node = getNodeById(root, lineid)
+                    # print(lineid)
+                    linenode, _ = getSubroot(node)
+                    if linenode is None:
+                        tmp.append(linenode.id)
+
+                if key in failingTests:
+                    if key in fcover:
+                        fcover[key]['buggy'] = tmp
+                    else:
+                        fcover[key] = {}
+                        fcover[key]['buggy'] = tmp
+                else:
+                    if key in pcover:
+                        pcover[key]['buggy'] = tmp
+                        plinecover[key]['buggy'] = commonline
+                    else:
+                        pcover[key] = {}
+                        plinecover[key] = {}
+                        pcover[key]['buggy'] = tmp
+                        plinecover[key]['buggy'] = commonline
+            for key in fixedTraceInfo:
+                commonline = []
+                tmp = []
+                for line in fixedTraceInfo[key]:
+                    lst = line.split('#')
+                    lineid = int(lst[1])
+                    if lineid in normallines:
+                        commonline.append(lineid)
+                        lineid = normallines[lineid]
+                        if lineid not in alineb:
+                            continue
+                        node = getNodeById(root, lineid)
+                    elif lineid in addlines:
+                        lineid = addlines[lineid]
+                        if lineid not in alinef:
+                            continue
+                        node = getNodeById2(root, lineid)
+                    elif lineid in deletelines:
+                        assert (0)
+                    # node = getNodeById2(root, lineid)
+                    linenode, _ = getSubroot(node)
+                    if linenode is None:
+                        continue
+                    tmp.append(linenode.id)
+                # cover['fixed'] = tmp
+                if key in failingTests:
+                    if key in fcover:
+                        fcover[key]['fixed'] = tmp
+                    else:
+                        fcover[key] = {}
+                        fcover[key]['fixed'] = tmp
+                else:
+                    if key in pcover:
+                        pcover[key]['fixed'] = tmp
+                        plinecover[key]['fixed'] = commonline
+                    else:
+                        pcover[key] = {}
+                        plinecover[key] = {}
+                        pcover[key]['fixed'] = tmp
+                        plinecover[key]['fixed'] = commonline
+
+            pcover_score = most_change(plinecover)
+            pcover_limit = {}
+            num = 300
+            if len(pcover_score) <= num:
+                pcover_limit = pcover
+            else:
+                i = 1
+                for key in pcover_score:
+                    if i > num:
+                        break
+                    pcover_limit[key[0]] = pcover[key[0]]
+                    i = + 1
 
             newdata[datas['patchName']] = (
                 {'tree': root.printTreeWithVar(root, vardic), 'label': datas['label'], 'prob': root.getTreeProb(root),
@@ -813,20 +809,20 @@ for x in lst:
             #    assert(0)
         except:
             print(datas['patchName'])
-            print(datas['combinedMethod'])
-            traceback.print_exc()
-            if 'Closure-92' in datas['patchName'] or 'Closure-93' in datas['patchName']:
-                continue
-            if datas['patchName'] == 'Closure_65.src.patch':
-                continue
-            assert (0)
-            # print(patchid[key1])
-            # if patchid == 'patch1-Chart-4-SOFix.patch':
+        print(datas['combinedMethod'])
+        traceback.print_exc()
+        if 'Closure-92' in datas['patchName'] or 'Closure-93' in datas['patchName']:
+            continue
+        if datas['patchName'] == 'Closure_65.src.patch':
+            continue
+        assert (0)
+        # print(patchid[key1])
+        # if patchid == 'patch1-Chart-4-SOFix.patch':
 
-            pass
-            errors.setdefault(x, []).append(patchid)
-    print('%s  Size %s : ', x, len(newdata))
-    wf.write(pickle.dumps(newdata, protocol=1))
-    # infofile.write(json.dumps(infodata))
+        pass
+        errors.setdefault(x, []).append(patchid)
+print('%s  Size %s : ', x, len(newdata))
+wf.write(pickle.dumps(newdata, protocol=1))
+# infofile.write(json.dumps(infodata))
 print(errors)
 print(fnames)
