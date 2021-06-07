@@ -790,22 +790,22 @@ for x in lst:
             #         pdiff = pdiff + 1
 
             pcover, fcover, plinecover = obtain_cover(root, datas)
-            pcover_score = most_change(plinecover)
-            pcover_limit = {}
-            num = 300
-            if len(pcover_score) <= num:
-                pcover_limit = pcover
-            else:
-                i = 1
-                for key in pcover_score:
-                    if i > num:
-                        break
-                    pcover_limit[key[0]] = pcover[key[0]]
-                    i = + 1
+            # pcover_score = most_change(plinecover)
+            # pcover_limit = {}
+            # num = 300
+            # if len(pcover_score) <= num:
+            #     pcover_limit = pcover
+            # else:
+            #     i = 1
+            #     for key in pcover_score:
+            #         if i > num:
+            #             break
+            #         pcover_limit[key[0]] = pcover[key[0]]
+            #         i = + 1
 
             newdata[datas['patchName']] = (
                 {'tree': root.printTreeWithVar(root, vardic), 'label': datas['label'], 'prob': root.getTreeProb(root),
-                 'pcover': pcover_limit, 'fcover': fcover})
+                 'pcover': pcover, 'fcover': fcover})
 
             # infodata[datas['patchName']] = ({'label': datas['label'], 'psame': psame, 'pdiff': pdiff})
             # assert(0)
