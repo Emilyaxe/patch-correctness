@@ -790,7 +790,7 @@ for x in lst:
             #         pdiff = pdiff + 1
 
             pcover, fcover, plinecover = obtain_cover(root, datas)
-            pcover_score = most_change(pcover)
+            pcover_score = most_change(plinecover)
             pcover_limit = {}
             num = 300
             if len(pcover_score) <= num:
