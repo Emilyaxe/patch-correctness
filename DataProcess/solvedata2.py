@@ -781,7 +781,7 @@ for x in lst:
             #         pdiff = pdiff + 1
             pcover_score = most_change(plinecover)
             pcover_limit = {}
-            num = 300
+            num = 10
             if len(pcover_score) <= num:
                 pcover_limit = pcover
             else:
@@ -790,7 +790,7 @@ for x in lst:
                     if i > num:
                         break
                     pcover_limit[key[0]] = pcover[key[0]]
-                    i = + 1
+                    i = i + 1
 
             newdata[datas['patchName']] = (
                 {'tree': root.printTreeWithVar(root, vardic), 'label': datas['label'], 'prob': root.getTreeProb(root),
