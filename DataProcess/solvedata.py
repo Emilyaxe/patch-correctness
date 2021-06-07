@@ -7,9 +7,9 @@ import javalang
 from Searchnode import Node
 
 lst = ['trainSetS']
-linenodename = ['Statement_ter', 'BreakStatement_ter', 'ReturnStatement_ter', 'ContinueStatement',
-                'ContinueStatement_ter', 'LocalVariableDeclaration', 'condition', 'control', 'BreakStatement',
-                'ContinueStatement', 'ReturnStatement', "parameters", 'StatementExpression', 'return_type']
+line_node_name = ['Statement_ter', 'BreakStatement_ter', 'ReturnStatement_ter', 'ContinueStatement',
+                  'ContinueStatement_ter', 'LocalVariableDeclaration', 'condition', 'control', 'BreakStatement',
+                  'ContinueStatement', 'ReturnStatement', "parameters", 'StatementExpression', 'return_type']
 
 
 # os.environ["CUDA_VISIBLE_DEVICES"]="1, 4"
@@ -160,12 +160,12 @@ def setProb(r, p):
 
 
 def getSubroot(treeroot):
-    global linenodename
+    global line_node_name
     currnode = treeroot
     lnode = None
     mnode = None
     while currnode:
-        if currnode.name in linenodename:
+        if currnode.name in line_node_name:
             lnode = currnode
             break
         currnode = currnode.father

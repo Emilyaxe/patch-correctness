@@ -15,7 +15,7 @@ public class checkCover {
         int inCorDiff1 = 0;
         String[] fileSet = {"correctSet_purify.info", "testSet_purify.info", "trainSet_purify.info"};
         for (String data : fileSet) {
-            String file = "./result/" + data;
+            String file = "./result/pkldir/" + data;
             String content = FileIO.readFileToString(file);
             JSONObject jsonObject = JSON.parseObject(content);
             for (String key : jsonObject.keySet()) {

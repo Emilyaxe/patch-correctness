@@ -6,13 +6,13 @@ import javalang
 from Searchnode import Node
 
 lst = ['trainSet_purify', 'testSet_purify', 'correctSet_purify']
-linenodename = ['Statement_ter', 'BreakStatement_ter', 'ReturnStatement_ter', 'ContinueStatement',
-                'ContinueStatement_ter', 'LocalVariableDeclaration', 'condition', 'control', 'BreakStatement',
-                'ContinueStatement', 'ReturnStatement', "parameters", 'StatementExpression', 'return_type']
+line_node_name = ['Statement_ter', 'BreakStatement_ter', 'ReturnStatement_ter', 'ContinueStatement',
+                  'ContinueStatement_ter', 'LocalVariableDeclaration', 'condition', 'control', 'BreakStatement',
+                  'ContinueStatement', 'ReturnStatement', "parameters", 'StatementExpression', 'return_type']
 
 
 # os.environ["CUDA_VISIBLE_DEVICES"]="1, 4"
-def getLocVar(node):
+def get_local_var(node):
     varnames = []
     if node.name == 'VariableDeclarator':
         currnode = -1
@@ -36,7 +36,7 @@ def getLocVar(node):
                 break
         varnames.append((currnode.child[0].name, node))
     for x in node.child:
-        varnames.extend(getLocVar(x))
+        varnames.extend(get_local_var(x))
     return varnames
 
 
@@ -113,7 +113,7 @@ def solveLongTree(root, subroot, maxsize):
         troot = root
     n = 0
     setid(troot)
-    varnames = getLocVar(troot)
+    varnames = get_local_var(troot)
     fnum = -1
     vnum = -1
     vardic = {}
@@ -159,12 +159,12 @@ def setProb(r, p):
 
 
 def getSubroot(treeroot):
-    global linenodename
+    global line_node_name
     currnode = treeroot
     lnode = None
     mnode = None
     while currnode:
-        if currnode.name in linenodename:
+        if currnode.name in line_node_name:
             lnode = currnode
             break
         currnode = currnode.father
@@ -393,7 +393,7 @@ anodes = []
 
 
 def setProb2(root, v):
-    root.probility = v
+    root.possibility = v
     for x in root.child:
         setProb2(x, v)
 
@@ -407,7 +407,7 @@ def setProb(root):
         setProb2(root[0], 1)
         setProb2(root[1], 2)
     else:
-        root.probility = 3
+        root.possibility = 3
 
 
 def changetree(root1, root2):
@@ -587,8 +587,8 @@ for x in lst:
     newdata = {}
     infodata = {}
     for datas in tqdm(data):
-        # if datas['patchName'] != 'patch1-Chart-1-Jaid.patch':
-        #     continue
+        if datas['patchName'] != 'patch1-Chart-1-Jaid.patch':
+            continue
         # datas = data[patchid]
         # if key1 != '642':
         #    continue
@@ -623,7 +623,8 @@ for x in lst:
             tokens = javalang.tokenizer.tokenize(code)
             parser = javalang.parser.Parser(tokens)
             tree = parser.parse_member_declaration()
-            root = getroottree(generateAST(tree))
+            result = generateAST(tree)
+            root = getroottree(result)
             print('---------------\n')
             tokens = javalang.tokenizer.tokenize(newcode)
             parser = javalang.parser.Parser(tokens)
