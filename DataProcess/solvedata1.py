@@ -707,8 +707,8 @@ for x in lst:
     newdata = {}
     infodata = {}
     for datas in tqdm(data):
-        if datas['patchName'] != 'patch1-Closure-73-SequenceR.patch':
-            continue
+        # if datas['patchName'] != 'patch1-Closure-73-SequenceR.patch':
+        #     continue
         # datas = data[patchid]
         # if key1 != '642':
         #    continue
