@@ -580,6 +580,24 @@ def collectLine2(root):
     return ans
 
 
+def most_change(plinecover):
+    pcover_score = {}
+    for key in plinecover:
+        # print(key)
+        if 'buggy' in plinecover[key] and 'fixed' in plinecover[key]:
+            if max(len(set(plinecover[key]['buggy'])), len(set(plinecover[key]['fixed']))) == 0:
+                score = 0.0
+            else:
+                score = 1.0 - len(set(plinecover[key]['buggy']) & set(plinecover[key]['fixed'])) / max(
+                    len(set(plinecover[key]['buggy'])),
+                    len(set(plinecover[key]['fixed'])))
+        else:
+            score = 1.0
+        pcover_score[key] = score
+    pcover_score = sorted(pcover_score.items(), key=lambda d: d[1], reverse=True)
+    return pcover_score
+
+
 for x in lst:
     data = json.loads(open('../result/%s' % x, 'r').read())
     wf = open('../result/pkldir/%s.pkl' % x, 'wb')
@@ -587,8 +605,8 @@ for x in lst:
     newdata = {}
     # infodata = {}
     for datas in tqdm(data):
-        # if datas['patchName'] != 'patch1-Chart-1-Jaid.patch':
-        #     continue
+        if datas['patchName'] != 'patch1-Chart-1-Jaid.patch':
+            continue
         # datas = data[patchid]
         # if key1 != '642':
         #    continue
@@ -761,10 +779,22 @@ for x in lst:
             #             pdiff = pdiff + 1
             #     else:
             #         pdiff = pdiff + 1
+            pcover_score = most_change(plinecover)
+            pcover_limit = {}
+            num = 300
+            if len(pcover_score) <= num:
+                pcover_limit = pcover
+            else:
+                i = 1
+                for key in pcover_score:
+                    if i > num:
+                        break
+                    pcover_limit[key[0]] = pcover[key[0]]
+                    i = + 1
 
             newdata[datas['patchName']] = (
                 {'tree': root.printTreeWithVar(root, vardic), 'label': datas['label'], 'prob': root.getTreeProb(root),
-                 'pcover': pcover, 'fcover': fcover})
+                 'pcover': pcover_limit, 'fcover': fcover})
             # infodata[datas['patchName']] = ({'label': datas['label'], 'psame': psame, 'pdiff': pdiff})
             # assert(0)
             # if patchid == 'Math93b_Patch207':
