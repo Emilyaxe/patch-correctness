@@ -588,10 +588,14 @@ calculating the score by the set
 def most_change(plinecover):
     pcover_score = {}
     for key in plinecover:
+        # print(key)
         if 'buggy' in plinecover[key] and 'fixed' in plinecover[key]:
-            score = 1.0 - len(set(plinecover[key]['buggy']) & set(plinecover[key]['fixed'])) / max(
-                len(set(plinecover[key]['buggy'])),
-                len(set(plinecover[key]['fixed'])))
+            if max(len(set(plinecover[key]['buggy'])), len(set(plinecover[key]['fixed']))) == 0:
+                score = 0.0
+            else:
+                score = 1.0 - len(set(plinecover[key]['buggy']) & set(plinecover[key]['fixed'])) / max(
+                    len(set(plinecover[key]['buggy'])),
+                    len(set(plinecover[key]['fixed'])))
         else:
             score = 1.0
         pcover_score[key] = score
@@ -703,8 +707,8 @@ for x in lst:
     newdata = {}
     infodata = {}
     for datas in tqdm(data):
-        # if datas['patchName'] != 'Math42b_Patch163':
-        #     continue
+        if datas['patchName'] != 'patch1-Closure-73-SequenceR.patch':
+            continue
         # datas = data[patchid]
         # if key1 != '642':
         #    continue
@@ -786,7 +790,7 @@ for x in lst:
             #         pdiff = pdiff + 1
 
             pcover, fcover, plinecover = obtain_cover(root, datas)
-            pcover_score = most_change(plinecover)
+            pcover_score = most_change(pcover)
             pcover_limit = {}
             num = 300
             if len(pcover_score) <= num:
@@ -796,7 +800,7 @@ for x in lst:
                 for key in pcover_score:
                     if i > num:
                         break
-                    pcover_limit[key] = pcover[key]
+                    pcover_limit[key[0]] = pcover[key[0]]
                     i = + 1
 
             newdata[datas['patchName']] = (
