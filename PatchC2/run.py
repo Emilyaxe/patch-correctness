@@ -23,8 +23,8 @@ args = dotdict({
     'NlLen':500,
     'CodeLen':3200,
     'SentenceLen':10,
-    'batch_size':50,
-    'embedding_size':256,
+    'batch_size':20,
+    'embedding_size':64,
     'WoLen':15,
     'Vocsize':100,
     'Nl_Vocsize':100,
@@ -118,10 +118,10 @@ def train():
     args.Nl_Vocsize = len(train_set.Nl_Voc)
     data_loader = torch.utils.data.DataLoader(dataset=train_set, batch_size=args.batch_size,
                                               shuffle=True, drop_last=True, num_workers=1)
-    devloader = torch.utils.data.DataLoader(dataset=test_set, batch_size=len(test_set),
-                                              shuffle=False, drop_last=True, num_workers=1)
+    devloader = torch.utils.data.DataLoader(dataset=test_set, batch_size=args.batch_size,
+                                              shuffle=False, drop_last=False, num_workers=1)
     model = NlEncoder(args)
-    torch.cuda.set_device(4)
+    #torch.cuda.set_device(4)
     if use_cuda:
         print('using GPU')
         model = model.cuda()
@@ -144,28 +144,44 @@ def train():
     batchn = []
     bestModel = None        
     minloss = 1e9
-    devBatch = None
-    for x in train_set.Get_Train(1, id, False):
-        devBatch = x
+    #devBatch = None
+    #for x in train_set.Get_Train(1, id, False):
+    #    devBatch = x
     for epoch in range(100000):
         j = 0
-        for dBatch in tqdm(data_loader):
+        for dBatch in tqdm(train_set.Get_Train(args.batch_size)):
             if j % 3000 == 0:
                 #print(len(dev_set))
                 #devloader = torch.utils.data.DataLoader(dataset=dev_set, batch_size=len(dev_set),
                 #                              shuffle=False, drop_last=True, num_workers=1)
                 model = model.eval()
                 scores = []
-                for devBatch in tqdm(devloader):
+                preds = []
+                masks = []
+                realpreds = []
+                ress = []
+                for devBatch in tqdm(test_set.Get_Train(args.batch_size, shuffles=False)):
                     for i in range(len(devBatch)):
                         devBatch[i] = gVar(devBatch[i])
                     with torch.no_grad():
-                        loss, pre = model(devBatch[0], devBatch[1], devBatch[2], devBatch[3], devBatch[4])
+                        loss, pre = model(devBatch[0], devBatch[1], devBatch[2], devBatch[3], devBatch[4], devBatch[5], devBatch[6])
                         pred = pre[:,1]
+                        preds.append(pred)
+                        ress.append(devBatch[4])
                         realpred = torch.argmax(pre, dim=-1)
                         negativemask = torch.eq(devBatch[4], 0)
-                        predtrue = pred.masked_fill(devBatch[4] == 0, 1)
+                        
+                        masks.append(negativemask)
+                        realpreds.append(realpred)
+                if True:
+                    realpred = torch.cat(realpreds, dim=0)
+                    pred = torch.cat(preds, dim=0)
+                    negativemask = torch.cat(masks, dim=0)
+                    resp = torch.cat(ress, dim=0)
+                    print(realpred.size(), len(test_set))
+                    if True:
                         for i in range(1, 2, 1):
+                            predtrue = pred.masked_fill(resp == 0, 1)
                             i = 0.1 * i
                             marco = torch.min(predtrue)#.min()
                             idxs = torch.argmin(predtrue, dim=-1).item()
@@ -173,17 +189,17 @@ def train():
                             for x in idxsort[:10]:
                                 print(x, test_set.order[x.item()], predtrue[x])
                             #print('less score is %d' % )
-                            print(torch.eq(realpred, devBatch[4]).sum().float() / len(test_set))
-                            print(torch.eq(realpred, devBatch[4]).masked_fill(negativemask==1, 0).sum().float() / (len(test_set) - negativemask.sum().float()))
+                            print(torch.eq(realpred, resp).sum().float() / len(test_set))
+                            print(torch.eq(realpred, resp).masked_fill(negativemask==1, 0).sum().float() / (len(test_set) - negativemask.sum().float()))
                             negativepred = torch.ge(pred, marco)
                             pred1 = pred.masked_fill(negativepred == 1, 1)
                             pred1 = pred1.masked_fill(negativepred == 0, 0)
-                            res = torch.eq(pred1, devBatch[4]) * negativemask
+                            res = torch.eq(pred1, resp) * negativemask
                             #if i == 0.5:
                             scores.append((res.sum().float() / negativemask.sum().float()).item())
                             print(i, 'recall is %f'%(res.sum().float() / negativemask.sum().float()).item())
                             print((len(test_set) - negativemask.sum().float()))
-                            print(i, 'precision is %f'%(torch.eq(pred1, devBatch[4]).masked_fill(negativemask==1, 0).sum().float() / (len(test_set) - negativemask.sum().float()).item()))
+                            print(i, 'precision is %f'%(torch.eq(pred1, resp).masked_fill(negativemask==1, 0).sum().float() / (len(test_set) - negativemask.sum().float()).item()))
 
                 acc = scores[0]
                 print('current accuracy is %f max acc is %f'%(acc, maxAcc))
@@ -194,7 +210,7 @@ def train():
             model = model.train()
             for i in range(len(dBatch)):
                 dBatch[i] = gVar(dBatch[i])
-            loss, _ = model(dBatch[0], dBatch[1], dBatch[2], dBatch[3], dBatch[4])
+            loss, _ = model(dBatch[0], dBatch[1], dBatch[2], dBatch[3], dBatch[4], dBatch[5], dBatch[6])
             loss = torch.mean(loss)
             optimizer.zero_grad()
             loss.backward()

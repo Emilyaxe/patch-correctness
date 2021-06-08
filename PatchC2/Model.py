@@ -38,6 +38,7 @@ class TreeAttEncoder(nn.Module):
         for trans in self.transformerBlocks:
             x = trans.forward(x, codemask, charEm)
         return x
+from graphTransformer import graphTransformerBlock
 class NlEncoder(nn.Module):
     def __init__(self, args):
         super(NlEncoder, self).__init__()
@@ -49,13 +50,20 @@ class NlEncoder(nn.Module):
         self.conv = nn.Conv2d(self.embedding_size, self.embedding_size, (1, self.word_len))
         self.transformerBlocks = nn.ModuleList(
             [TransformerBlock(self.embedding_size, 8, self.feed_forward_hidden, 0.1) for _ in range(6)])
+        self.graphTransformerBlocks = nn.ModuleList(
+            [graphTransformerBlock(self.embedding_size, 8, self.feed_forward_hidden, 0.1) for _ in range(6)])
         self.token_embedding = nn.Embedding(args.Nl_Vocsize, self.embedding_size)
 
         self.pos_embedding = nn.Embedding(5, self.embedding_size)
-        self.resLinear = nn.Linear(self.embedding_size, 2)
+        self.resLinear = nn.Linear(2 * self.embedding_size, 2)
         self.pos = PositionalEmbedding(self.embedding_size)
         self.loss = nn.CrossEntropyLoss()
-    def forward(self, inputNodes, inputpos, nlad, tmpchar, inputres):
+        self.lstm = nn.LSTM(self.embedding_size, int(self.embedding_size / 2), batch_first=True, bidirectional=True)
+        self.edgeem = nn.Embedding(10, int(self.embedding_size/8))
+        self.finalAtt = MultiHeadedAttention(8, self.embedding_size)
+
+    def forward(self, inputNodes, inputpos, nlad, tmpchar, inputres, inputtest, inputad):
+        self.lstm.flatten_parameters()
         posEm = self.pos_embedding(inputpos)
         nlad = nlad.float()
         charEm = self.char_embedding(tmpchar.long())
@@ -66,7 +74,28 @@ class NlEncoder(nn.Module):
         nlmask = torch.gt(inputNodes, 0)
         for trans in self.transformerBlocks:
             x = trans.forward(x, nlmask, posEm, nlad, charEm)
-        res = self.resLinear(x[:,0])
+        '''length = torch.gt(inputNodes, 0).sum(dim=-1)
+        _, idx_sort = torch.sort(length, dim=0, descending=True)
+        _, idx_unsort = torch.sort(idx_sort, dim=0)
+        x = x.index_select(0, idx_sort)
+        length = length.masked_fill(length == 0, 1)
+        padedseq = nn.utils.rnn.pack_padded_sequence(x, length[idx_sort], batch_first=True)
+        packed_wenc, hc_out = self.lstm(padedseq)
+        wenc, _l = nn.utils.rnn.pad_packed_sequence(packed_wenc, batch_first=True)
+        x = wenc[tuple(range(x.size(0))), length[idx_sort] - 1]
+        x = x[idx_unsort]
+        x = x.view(-1, self.embedding_size)'''
+        #static
+        inputem = self.token_embedding(inputtest)
+        testmask = torch.gt(inputtest, 0)
+        dynamic = inputem
+        #relem = self.edgeem(inputad2.long())
+        for trans in self.graphTransformerBlocks:
+            dynamic = trans(dynamic, testmask, x, inputad.float())
+        #res = self.finalAtt(x, dynamic, dynamic, testmask)
+        
+        x = torch.cat([x[:,0], dynamic[:, 0]], dim=-1) #res[:,0] 
+        res = self.resLinear(x)
         res = F.softmax(res)
         weight = torch.FloatTensor([1, 1]).cuda()
         loss = -torch.log(torch.gather(res, -1, inputres.unsqueeze(-1)).squeeze(-1)) * torch.gather(weight, -1, inputres)

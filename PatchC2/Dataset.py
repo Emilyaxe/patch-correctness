@@ -23,9 +23,11 @@ class Graph:
         self.rowNum = 0
         self.colNum = 0
     def addEdge(self, r, c, v):
+        #if r > 4100 or c > 4100:
+        #    assert(0)
         if (r, c) in self.edge:
-            print(r, c)
-            assert(0)
+            #print(r, c)
+            return
         self.edge[(r, c)] = len(self.row)
         self.row.append(r)
         self.col.append(c)
@@ -52,9 +54,9 @@ class Graph:
             self.val[i] = 1 / math.sqrt(r[self.row[i]]) * 1 / math.sqrt(c[self.col[i]])
 class SumDataset(data.Dataset):
     def __init__(self, config, dataName="train", proj="Math", testid=0, lst=[]):
-        self.train_path = "trainSetS.pkl"
+        self.train_path = "trainSet_unpurify2.pkl"
         self.val_path = "ndev.txt"  # "validD.txt"
-        self.test_path = "testSetS.pkl"
+        self.test_path = "testSet_unpurify.pkl"
         self.proj = proj
         self.SentenceLen = config.SentenceLen
         self.Nl_Voc = {"pad": 0, "Unknown": 1}
@@ -117,7 +119,7 @@ class SumDataset(data.Dataset):
         Codes = []
         for x in data:
             Codes.append(data[x]['tree'].split())
-
+        Codes.append(['fixtestf', 'bugtestf', 'fixtestp', 'bugtestp', 'special'])
         code_voc = VocabEntry.from_corpus(Codes, size=50000, freq_cutoff = 0)
         self.Nl_Voc = code_voc.word2id
         for x in self.Nl_Voc:
@@ -221,10 +223,14 @@ class SumDataset(data.Dataset):
         inputPos = []
         inputNlChar = []
         order = []
+        inputPatch = []
+        inputAdTreetoTest = []
+        inputAdTesttoTest = []
         maxl = []
         for x in tqdm(liness):
             #if x in ['Lang58b_Patch26', 'Lang55b_Patch25', 'Chart5b_Patch7', 'Math93b_Patch207', 'Math50b_Patch46', 'Lang44b_Patch21']:
             #W    continue
+            xssss = x
             order.append(x)
             x = liness[x]
             xs = x
@@ -282,11 +288,55 @@ class SumDataset(data.Dataset):
             inputNodes.append(inputnls)
             inputPos.append(inputpos)
             inputAd.append(nlad)
-            maxl.append(len(xs['cover']))
-        batchs = [inputNodes, inputPos, inputAd, inputNlChar, inputRes]
+            maxl.append(len(xs['pcover']) + len(xs['fcover']))
+            inputtest = ['special']
+            grapht = Graph()
+            grapht2t = Graph()
+            #print(len(xs['cover']))
+            print(xssss)
+            for x in xs['fcover']:
+                test = xs['fcover'][x]
+                inputtest.append('fixtestf')
+                inputtest.append('bugtestf')
+                grapht.addEdge(self.Nl_Len + len(inputtest) -2, self.Nl_Len + len(inputtest) - 1, 1)
+                grapht.addEdge(self.Nl_Len + len(inputtest) -1, self.Nl_Len + len(inputtest) - 2, 1)
+                #print(test)
+                if 'fixed' in test:
+                    for y in test['fixed']:
+                        grapht.addEdge(self.Nl_Len + len(inputtest) - 2, y, 1)
+                        grapht.addEdge(y, self.Nl_Len + len(inputtest) - 2, 1)
+                if 'buggy' in test:
+                    for y in test['buggy']:
+                        grapht.addEdge(self.Nl_Len + len(inputtest) - 1, y, 1)
+                        grapht.addEdge(y, self.Nl_Len + len(inputtest) - 1, 1)
+            for x in xs['pcover']:
+                test = xs['pcover'][x]
+                inputtest.append('fixtestp')
+                inputtest.append('bugtestp')
+                grapht.addEdge(self.Nl_Len + len(inputtest) -2, self.Nl_Len + len(inputtest) - 1, 1)
+                grapht.addEdge(self.Nl_Len + len(inputtest) -1, self.Nl_Len + len(inputtest) - 2, 1)
+                #print(test)
+                if 'fixed' in test:
+                    for y in test['fixed']:
+                        grapht.addEdge(self.Nl_Len + len(inputtest) - 2, y, 1)
+                        grapht.addEdge(y, self.Nl_Len + len(inputtest) - 2, 1)
+                if 'buggy' in test:
+                    for y in test['buggy']:
+                        grapht.addEdge(self.Nl_Len + len(inputtest) - 1, y, 1)
+                        grapht.addEdge(y, self.Nl_Len + len(inputtest) - 1, 1)
+            for i in  range(len(inputtest)):
+                grapht.addEdge(self.Nl_Len, self.Nl_Len + i, 1)
+                grapht.addEdge(self.Nl_Len + i, self.Nl_Len, 1)
+            grapht.normlize()
+            inputPatch.append(self.pad_seq(self.Get_Em(inputtest, self.Nl_Voc), 12000))
+            inputAdTreetoTest.append(sparse.coo_matrix((grapht.val, (grapht.row, grapht.col)), shape=(self.Nl_Len + 12000, self.Nl_Len + 12000)))
+            inputAdTesttoTest.append(sparse.coo_matrix((grapht2t.val, (grapht2t.row, grapht2t.col)), shape=(140, 140)))
+
+        batchs = [inputNodes, inputPos, inputAd, inputNlChar, inputRes, inputPatch, inputAdTreetoTest, inputAdTesttoTest]
         self.data = batchs
         self.order = order
         print(np.max(maxl))
+        #assert(0)
         open("%sdata.pkl"%self.dataName, "wb").write(pickle.dumps(batchs, protocol=4))
         open('%sorder.pkl'%self.dataName, 'wb').write(pickle.dumps(order, protocol=4))
         return batchs
@@ -295,7 +345,7 @@ class SumDataset(data.Dataset):
         ans = []
         if True:
             for i in range(len(self.data)):
-                if i == 2:
+                if i == 2 or i == 7 or i == 6:
                     #torch.FloatTensor(np.array([self.data[i][offset].row, self.data[i][offset].col])).float()
                     #torch.FloatTensor(self.data[i][offset].data)
                     #torch.FloatTensor(self.data[i][offset].data)
@@ -303,11 +353,11 @@ class SumDataset(data.Dataset):
                     #ans.append(torch.sparse.FloatTensor(torch.LongTensor(np.array([self.data[i][offset].row, self.data[i][offset].col])), torch.FloatTensor(self.data[i][offset].data).float(), torch.Size([self.Nl_Len,self.Nl_Len])))
                     #open('tmp.pkl', 'wb').write(pickle.dumps(self.data[i][offset]))
                     #assert(0)
-                    ans.append(self.data[i][offset].toarray())
+                    ans.append(self.data[i][offset].toarray().astype(np.int64))
                     #print(self.data[i][offset].toarray()[0, 2545])
                     #assert(0)
                 else:
-                    ans.append(np.array(self.data[i][offset]))
+                    ans.append(np.array(self.data[i][offset]).astype(np.int64))
         else:
             for i in range(len(self.data)):
                 if i == 4:
@@ -333,64 +383,46 @@ class SumDataset(data.Dataset):
                 shuffle = np.arange(len(loaddata[0]))
             if batch_nums * batch_size == len(data[0]):
                 batch_nums -= 1
-            for i in range(batch_nums + 1):
-                #print(shuffle[i])
-                if shuffle[i] != Maskid and not shuffles:
-                    continue
-                if shuffles and shuffle[i] == Maskid:
-                    continue 
+            for i in range(batch_nums):
                 ans = []
-                bias4_0 = 0
-                bias4_1 = 0
-                bias5_0 = 0
-                bias5_1 = 0
-                bias6_0 = 0
-                bias6_1 = 0
                 for j in range(len(data)):
-                    if j != 3:
-                        tans = []
-                        for k in shuffle[batch_size * i: batch_size * (i + 1)]:
-                            tans.append(data[j][k])
-                        ans.append(torch.from_numpy(np.concatenate(tans, axis=0)))
-                        #tmpd = np.array(data[j])[shuffle[batch_size * i: batch_size * (i + 1)]]
-                        #ans.append(torch.from_numpy(np.array(tmpd)))
-                    elif j == 3:
+                    if j not in [2, 6, 7]:
+                        tmpd = np.array(data[j])[shuffle[batch_size * i: batch_size * (i + 1)]]
+                        ans.append(torch.from_numpy(np.array(tmpd)))
+                    elif j == 2:
+                        tmp = []
+                        for k in range(batch_size * i, batch_size * (i + 1)):
+                            tmp.append(self.data[j][k].toarray().astype(np.int64))
+                        ans.append(torch.from_numpy(np.array(tmp)))
+                    elif j == 6:
                         ids = []
                         v = []
                         for idx in range(batch_size * i, batch_size * (i + 1)):
-                            if idx >= len(data[0]):
-                                continue
                             for p in range(len(data[j][shuffle[idx]].row)):
-                                ids.append([data[j][shuffle[idx]].row[p] + bias4_0, data[j][shuffle[idx]].col[p] + bias4_1])
-                                v.append(data[j][shuffle[idx]].val[p])
-                            bias4_0 += data[j][shuffle[idx]].rowNum
-                            bias4_1 += data[j][shuffle[idx]].colNum
-                        ans.append(torch.sparse.FloatTensor(torch.LongTensor(ids).t(), torch.FloatTensor(v), torch.Size([bias4_0, bias4_1])))
-                    elif j == 5:
+                                ids.append([idx - batch_size * i, data[j][shuffle[idx]].row[p], data[j][shuffle[idx]].col[p]])
+                                v.append(data[j][shuffle[idx]].data[p])
+                        ans.append(torch.sparse.FloatTensor(torch.LongTensor(ids).t(), torch.FloatTensor(v), torch.Size([batch_size, self.Nl_Len + 12000, self.Nl_Len + 12000])))
+                yield ans
+            if batch_nums * batch_size < len(data[0]):
+                ans = []
+                for j in range(len(data)):
+                    if j not in [2, 6, 7]:
+                        tmpd = np.array(data[j])[shuffle[batch_size * batch_nums: ]]
+                        ans.append(torch.from_numpy(np.array(tmpd)))
+                    elif j == 2:
+                        tmp = []
+                        for k in range(batch_size * batch_nums, len(data[0])):
+                            tmp.append(self.data[j][k].toarray().astype(np.int64))
+                        ans.append(torch.from_numpy(np.array(tmp)))
+                    elif j == 6:
+                        batch_sizess = - batch_nums * batch_size + len(data[0])
                         ids = []
                         v = []
-                        for idx in range(batch_size * i, batch_size * (i + 1)):
-                            if idx >= len(data[0]):
-                                continue
+                        for idx in range(batch_size * batch_nums, len(data[0])):
                             for p in range(len(data[j][shuffle[idx]].row)):
-                                ids.append([data[j][shuffle[idx]].row[p] + bias5_0, data[j][shuffle[idx]].col[p] + bias5_1])
-                                #print(idx, p)
-                                v.append(data[j][shuffle[idx]].val[p])
-                            bias5_0 += data[j][shuffle[idx]].rowNum
-                            bias5_1 += data[j][shuffle[idx]].colNum
-                        ans.append(torch.sparse.FloatTensor(torch.LongTensor(ids).t(), torch.FloatTensor(v), torch.Size([bias5_0, bias5_1])))
-                    elif j == 8:
-                        ids = []
-                        v = []
-                        for idx in range(batch_size * i, batch_size * (i + 1)):
-                            if idx >= len(data[0]):
-                                continue
-                            for p in range(len(data[j][shuffle[idx]].row)):
-                                ids.append([data[j][shuffle[idx]].row[p] + bias6_0, data[j][shuffle[idx]].col[p] + bias6_1])
-                                v.append(data[j][shuffle[idx]].val[p])
-                            bias6_0 += data[j][shuffle[idx]].rowNum
-                            bias6_1 += data[j][shuffle[idx]].colNum
-                        ans.append(torch.sparse.FloatTensor(torch.LongTensor(ids).t(), torch.FloatTensor(v), torch.Size([bias6_0, bias6_1])))
+                                ids.append([idx - batch_size * batch_nums, data[j][shuffle[idx]].row[p], data[j][shuffle[idx]].col[p]])
+                                v.append(data[j][shuffle[idx]].data[p])
+                        ans.append(torch.sparse.FloatTensor(torch.LongTensor(ids).t(), torch.FloatTensor(v), torch.Size([batch_sizess, self.Nl_Len + 12000, self.Nl_Len + 12000])))
                 yield ans
             '''
             if batch_nums * batch_size < len(data[0]):
