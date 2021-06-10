@@ -90,7 +90,8 @@ class NlEncoder(nn.Module):
         x = torch.cat([x[:, 0], dynamic[:, 0]], dim=-1)  # res[:,0]
         res = self.resLinear(x)
         res = F.softmax(res)
-        weight = torch.FloatTensor([1, 1]).cuda()
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        weight = torch.FloatTensor([1, 1]).to(device)
         loss = -torch.log(torch.gather(res, -1, inputres.unsqueeze(-1)).squeeze(-1)) * torch.gather(weight, -1,
                                                                                                     inputres)
         return loss, res
