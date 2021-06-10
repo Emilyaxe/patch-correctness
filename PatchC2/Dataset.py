@@ -1,19 +1,23 @@
-import sys
+import torch
+import math
+import os
+import pickle
+import random
+import re
+
+import numpy as np
 import torch
 import torch.utils.data as data
-import random
-import pickle
-import os
-from nltk import word_tokenize
-from vocab import VocabEntry
-import numpy as np
-import re
-from tqdm import tqdm
-from Searchnode import Node
 from scipy import sparse
-import math
+from tqdm import tqdm
 from transformers import AutoTokenizer
+
+from Searchnode import Node
+from vocab import VocabEntry
+
 tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
+
+
 class Graph:
     def __init__(self):
         self.row = []
@@ -22,11 +26,12 @@ class Graph:
         self.edge = {}
         self.rowNum = 0
         self.colNum = 0
+
     def addEdge(self, r, c, v):
-        #if r > 4100 or c > 4100:
+        # if r > 4100 or c > 4100:
         #    assert(0)
         if (r, c) in self.edge:
-            #print(r, c)
+            # print(r, c)
             return
         self.edge[(r, c)] = len(self.row)
         self.row.append(r)
@@ -36,14 +41,17 @@ class Graph:
         self.row.append(c)
         self.col.append(r)
         self.val.append(v)'''
+
     def editVal(self, r, c, v):
         self.val[self.edge(r, c)] = v
+
     def updateval(self, index, v):
         self.val[index] = v
+
     def normlize(self):
         r = {}
         c = {}
-        for i  in range(len(self.row)):
+        for i in range(len(self.row)):
             if self.row[i] not in r:
                 r[self.row[i]] = 0
             r[self.row[i]] += 1
@@ -52,9 +60,11 @@ class Graph:
             c[self.col[i]] += 1
         for i in range(len(self.row)):
             self.val[i] = 1 / math.sqrt(r[self.row[i]]) * 1 / math.sqrt(c[self.col[i]])
+
+
 class SumDataset(data.Dataset):
     def __init__(self, config, dataName="train", proj="Math", testid=0, lst=[]):
-        self.train_path = "trainSet_unpurify2.pkl"
+        self.train_path = "trainSet_unpurify1.pkl"
         self.val_path = "ndev.txt"  # "validD.txt"
         self.test_path = "testSet_unpurify.pkl"
         self.proj = proj
@@ -77,18 +87,18 @@ class SumDataset(data.Dataset):
         self.ids = []
         self.Nls = []
         if dataName == "train":
-            if os.path.exists("%sdata.pkl"%self.dataName):
-                self.data = pickle.load(open("%sdata.pkl"%self.dataName, "rb"))
-                self.order = pickle.load(open('%sorder.pkl'%self.dataName, 'rb'))
+            if os.path.exists("%sdata.pkl" % self.dataName):
+                self.data = pickle.load(open("%sdata.pkl" % self.dataName, "rb"))
+                self.order = pickle.load(open('%sorder.pkl' % self.dataName, 'rb'))
             else:
                 self.data = self.preProcessData(open(self.train_path, "rb"))
         elif dataName == 'test':
             if os.path.exists("testdata.pkl"):
                 self.data = pickle.load(open("testdata.pkl", "rb"))
-                self.order = pickle.load(open('%sorder.pkl'%self.dataName, 'rb'))
+                self.order = pickle.load(open('%sorder.pkl' % self.dataName, 'rb'))
             else:
                 self.data = self.preProcessData(open(self.test_path, "rb"))
-            #self.data = pickle.load(open("testdata.pkl", "rb"))
+            # self.data = pickle.load(open("testdata.pkl", "rb"))
 
     def Load_Voc(self):
         if os.path.exists("nl_voc.pkl"):
@@ -97,6 +107,7 @@ class SumDataset(data.Dataset):
             self.Code_Voc = pickle.load(open("code_voc.pkl", "rb"))
         if os.path.exists("char_voc.pkl"):
             self.Char_Voc = pickle.load(open("char_voc.pkl", "rb"))
+
     def splitCamel(self, token):
         ans = []
         tmp = ""
@@ -108,6 +119,7 @@ class SumDataset(data.Dataset):
                 tmp += x.lower()
         ans.append(tmp)
         return ans
+
     def init_dic(self):
         print("initVoc")
         f = open(self.train_path, 'rb')
@@ -120,7 +132,7 @@ class SumDataset(data.Dataset):
         for x in data:
             Codes.append(data[x]['tree'].split())
         Codes.append(['fixtestf', 'bugtestf', 'fixtestp', 'bugtestp', 'special'])
-        code_voc = VocabEntry.from_corpus(Codes, size=50000, freq_cutoff = 0)
+        code_voc = VocabEntry.from_corpus(Codes, size=50000, freq_cutoff=0)
         self.Nl_Voc = code_voc.word2id
         for x in self.Nl_Voc:
             maxCharLen = max(maxCharLen, len(x))
@@ -129,6 +141,7 @@ class SumDataset(data.Dataset):
                     self.Char_Voc[c] = len(self.Char_Voc)
         open("nl_voc.pkl", "wb").write(pickle.dumps(self.Nl_Voc))
         open("char_voc.pkl", "wb").write(pickle.dumps(self.Char_Voc))
+
     def Get_Em(self, WordList, voc):
         ans = []
         for x in WordList:
@@ -137,6 +150,7 @@ class SumDataset(data.Dataset):
             else:
                 ans.append(voc[x])
         return ans
+
     def Get_Char_Em(self, WordList):
         ans = []
         for x in WordList:
@@ -146,6 +160,7 @@ class SumDataset(data.Dataset):
                 tmp.append(c_id)
             ans.append(tmp)
         return ans
+
     def pad_seq(self, seq, maxlen):
         act_len = len(seq)
         if len(seq) < maxlen:
@@ -155,6 +170,7 @@ class SumDataset(data.Dataset):
             seq = seq[:maxlen]
             act_len = maxlen
         return seq
+
     def pad_str_seq(self, seq, maxlen):
         act_len = len(seq)
         if len(seq) < maxlen:
@@ -164,13 +180,15 @@ class SumDataset(data.Dataset):
             seq = seq[:maxlen]
             act_len = maxlen
         return seq
-    def pad_list(self,seq, maxlen1, maxlen2):
+
+    def pad_list(self, seq, maxlen1, maxlen2):
         if len(seq) < maxlen1:
             seq = seq + [[self.PAD_token] * maxlen2] * maxlen1
             seq = seq[:maxlen1]
         else:
             seq = seq[:maxlen1]
         return seq
+
     def pad_multilist(self, seq, maxlen1, maxlen2, maxlen3):
         if len(seq) < maxlen1:
             seq = seq + [[[self.PAD_token] * maxlen3] * maxlen2] * maxlen1
@@ -178,14 +196,16 @@ class SumDataset(data.Dataset):
         else:
             seq = seq[:maxlen1]
         return seq
+
     def tokenize_for_bleu_eval(self, code):
         code = re.sub(r'([^A-Za-z0-9])', r' \1 ', code)
-        #code = re.sub(r'([a-z])([A-Z])', r'\1 \2', code)
+        # code = re.sub(r'([a-z])([A-Z])', r'\1 \2', code)
         code = re.sub(r'\s+', ' ', code)
         code = code.replace('"', '`')
         code = code.replace('\'', '`')
         tokens = [t for t in code.split(' ') if t]
         return tokens
+
     def getoverlap(self, a, b):
         ans = []
         for x in a:
@@ -198,6 +218,7 @@ class SumDataset(data.Dataset):
                 maxl = max(maxl, tmp)
             ans.append(int(100 * maxl / len(x)) + 1)
         return ans
+
     def getRes(self, codetoken, nltoken):
         ans = []
         for x in nltoken:
@@ -215,8 +236,9 @@ class SumDataset(data.Dataset):
                 print(codetoken, nltoken)
                 exit(0)
         return ans
+
     def preProcessData(self, dataFile):
-        liness = pickle.load(dataFile)#dataFile.readlines()
+        liness = pickle.load(dataFile)  # dataFile.readlines()
         inputNodes = []
         inputAd = []
         inputRes = []
@@ -228,8 +250,8 @@ class SumDataset(data.Dataset):
         inputAdTesttoTest = []
         maxl = []
         for x in tqdm(liness):
-            #if x in ['Lang58b_Patch26', 'Lang55b_Patch25', 'Chart5b_Patch7', 'Math93b_Patch207', 'Math50b_Patch46', 'Lang44b_Patch21']:
-            #W    continue
+            # if x in ['Lang58b_Patch26', 'Lang55b_Patch25', 'Chart5b_Patch7', 'Math93b_Patch207', 'Math50b_Patch46', 'Lang44b_Patch21']:
+            # W    continue
             xssss = x
             order.append(x)
             x = liness[x]
@@ -237,7 +259,7 @@ class SumDataset(data.Dataset):
             inputpos = x['prob']
             if x['label'] not in ['0', '1']:
                 print(x['label'])
-                assert(0)
+                assert (0)
             inputRes.append(int(x['label']))
             tree = x['tree']
             inputpos = self.pad_seq(inputpos, self.Nl_Len)
@@ -292,15 +314,15 @@ class SumDataset(data.Dataset):
             inputtest = ['special']
             grapht = Graph()
             grapht2t = Graph()
-            #print(len(xs['cover']))
+            # print(len(xs['cover']))
             print(xssss)
             for x in xs['fcover']:
                 test = xs['fcover'][x]
                 inputtest.append('fixtestf')
                 inputtest.append('bugtestf')
-                grapht.addEdge(self.Nl_Len + len(inputtest) -2, self.Nl_Len + len(inputtest) - 1, 1)
-                grapht.addEdge(self.Nl_Len + len(inputtest) -1, self.Nl_Len + len(inputtest) - 2, 1)
-                #print(test)
+                grapht.addEdge(self.Nl_Len + len(inputtest) - 2, self.Nl_Len + len(inputtest) - 1, 1)
+                grapht.addEdge(self.Nl_Len + len(inputtest) - 1, self.Nl_Len + len(inputtest) - 2, 1)
+                # print(test)
                 if 'fixed' in test:
                     for y in test['fixed']:
                         grapht.addEdge(self.Nl_Len + len(inputtest) - 2, y, 1)
@@ -313,9 +335,9 @@ class SumDataset(data.Dataset):
                 test = xs['pcover'][x]
                 inputtest.append('fixtestp')
                 inputtest.append('bugtestp')
-                grapht.addEdge(self.Nl_Len + len(inputtest) -2, self.Nl_Len + len(inputtest) - 1, 1)
-                grapht.addEdge(self.Nl_Len + len(inputtest) -1, self.Nl_Len + len(inputtest) - 2, 1)
-                #print(test)
+                grapht.addEdge(self.Nl_Len + len(inputtest) - 2, self.Nl_Len + len(inputtest) - 1, 1)
+                grapht.addEdge(self.Nl_Len + len(inputtest) - 1, self.Nl_Len + len(inputtest) - 2, 1)
+                # print(test)
                 if 'fixed' in test:
                     for y in test['fixed']:
                         grapht.addEdge(self.Nl_Len + len(inputtest) - 2, y, 1)
@@ -324,21 +346,23 @@ class SumDataset(data.Dataset):
                     for y in test['buggy']:
                         grapht.addEdge(self.Nl_Len + len(inputtest) - 1, y, 1)
                         grapht.addEdge(y, self.Nl_Len + len(inputtest) - 1, 1)
-            for i in  range(len(inputtest)):
+            for i in range(len(inputtest)):
                 grapht.addEdge(self.Nl_Len, self.Nl_Len + i, 1)
                 grapht.addEdge(self.Nl_Len + i, self.Nl_Len, 1)
             grapht.normlize()
             inputPatch.append(self.pad_seq(self.Get_Em(inputtest, self.Nl_Voc), 12000))
-            inputAdTreetoTest.append(sparse.coo_matrix((grapht.val, (grapht.row, grapht.col)), shape=(self.Nl_Len + 12000, self.Nl_Len + 12000)))
+            inputAdTreetoTest.append(sparse.coo_matrix((grapht.val, (grapht.row, grapht.col)),
+                                                       shape=(self.Nl_Len + 12000, self.Nl_Len + 12000)))
             inputAdTesttoTest.append(sparse.coo_matrix((grapht2t.val, (grapht2t.row, grapht2t.col)), shape=(140, 140)))
 
-        batchs = [inputNodes, inputPos, inputAd, inputNlChar, inputRes, inputPatch, inputAdTreetoTest, inputAdTesttoTest]
+        batchs = [inputNodes, inputPos, inputAd, inputNlChar, inputRes, inputPatch, inputAdTreetoTest,
+                  inputAdTesttoTest]
         self.data = batchs
         self.order = order
         print(np.max(maxl))
-        #assert(0)
-        open("%sdata.pkl"%self.dataName, "wb").write(pickle.dumps(batchs, protocol=4))
-        open('%sorder.pkl'%self.dataName, 'wb').write(pickle.dumps(order, protocol=4))
+        # assert(0)
+        open("%sdata.pkl" % self.dataName, "wb").write(pickle.dumps(batchs, protocol=4))
+        open('%sorder.pkl' % self.dataName, 'wb').write(pickle.dumps(order, protocol=4))
         return batchs
 
     def __getitem__(self, offset):
@@ -346,16 +370,16 @@ class SumDataset(data.Dataset):
         if True:
             for i in range(len(self.data)):
                 if i == 2 or i == 7 or i == 6:
-                    #torch.FloatTensor(np.array([self.data[i][offset].row, self.data[i][offset].col])).float()
-                    #torch.FloatTensor(self.data[i][offset].data)
-                    #torch.FloatTensor(self.data[i][offset].data)
-                    #ans.append(self.data[i][offset])
-                    #ans.append(torch.sparse.FloatTensor(torch.LongTensor(np.array([self.data[i][offset].row, self.data[i][offset].col])), torch.FloatTensor(self.data[i][offset].data).float(), torch.Size([self.Nl_Len,self.Nl_Len])))
-                    #open('tmp.pkl', 'wb').write(pickle.dumps(self.data[i][offset]))
-                    #assert(0)
+                    # torch.FloatTensor(np.array([self.data[i][offset].row, self.data[i][offset].col])).float()
+                    # torch.FloatTensor(self.data[i][offset].data)
+                    # torch.FloatTensor(self.data[i][offset].data)
+                    # ans.append(self.data[i][offset])
+                    # ans.append(torch.sparse.FloatTensor(torch.LongTensor(np.array([self.data[i][offset].row, self.data[i][offset].col])), torch.FloatTensor(self.data[i][offset].data).float(), torch.Size([self.Nl_Len,self.Nl_Len])))
+                    # open('tmp.pkl', 'wb').write(pickle.dumps(self.data[i][offset]))
+                    # assert(0)
                     ans.append(self.data[i][offset].toarray().astype(np.int64))
-                    #print(self.data[i][offset].toarray()[0, 2545])
-                    #assert(0)
+                    # print(self.data[i][offset].toarray()[0, 2545])
+                    # assert(0)
                 else:
                     ans.append(np.array(self.data[i][offset]).astype(np.int64))
         else:
@@ -370,9 +394,11 @@ class SumDataset(data.Dataset):
                 ans.append(np.array(self.data[2][negoffset]))
                 ans.append(np.array(self.data[3][negoffset]))
         return ans
+
     def __len__(self):
         return len(self.data[0])
-    def Get_Train(self, batch_size, Maskid = -1, shuffles=True):
+
+    def Get_Train(self, batch_size, Maskid=-1, shuffles=True):
         data = self.data
         loaddata = data
         batch_nums = int(len(data[0]) / batch_size)
@@ -399,15 +425,17 @@ class SumDataset(data.Dataset):
                         v = []
                         for idx in range(batch_size * i, batch_size * (i + 1)):
                             for p in range(len(data[j][shuffle[idx]].row)):
-                                ids.append([idx - batch_size * i, data[j][shuffle[idx]].row[p], data[j][shuffle[idx]].col[p]])
+                                ids.append(
+                                    [idx - batch_size * i, data[j][shuffle[idx]].row[p], data[j][shuffle[idx]].col[p]])
                                 v.append(data[j][shuffle[idx]].data[p])
-                        ans.append(torch.sparse.FloatTensor(torch.LongTensor(ids).t(), torch.FloatTensor(v), torch.Size([batch_size, self.Nl_Len + 12000, self.Nl_Len + 12000])))
+                        ans.append(torch.sparse.FloatTensor(torch.LongTensor(ids).t(), torch.FloatTensor(v), torch.Size(
+                            [batch_size, self.Nl_Len + 12000, self.Nl_Len + 12000])))
                 yield ans
             if batch_nums * batch_size < len(data[0]):
                 ans = []
                 for j in range(len(data)):
                     if j not in [2, 6, 7]:
-                        tmpd = np.array(data[j])[shuffle[batch_size * batch_nums: ]]
+                        tmpd = np.array(data[j])[shuffle[batch_size * batch_nums:]]
                         ans.append(torch.from_numpy(np.array(tmpd)))
                     elif j == 2:
                         tmp = []
@@ -420,9 +448,11 @@ class SumDataset(data.Dataset):
                         v = []
                         for idx in range(batch_size * batch_nums, len(data[0])):
                             for p in range(len(data[j][shuffle[idx]].row)):
-                                ids.append([idx - batch_size * batch_nums, data[j][shuffle[idx]].row[p], data[j][shuffle[idx]].col[p]])
+                                ids.append([idx - batch_size * batch_nums, data[j][shuffle[idx]].row[p],
+                                            data[j][shuffle[idx]].col[p]])
                                 v.append(data[j][shuffle[idx]].data[p])
-                        ans.append(torch.sparse.FloatTensor(torch.LongTensor(ids).t(), torch.FloatTensor(v), torch.Size([batch_sizess, self.Nl_Len + 12000, self.Nl_Len + 12000])))
+                        ans.append(torch.sparse.FloatTensor(torch.LongTensor(ids).t(), torch.FloatTensor(v), torch.Size(
+                            [batch_sizess, self.Nl_Len + 12000, self.Nl_Len + 12000])))
                 yield ans
             '''
             if batch_nums * batch_size < len(data[0]):
@@ -440,13 +470,16 @@ class SumDataset(data.Dataset):
                                 v.append(data[j][shuffle[idx]].data[p])
                         ans.append(torch.sparse.FloatTensor(torch.LongTensor(ids).t(), torch.FloatTensor(v), torch.Size([len(data[0]) - batch_size * batch_nums, self.Nl_Len + self.Code_Len, self.Nl_Len + self.Code_Len])))
                 yield ans'''
-            
+
+
 class node:
     def __init__(self, name):
         self.name = name
         self.father = None
         self.child = []
         self.id = -1
-#from run.py import args
+
+
+# from run.py import args
 if __name__ == '__main__':
     SumDataset('train', args)

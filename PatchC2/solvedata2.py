@@ -683,6 +683,7 @@ for x in lst:
                 failintFiles.append(test.split('::')[0])
             buggyTraceInfo = datas['buggyTraceInfo']
             fixedTraceInfo = datas['fixedTraceInfo']
+
             for key in buggyTraceInfo:
                 # cover = {}
                 tmp = []
@@ -767,18 +768,18 @@ for x in lst:
                         plinecover[key] = {}
                         pcover[key]['fixed'] = tmp
                         plinecover[key]['fixed'] = commonline
-            # psame = 0
-            # pdiff = 0
-            # for key in plinecover:
-            #     if not key.split('::')[0] in failintFiles:
-            #         continue
-            #     if 'buggy' in plinecover[key] and 'fixed' in plinecover[key]:
-            #         if plinecover[key]['buggy'] == plinecover[key]['fixed']:
-            #             psame = psame + 1
-            #         else:
-            #             pdiff = pdiff + 1
-            #     else:
-            #         pdiff = pdiff + 1
+
+            for key in fcover:
+                if 'fixed' not in fcover[key]:
+                    fcover[key]['fixed'] = []
+                if 'buggy' not in fcover[key]:
+                    fcover[key]['buggy'] = []
+            for key in pcover:
+                if 'fixed' not in pcover[key]:
+                    pcover[key]['fixed'] = []
+                if 'buggy' not in pcover[key]:
+                    pcover[key]['buggy'] = []
+
             pcover_score = most_change(plinecover)
             pcover_limit = {}
             num = 300

@@ -48,7 +48,7 @@ class NlEncoder(nn.Module):
         self.embedding_size = args.embedding_size
         self.nl_len = args.NlLen
         self.word_len = args.WoLen
-        self.char_embedding = nn.Embedding(args.Vocsize, self.embedding_size)
+        self.char_embedding = nn.Embedding(args.Vocsize, self.embedding_size)  # 对 Vocsize个词 生成 embedding_size 维度的向量
         self.feed_forward_hidden = 4 * self.embedding_size
         self.conv = nn.Conv2d(self.embedding_size, self.embedding_size, (1, self.word_len))
         self.transformerBlocks = nn.ModuleList(
