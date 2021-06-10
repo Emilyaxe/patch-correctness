@@ -795,7 +795,7 @@ for x in lst:
 
             newdata[datas['patchName']] = (
                 {'tree': root.printTreeWithVar(root, vardic), 'label': datas['label'], 'prob': root.getTreeProb(root),
-                 'pcover': pcover_limit, 'fcover': fcover})
+                 'pcover': pcover, 'fcover': fcover})
             # infodata[datas['patchName']] = ({'label': datas['label'], 'psame': psame, 'pdiff': pdiff})
             # assert(0)
             # if patchid == 'Math93b_Patch207':

@@ -1,10 +1,9 @@
-import torch
-import math
 import os
 import pickle
 import random
 import re
 
+import math
 import numpy as np
 import torch
 import torch.utils.data as data
@@ -12,6 +11,7 @@ from scipy import sparse
 from tqdm import tqdm
 from transformers import AutoTokenizer
 
+# from PatchC2.run import dotdict
 from Searchnode import Node
 from vocab import VocabEntry
 
@@ -64,14 +64,14 @@ class Graph:
 
 class SumDataset(data.Dataset):
     def __init__(self, config, dataName="train", proj="Math", testid=0, lst=[]):
-        self.train_path = "trainSet_unpurify1.pkl"
+        self.train_path = "trainSet_unpurify.pkl"
         self.val_path = "ndev.txt"  # "validD.txt"
         self.test_path = "testSet_unpurify.pkl"
         self.proj = proj
         self.SentenceLen = config.SentenceLen
-        self.Nl_Voc = {"pad": 0, "Unknown": 1}
+        self.Nl_Voc = {"pad": 0, "Unknown": 1}  # 单词转成数字
         self.Code_Voc = {"pad": 0, "Unknown": 1}
-        self.Char_Voc = {"pad": 0, "Unknown": 1}
+        self.Char_Voc = {"pad": 0, "Unknown": 1}  # char 转成数字
         self.Nl_Len = config.NlLen
         self.Code_Len = config.CodeLen
         self.Char_Len = config.WoLen
@@ -239,12 +239,12 @@ class SumDataset(data.Dataset):
 
     def preProcessData(self, dataFile):
         liness = pickle.load(dataFile)  # dataFile.readlines()
-        inputNodes = []
-        inputAd = []
-        inputRes = []
-        inputPos = []
-        inputNlChar = []
-        order = []
+        inputNodes = []  # 存储 voc id
+        inputAd = []  # 存储 每个节点的位置
+        inputRes = []  # label
+        inputPos = []  # possibility
+        inputNlChar = []  # char id
+        order = []  # 存储patchname
         inputPatch = []
         inputAdTreetoTest = []
         inputAdTesttoTest = []
@@ -262,7 +262,7 @@ class SumDataset(data.Dataset):
                 assert (0)
             inputRes.append(int(x['label']))
             tree = x['tree']
-            inputpos = self.pad_seq(inputpos, self.Nl_Len)
+            inputpos = self.pad_seq(inputpos, self.Nl_Len)  # possibility 补全到最大长度 500
             nl = tree.split()
             node = Node(nl[0], 0)
             currnode = node
@@ -294,18 +294,18 @@ class SumDataset(data.Dataset):
                             nladrow.append(x.id)
                             nladcol.append(s.id)
                             nladdata.append(1)
-                for s in x.child:
+                for s in x.child:  # 记录 x 的孩子节点，
                     if x.id < self.Nl_Len and s.id < self.Nl_Len:
                         nladrow.append(x.id)
                         nladcol.append(s.id)
                         nladdata.append(1)
-            nl = nltmp
-            inputnlchar = self.Get_Char_Em(nl)
-            for j in range(len(inputnlchar)):
+            nl = nltmp  # 去掉了 ^
+            inputnlchar = self.Get_Char_Em(nl)  # 每个单词变成char
+            for j in range(len(inputnlchar)):  # 对每个单词char 形式补齐
                 inputnlchar[j] = self.pad_seq(inputnlchar[j], self.Char_Len)
-            inputnlchar = self.pad_list(inputnlchar, self.Nl_Len, self.Char_Len)
+            inputnlchar = self.pad_list(inputnlchar, self.Nl_Len, self.Char_Len)  # 补齐整段list，每个元素是char
             inputNlChar.append(inputnlchar)
-            inputnls = self.pad_seq(self.Get_Em(nl, self.Nl_Voc), self.Nl_Len)
+            inputnls = self.pad_seq(self.Get_Em(nl, self.Nl_Voc), self.Nl_Len)  # 补齐整段list，每个元素是单词
             nlad = sparse.coo_matrix((nladdata, (nladrow, nladcol)), shape=(self.Nl_Len, self.Nl_Len))
             inputNodes.append(inputnls)
             inputPos.append(inputpos)
@@ -480,6 +480,30 @@ class node:
         self.id = -1
 
 
+class dotdict(dict):
+    def __getattr__(self, name):
+        return self[name]
+
+
+args = dotdict({
+    'NlLen': 500,
+    'CodeLen': 3200,
+    'SentenceLen': 10,
+    'batch_size': 20,
+    'embedding_size': 64,
+    'WoLen': 15,
+    'Vocsize': 100,
+    'Nl_Vocsize': 100,
+    'max_step': 3,
+    'margin': 0.5,
+    'poolsize': 50,
+    'Code_Vocsize': 100,
+    'seed': 19970316
+})
+
 # from run.py import args
 if __name__ == '__main__':
-    SumDataset('train', args)
+    # SumDataset('train', args)
+
+    train_set = SumDataset(args, "train")
+    print('ok')
