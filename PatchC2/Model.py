@@ -77,7 +77,6 @@ class NlEncoder(nn.Module):
         nlmask = torch.gt(inputNodes, 0)
         for trans in self.transformerBlocks:
             x = trans.forward(x, nlmask, posEm, nlad, charEm)
-
         # static
         inputem = self.token_embedding(inputtest)
         testmask = torch.gt(inputtest, 0)

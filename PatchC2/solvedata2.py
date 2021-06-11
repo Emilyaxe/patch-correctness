@@ -782,7 +782,7 @@ for x in lst:
 
             pcover_score = most_change(plinecover)
             pcover_limit = {}
-            num = 300
+            num = 50
             if len(pcover_score) <= num:
                 pcover_limit = pcover
             else:
@@ -795,7 +795,7 @@ for x in lst:
 
             newdata[datas['patchName']] = (
                 {'tree': root.printTreeWithVar(root, vardic), 'label': datas['label'], 'prob': root.getTreeProb(root),
-                 'pcover': pcover, 'fcover': fcover})
+                 'pcover': pcover_limit, 'fcover': fcover})
             # infodata[datas['patchName']] = ({'label': datas['label'], 'psame': psame, 'pdiff': pdiff})
             # assert(0)
             # if patchid == 'Math93b_Patch207':
