@@ -810,13 +810,11 @@ for x in lst:
             if datas['patchName'] == 'Closure_65.src.patch':
                 continue
             assert (0)
-# print(patchid[key1])
-# if patchid == 'patch1-Chart-4-SOFix.patch':
 
-pass
-errors.setdefault(x, []).append(patchid)
-print('%s  Size %s : ' % (x, len(newdata)))
-wf.write(pickle.dumps(newdata, protocol=1))
+            pass
+            errors.setdefault(x, []).append(patchid)
+    print('%s  Size %s : ' % (x, len(newdata)))
+    wf.write(pickle.dumps(newdata, protocol=1))
 # infofile.write(json.dumps(infodata))
 print(errors)
 print(fnames)
