@@ -605,7 +605,7 @@ for x in lst:
     newdata = {}
     # infodata = {}
     for datas in tqdm(data):
-        # if datas['patchName'] != 'patch1-Chart-1-Jaid.patch':
+        # if datas['patchName'] != 'Lang58b_Patch26':
         #     continue
         # datas = data[patchid]
         # if key1 != '642':
@@ -782,7 +782,7 @@ for x in lst:
 
             pcover_score = most_change(plinecover)
             pcover_limit = {}
-            num = 50
+            num = 10
             if len(pcover_score) <= num:
                 pcover_limit = pcover
             else:
