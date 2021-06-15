@@ -88,9 +88,9 @@ public class checkPrefix {
 
     public static void mainProcess(String dir) {
         List<PatchJson> patches =
-                JSON.parseArray(FileIO.readFileToString("./result/" + dir + "_purify"), PatchJson.class);
+                JSON.parseArray(FileIO.readFileToString("./result/combineInfo/" + dir + "_purify"), PatchJson.class);
         List<PatchJson> patchJsons =
-                JSON.parseArray(FileIO.readFileToString("./result/" + dir + "_tmp_unpurify"), PatchJson
+                JSON.parseArray(FileIO.readFileToString("./result/combineInfo/" + dir + "_tmp_unpurify"), PatchJson
                         .class);
         List<String> checkedPatches = Arrays.asList(checkedPatch.split("\n"));
         Map<String, PatchJson> replaceMap =

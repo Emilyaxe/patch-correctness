@@ -432,7 +432,7 @@ def changetree(root1, root2):
                     print('add3 ' + root2.getTreestr())
                     break
                 else:
-                    print('test2 root1', root1.child[i].getTreestr())
+                    # print('test2 root1', root1.child[i].getTreestr())
                     # print('test2 root2', root2.child[i].getTreestr())
                     a, b = changetree(root1.child[i], root2.child[i])
                     if a is not None:
@@ -492,7 +492,7 @@ def changetree(root1, root2):
                     index2 = idx2 + 1
                     continue
                 else:
-                    print('test', root1.child[index1].getTreestr())
+                    # print('test', root1.child[index1].getTreestr())
                     index1 += 1
         if index1 < len(root1.child):
             node = Node('Delete_S', 1)
@@ -599,7 +599,7 @@ def most_change(plinecover):
 
 
 for x in lst:
-    data = json.loads(open('../result/%s' % x, 'r').read())
+    data = json.loads(open('../result/combineInfo/%s' % x, 'r').read())
     wf = open('../result/pkldir/%s.pkl' % x, 'wb')
     # infofile = open('../result/pkldir/%s.info' % x, 'w')
     newdata = {}
@@ -662,8 +662,8 @@ for x in lst:
             # print(root.printTreeWithLine(root))
             root, vardic, _ = solveLongTree(root, subroot, 1000)
             setProb(root)
-            print(root.name)
-            print(root.printTree(root))
+            # print(root.name)
+            # print(root.printTree(root))
             # assert(0)
             ##trace info
             # filepre = '%s/%s/' % (x[:-1], patchid)
@@ -782,7 +782,7 @@ for x in lst:
 
             pcover_score = most_change(plinecover)
             pcover_limit = {}
-            num = 10
+            num = 5
             if len(pcover_score) <= num:
                 pcover_limit = pcover
             else:
@@ -800,6 +800,7 @@ for x in lst:
             # assert(0)
             # if patchid == 'Math93b_Patch207':
             #    assert(0)
+            print('PatchName %s, pcover %d, fcover %d', (datas['patchName'], len(pcover), len(fcover)))
         except:
             print(datas['patchName'])
             print(datas['combinedMethod'])
