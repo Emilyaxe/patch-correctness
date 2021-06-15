@@ -600,7 +600,7 @@ def most_change(plinecover):
 
 for x in lst:
     data = json.loads(open('../result/combineInfo/%s' % x, 'r').read())
-    wf = open('../result/pkldir/%s.pkl' % x, 'wb')
+    wf = open('../result/pkldir/%s_5.pkl' % x, 'wb')
     # infofile = open('../result/pkldir/%s.info' % x, 'w')
     newdata = {}
     # infodata = {}
@@ -800,7 +800,7 @@ for x in lst:
             # assert(0)
             # if patchid == 'Math93b_Patch207':
             #    assert(0)
-            print('PatchName %s, pcover %d, fcover %d', (datas['patchName'], len(pcover), len(fcover)))
+            print('PatchName %s, pcover %s, fcover %s' % (datas['patchName'], len(pcover), len(fcover)))
         except:
             print(datas['patchName'])
             print(datas['combinedMethod'])
@@ -810,13 +810,13 @@ for x in lst:
             if datas['patchName'] == 'Closure_65.src.patch':
                 continue
             assert (0)
-            # print(patchid[key1])
-            # if patchid == 'patch1-Chart-4-SOFix.patch':
+# print(patchid[key1])
+# if patchid == 'patch1-Chart-4-SOFix.patch':
 
-            pass
-            errors.setdefault(x, []).append(patchid)
-    print('%s  Size %s : ', x, len(newdata))
-    wf.write(pickle.dumps(newdata, protocol=1))
-    # infofile.write(json.dumps(infodata))
+pass
+errors.setdefault(x, []).append(patchid)
+print('%s  Size %s : ' % (x, len(newdata)))
+wf.write(pickle.dumps(newdata, protocol=1))
+# infofile.write(json.dumps(infodata))
 print(errors)
 print(fnames)
