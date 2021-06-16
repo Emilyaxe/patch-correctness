@@ -131,7 +131,7 @@ public class ObtainTraceInfo {
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
         for (Patch patch : entry.getValue()) {
 
-            if (!patch.getPatchName().equals("Math93b_Patch207")) {
+            if (!patch.getPatchName().equals("Math93b_Patch207") || !patch.getPatchName().equals("Lang58b_Patch26")) {
                 continue;
             }
 
