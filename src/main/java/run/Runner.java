@@ -498,7 +498,7 @@ public class Runner {
         log.info("Unzip {}", filePath);
         if (new File(filePath + ".tar.bz2").exists()) {
             try {
-                FileUtils.deleteDirectory(new File(filePath + ".tar.bz2"));
+                FileUtils.forceDelete(new File(filePath + ".tar.bz2"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
