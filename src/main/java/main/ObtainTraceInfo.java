@@ -136,7 +136,6 @@ public class ObtainTraceInfo {
                 continue;
             }
 
-            boolean isPurify = false;
             cleanSubject(subject.getHome() + subject.get_ssrc());
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
 
@@ -157,7 +156,7 @@ public class ObtainTraceInfo {
                         + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
                 ProcessPatch.createCombinedBuggy4AllFiles(patch, reverse);
                 instrument(fixedLine, writeFile, oneFixedFile);
-                instrumentTests(subject, writeFile, isPurify);
+                instrumentRandoopTests(subject, writeFile, testSuite);
                 TimeUnit.SECONDS.sleep(2);
 
                 if (!compile(subject)) {
@@ -187,7 +186,7 @@ public class ObtainTraceInfo {
                         + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
                 ProcessPatch.createCombinedFixed4AllFiles(patch, reverse);
                 instrument(fixedLine, writeFile, oneFixedFile);
-                instrumentTests(subject, writeFile, isPurify);
+                instrumentRandoopTests(subject, writeFile, testSuite);
                 TimeUnit.SECONDS.sleep(2);
 
                 if (!compile(subject)) {
@@ -207,6 +206,33 @@ public class ObtainTraceInfo {
         }
 
     }
+
+    private static void instrumentRandoopTests(Subject subject, String writeFile, String testSuite) {
+        synchronized (lock) {
+            // unzip testSuite
+            //Runner.unZipTest(testSuite);
+            String testDir = testSuite.split(".tar.bz2")[0];
+            FileIO.backupDir(testDir);
+
+            List<File> allTestFiles = new LinkedList<>();
+            FileIO.getAllFile(new File(testDir), allTestFiles);
+            for (File testFile : allTestFiles) {
+                if (!testFile.getName().endsWith(".java")) {
+                    continue;
+                }
+                InstruTestFileVisitor instruTestFileVisitor = new InstruTestFileVisitor();
+                instruTestFileVisitor.setWriteFile(writeFile);
+                instruTestFileVisitor.setRandoopTest(true);
+                CompilationUnit compilationUnit = FileIO.genASTFromSource(
+                        FileIO.readFileToString(testFile), ASTParser.K_COMPILATION_UNIT);
+                compilationUnit.accept(instruTestFileVisitor);
+                FileIO.writeStringToFile(testFile, compilationUnit.toString());
+            }
+            Runner.zipTest(testDir);
+
+        }
+    }
+
 
     public static void cleanSubject(String srcPath) {
         log.info("Clean subject ....");
@@ -311,6 +337,7 @@ public class ObtainTraceInfo {
             }
         }
     }
+
 
     private static void instrumentTests(Subject subject, String writeFile, boolean isPurify) {
         synchronized (lock) {

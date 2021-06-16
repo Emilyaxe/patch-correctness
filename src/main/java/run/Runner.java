@@ -6,6 +6,7 @@ import static config.Constant.HOME;
 import static config.Constant.JUNIT_RUN_MAIN;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -13,6 +14,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 
 import config.Constant;
 import entity.Subject;
@@ -474,7 +476,11 @@ public class Runner {
      */
     public static void unZipTest(String filePath) {
         log.info("Unzip {}", filePath);
-        StringBuilder stringBuilder = new StringBuilder("tar -xjvf ").append(filePath);
+        String newPath = filePath.split(".tar.bz2")[0];
+        if (!new File(newPath).exists()) {
+            new File(newPath).mkdirs();
+        }
+        StringBuilder stringBuilder = new StringBuilder("tar -xjvf ").append(filePath).append(" -C ").append(newPath);
         List<String> message = Collections.emptyList();
         try {
             message = Executor.execute(new String[] {"/bin/bash", "-c", stringBuilder.toString()});
@@ -485,6 +491,32 @@ public class Runner {
         log.info(String.join(" ", message));
     }
 
+    /*
+ tar.bz2 zip
+  */
+    public static void zipTest(String filePath) {
+        log.info("Unzip {}", filePath);
+        if (new File(filePath + ".tar.bz2").exists()) {
+            try {
+                FileUtils.deleteDirectory(new File(filePath + ".tar.bz2"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        String fileName = filePath.split("\\/")[filePath.split("\\/").length - 1];
+        String fileDir = filePath.split(fileName)[0];
+        StringBuilder stringBuilder =
+                new StringBuilder("cd ").append(fileDir).append(" && ").append("tar -czvf ").append(fileName)
+                        .append(".tar.bz2 ").append(fileName);
+        List<String> message = Collections.emptyList();
+        try {
+            message = Executor.execute(new String[] {"/bin/bash", "-c", stringBuilder.toString()});
+        } catch (Exception e) {
+            log.error(__name__ + " zip failed !", e);
+        }
+        log.info(stringBuilder.toString());
+        log.info(String.join(" ", message));
+    }
 
     public static void runSootJimple(String classPath, Subject subject) {
         List<String> message = Collections.emptyList();

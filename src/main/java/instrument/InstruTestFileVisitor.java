@@ -36,6 +36,7 @@ public class InstruTestFileVisitor extends TraversalVisitor {
     private String _clazzFileName = "";
     private CompilationUnit _cu;
     private String writeFile = "";
+    private boolean isRandoopTest = false;
 
     //private List<String> passingList;
 
@@ -43,7 +44,7 @@ public class InstruTestFileVisitor extends TraversalVisitor {
     public boolean visit(CompilationUnit node) {
 
         _cu = node;
-        _clazzName = node.getPackage().getName().getFullyQualifiedName();
+        _clazzName = !isRandoopTest ? node.getPackage().getName().getFullyQualifiedName() : "";
         if (_clazzName.equals("auxiliary")) {
             return false;
         }
