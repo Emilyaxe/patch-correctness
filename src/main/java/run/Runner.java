@@ -480,7 +480,7 @@ public class Runner {
         if (!new File(newPath).exists()) {
             new File(newPath).mkdirs();
         }
-        StringBuilder stringBuilder = new StringBuilder("tar -xjvf ").append(filePath).append(" -C ").append(newPath);
+        StringBuilder stringBuilder = new StringBuilder("tar -zxvf ").append(filePath).append(" -C ").append(newPath);
         List<String> message = Collections.emptyList();
         try {
             message = Executor.execute(new String[] {"/bin/bash", "-c", stringBuilder.toString()});
@@ -506,7 +506,7 @@ public class Runner {
         String fileName = filePath.split("\\/")[filePath.split("\\/").length - 1];
         String fileDir = filePath.split(fileName)[0];
         StringBuilder stringBuilder =
-                new StringBuilder("cd ").append(fileDir).append(" && ").append("tar -czvf ").append(fileName)
+                new StringBuilder("cd ").append(fileDir).append(" && ").append("tar -jxvf ").append(fileName)
                         .append(".tar.bz2 ").append(fileName);
         List<String> message = Collections.emptyList();
         try {
