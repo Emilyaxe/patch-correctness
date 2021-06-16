@@ -130,6 +130,66 @@ public class Patch {
         return patchRecord;
     }
 
+    // find combined method for Math93b_Patch207
+    public static String findMethods4Corner(Map<String, List<Patch>> subjectPatchMap, String methodOutPutDir,
+            boolean reverse) {
+
+        List<String> errorPatches = new LinkedList<>();
+        Map<String, List<String>> nameValueMap = new LinkedHashMap<>();
+        int patchid = 0;
+        for (Entry<String, List<Patch>> entry : subjectPatchMap.entrySet()) {
+
+            String name = entry.getKey().split("-")[0];
+            String id = entry.getKey().split("-")[1];
+            Subject subject = new Subject(name, Integer.parseInt(id));
+            String subjectPath = Constant.PROJECT_HOME + "/" + name + "/" + name + id;
+            for (Patch patch : entry.getValue()) {
+                patchid++;
+                if (!patch.getPatchName().equals("Math93b_Patch207")) {
+                    continue;
+                }
+                log.info("{} Process patch {}", patchid, patch.getPatchPath());
+                cleanSubject(subject.getHome() + subject.get_ssrc());
+                initFixedFileAndChanges(patch);
+                if (patch.isDeleteAll()) {
+                    patch.setCombinedMethod(constructMethod("deleteAllFile"));
+                    List<String> tmpList = new LinkedList<>();
+                    tmpList.add(patch.getLabel());
+                    tmpList.add(patch.getBugId());
+                    tmpList.add(patch.getCombinedMethod());
+                    nameValueMap.put(patch.getPatchName(), tmpList);
+                    continue;
+                }
+
+                String fixedFile = subjectPath + patch.getFixedFile().trim();
+                FileIO.backupFile(fixedFile);
+
+                createCombinedBuggyFiles(fixedFile, patch, reverse);
+
+                List<Method> methodList = getMethodInfo(fixedFile);
+
+                //for (Integer lnumber : patch.getChangeLines()) {
+                Integer lnumber = 385;
+                Method findMethod = methodList.stream().filter(Objects::nonNull)
+                        .filter(method -> lnumber >= method.get_startLine()
+                                && lnumber <= method.get_endLine())
+                        .findAny().orElse(null);
+
+                if (Objects.isNull(findMethod)) {
+                    continue;
+                }
+                String combinedMethod = getMethodContent(fixedFile, findMethod.get_startLine(),
+                        findMethod.get_endLine(), patch, reverse);
+                //log.info("Patch {}, Method{}", patch.getPatchName(), combinedMethod);
+                if (!checkCombineMethod(combinedMethod)) {
+                    errorPatches.add(patch.getPatchName());
+                }
+                return combinedMethod;
+            }
+        }
+        return null;
+    }
+
     public static void findMethods(Map<String, List<Patch>> subjectPatchMap, String methodOutPutDir,
             boolean reverse) {
 
@@ -144,7 +204,7 @@ public class Patch {
             String subjectPath = Constant.PROJECT_HOME + "/" + name + "/" + name + id;
             for (Patch patch : entry.getValue()) {
                 patchid++;
-                //                if (!patch.getPatchName().equals("Time_9.src.patch")) {
+                //                if (!patch.getPatchName().equals("Math93b_Patch207")) {
                 //                    continue;
                 //                }
                 log.info("{} Process patch {}", patchid, patch.getPatchPath());

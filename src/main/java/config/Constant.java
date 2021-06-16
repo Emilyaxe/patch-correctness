@@ -56,6 +56,7 @@ public class Constant {
     public static String patchesOther = HOME + "/Patches/Patches_others";
     public static String staticResult = HOME + "/result/static";
     public static String dynamicResult = HOME + "/result/dynamic";
+    public static String randoopResult = HOME + "/result/randoop";
 
 
     public static String FIXED = ".fixed";

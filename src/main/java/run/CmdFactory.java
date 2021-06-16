@@ -18,7 +18,7 @@ public class CmdFactory {
 
         String stringBuilder = Constant.COMMAND_D4J + " checkout -p " + subject.get_name() + " -v "
                 + subject.get_id() + "b -w " + subject.getHome();
-        return new String[] { "/bin/bash", "-c", stringBuilder };
+        return new String[] {"/bin/bash", "-c", stringBuilder};
         //return createD4JCmd(subject, "checkout -p " + subject.get_name() + " -v " + subject.get_id() + "f -w " +
         // subject.getHome(), Constant.COMPILE_TIMEOUT);
     }
@@ -51,8 +51,8 @@ public class CmdFactory {
         return createD4JCmd(subject, "test -t " + failTest, -1);
     }
 
-    public static String[] createTestSuiteCmd(Subject subject, String testSuite) {
-        return createD4JCmd(subject, "test -s " + testSuite, -1);
+    public static String[] createTestSuiteCmd(Subject subject, String testSuite, int timeout) {
+        return createD4JCmd(subject, "test -s " + testSuite, timeout);
     }
 
     // TODO
@@ -63,7 +63,7 @@ public class CmdFactory {
         }*/
         stringBuilder.append(Constant.COMMAND_D4J).append(arg);
         log.info(stringBuilder.toString());
-        return new String[] { "/bin/bash", "-c", stringBuilder.toString() };
+        return new String[] {"/bin/bash", "-c", stringBuilder.toString()};
     }
 
     public static String[] createTestSingleTestByJUnit(Subject subject, String arg) {
@@ -72,7 +72,7 @@ public class CmdFactory {
         //stringBuilder.append(Constant.COMMAND_TIMEOUT).append(Constant.TEST_TIMEOUT).append(" ");
         stringBuilder.append(arg);
         log.info(stringBuilder.toString());
-        return new String[] { "/bin/bash", "-c", stringBuilder.toString() };
+        return new String[] {"/bin/bash", "-c", stringBuilder.toString()};
     }
 
     /**
@@ -94,7 +94,7 @@ public class CmdFactory {
             stringBuilder.append(Constant.COMMAND_TIMEOUT).append(timeout).append(" ");
         }
         stringBuilder.append(Constant.COMMAND_D4J).append(args);
-        return new String[] { "/bin/bash", "-c", stringBuilder.toString() };
+        return new String[] {"/bin/bash", "-c", stringBuilder.toString()};
     }
 
     //    public static String[] createDiffCmd(String sourceFile, String targetFile, String patchFile) {
@@ -108,7 +108,7 @@ public class CmdFactory {
     public static String[] createPatchCmd(String targetFile, String patchFile) {
         //log.info(stringBuilder.toString());
         String stringBuilder = Constant.COMMAND_PATCH + targetFile + " " + patchFile;
-        return new String[] { "/bin/bash", "-c", stringBuilder };
+        return new String[] {"/bin/bash", "-c", stringBuilder};
     }
 
     public static String createTracer() {
@@ -131,7 +131,7 @@ public class CmdFactory {
                         + "/soot/soot-4.2.1-jar-with-dependencies.jar soot.Main -pp -f J -cp . ")
                 .append(classPath);
         //log.info(stringBuilder.toString());
-        return new String[] { "/bin/bash", "-c", stringBuilder.toString() };
+        return new String[] {"/bin/bash", "-c", stringBuilder.toString()};
     }
 
 }

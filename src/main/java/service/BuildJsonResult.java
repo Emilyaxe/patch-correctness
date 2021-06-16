@@ -117,7 +117,7 @@ public class BuildJsonResult {
         //multiPcoessCheck(patches);
     }
 
-    private static Map<String, Set<String>> obtainTraceByFile(String file, Set<String> testSet)
+    public static Map<String, Set<String>> obtainTraceByFile(String file, Set<String> testSet)
             throws OutOfMemoryError {
         Map<String, Set<String>> map = new LinkedHashMap<>();
         try (FileInputStream inputStream = new FileInputStream(file);
@@ -225,7 +225,7 @@ public class BuildJsonResult {
         return true;
     }
 
-    private static Map<String, Set<String>> obtainTrace(String content, Set<String> testSet) {
+    public static Map<String, Set<String>> obtainTrace(String content, Set<String> testSet) {
         Map<String, Set<String>> map = new LinkedHashMap<>();
         if (StringUtils.isEmpty(content)) {
             return map;

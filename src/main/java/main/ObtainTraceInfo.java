@@ -114,13 +114,96 @@ public class ObtainTraceInfo {
         for (Entry<String, List<Patch>> entry : subjectPatchMap.entrySet()) {
             futureList.add(CompletableFuture.runAsync(() -> {
                 try {
-                    processAllTrace(reverse, reDir, entry);
+                    //processAllTrace(reverse, reDir, entry);
+                    processRandoopTrace(reverse, reDir, entry);
                 } catch (Exception e) {
                     log.error("obtain trace failed! subject {}", entry.getKey(), e);
                 }
             }, EXECUTOR));
         }
         CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0])).join();
+
+    }
+
+    public static void processRandoopTrace(boolean reverse, String reDir,
+            Entry<String, List<Patch>> entry) {
+        String[] sub = entry.getKey().split("-");
+        Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
+        for (Patch patch : entry.getValue()) {
+
+            if (!patch.getPatchName().equals("Math93b_Patch207")) {
+                continue;
+            }
+
+            boolean isPurify = false;
+            cleanSubject(subject.getHome() + subject.get_ssrc());
+            log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
+
+            int fixedLine = getOneChangeLine(subject, patch, reverse);
+            if (patch.getPatchName().equals("Math93b_Patch207")) {
+                fixedLine = 385;
+            }
+            if (fixedLine == 0) {
+                illeglePatches.put(patch.getPatchName(), "");
+                continue;
+            }
+            String testSuite = Constant.HOME + "/RandoopTest/" +
+                    subject.get_name() + '-' + subject.get_id() + "b-randoop." + subject.get_id() + ".tar.bz2";
+
+            try {
+                String writeFile = BuildPath.buildRandoopFile(reDir, patch.getPatchName(), true);
+                String oneFixedFile = Constant.PROJECT_HOME + "/" + subject.get_name() + "/"
+                        + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
+                ProcessPatch.createCombinedBuggy4AllFiles(patch, reverse);
+                instrument(fixedLine, writeFile, oneFixedFile);
+                instrumentTests(subject, writeFile, isPurify);
+                TimeUnit.SECONDS.sleep(2);
+
+                if (!compile(subject)) {
+                    log.error("Patch {}, Compile Error on buggy version!", patch.getPatchName());
+                }
+                List<String> message = Runner.runTestSuite(subject, testSuite);
+                if (message.size() <= 3) {
+                    log.error("Patch {}, Should Fail! \n {} ", patch.getPatchName(),
+                            StringUtils.join(message, "\n"));
+                    //shouldFail.add(patch.getPatchName());
+                    shouldFail.putIfAbsent(patch.getPatchName(), "");
+                } else {
+                    String failingTest = message.stream()
+                            .filter(line -> line.trim().startsWith("-"))
+                            .map(line -> line.split("-", 2)[1].trim())
+                            .collect(Collectors.joining("\n"));
+                    FileIO.writeStringToFile(writeFile + ".failing", failingTest);
+                }
+            } catch (Exception e) {
+                log.error("process  test on buggy version failed! subject {} patch {} ",
+                        subject.get_name() + subject.get_id(), patch.getPatchName(), e);
+            }
+
+            try {
+                String writeFile = BuildPath.buildRandoopFile(reDir, patch.getPatchName(), false);
+                String oneFixedFile = Constant.PROJECT_HOME + "/" + subject.get_name() + "/"
+                        + subject.get_name() + subject.get_id() + patch.getFixedFile().trim();
+                ProcessPatch.createCombinedFixed4AllFiles(patch, reverse);
+                instrument(fixedLine, writeFile, oneFixedFile);
+                instrumentTests(subject, writeFile, isPurify);
+                TimeUnit.SECONDS.sleep(2);
+
+                if (!compile(subject)) {
+                    log.error("Patch {}, Compile Error on fixed version!", patch.getPatchName());
+                }
+                List<String> message = Runner.runTestSuite(subject, testSuite);
+                if (CollectionUtils.isEmpty(message) || message.stream().filter(Objects::nonNull)
+                        .noneMatch(element -> element.contains(Runner.SUCCESSTEST))) {
+                    shoulPass.putIfAbsent(patch.getPatchName(), "");
+                    log.error("Patch {}, Should Pass! \n {} ", patch.getPatchName(),
+                            StringUtils.join(message, "\n"));
+                }
+            } catch (Exception e) {
+                log.error("process test on fixed version failed! subject {} patch {} ",
+                        subject.get_name() + subject.get_id(), patch.getPatchName(), e);
+            }
+        }
 
     }
 
@@ -145,24 +228,29 @@ public class ObtainTraceInfo {
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
         for (Patch patch : entry.getValue()) {
 
-            if (!reRunPatches.contains(patch.getPatchName())) {
-                continue;
-            }
-            try {
-                log.info("Delete Dir for Patch {}", patch.getPatchName());
-                FileUtils.deleteDirectory(new File(Constant.dynamicResult + "/" + reDir + "/" + patch
-                        .getPatchName()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            //            if (!patch.getPatchName().equals("Closure_3.src.patch")) {
+            //            if (!reRunPatches.contains(patch.getPatchName())) {
+            //                continue;
+            //            }
+            //            try {
+            //                log.info("Delete Dir for Patch {}", patch.getPatchName());
+            //                FileUtils.deleteDirectory(new File(Constant.dynamicResult + "/" + reDir + "/" + patch
+            //                        .getPatchName()));
+            //            } catch (IOException e) {
+            //                e.printStackTrace();
+            //            }
+            //            if (!patch.getPatchName().equals("Math93b_Patch207")) {
             //                continue;
             //            }
 
-            boolean isPurify = !unPurifyPatches.contains(patch.getPatchName());
+            boolean isPurify = false;
+            //!unPurifyPatches.contains(patch.getPatchName());
             cleanSubject(subject.getHome() + subject.get_ssrc());
             log.info("Process Dir {} for Patch {}", reDir, patch.getPatchName());
+
             int fixedLine = getOneChangeLine(subject, patch, reverse);
+            if (patch.getPatchName().equals("Math93b_Patch207")) {
+                fixedLine = 385;
+            }
             if (fixedLine == 0) {
                 illeglePatches.put(patch.getPatchName(), "");
                 continue;
@@ -434,21 +522,21 @@ public class ObtainTraceInfo {
     }
 
     public static void main(String[] args) {
-        List<Patch> trainPatch = ObtainPatches.readTrainPatches();
-        Map<String, List<Patch>> trainPatchMap = trainPatch.stream()
-                .collect(Collectors.groupingBy(Patch::getBugId));
-        obtainTrace(trainPatchMap, false, "trainSet");
+        //        List<Patch> trainPatch = ObtainPatches.readTrainPatches();
+        //        Map<String, List<Patch>> trainPatchMap = trainPatch.stream()
+        //                .collect(Collectors.groupingBy(Patch::getBugId));
+        //        obtainTrace(trainPatchMap, false, "trainSet");
 
         List<Patch> testPatches = ObtainPatches.readTestPatches();
         Map<String, List<Patch>> testSubjectPatchMap =
                 testPatches.stream().collect(Collectors.groupingBy(Patch::getBugId));
         obtainTrace(testSubjectPatchMap, false, "testSet");
 
-        List<Patch> correctPatches = ObtainPatches.readCorPatches();
-        Map<String, List<Patch>> correctSubjectPatchMap =
-                correctPatches.stream().collect(Collectors.groupingBy(Patch::getBugId));
-        obtainTrace(correctSubjectPatchMap, true, "correctSet");
-        //processCornerCase("correctSet", "Closure_16.src.patch");
+        //        List<Patch> correctPatches = ObtainPatches.readCorPatches();
+        //        Map<String, List<Patch>> correctSubjectPatchMap =
+        //                correctPatches.stream().collect(Collectors.groupingBy(Patch::getBugId));
+        //        obtainTrace(correctSubjectPatchMap, true, "correctSet");
+        //        processCornerCase("correctSet", "Closure_16.src.patch");
 
         log.info("Should Pass Patches: {}", String.join(",", shoulPass.keySet()));
         log.info("Should Fail Patches: {}", String.join(",", shouldFail.keySet()));

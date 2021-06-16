@@ -88,7 +88,7 @@ public class checkPrefix {
 
     public static void mainProcess(String dir) {
         List<PatchJson> patches =
-                JSON.parseArray(FileIO.readFileToString("./result/combineInfo/" + dir + "_purify"), PatchJson.class);
+                JSON.parseArray(FileIO.readFileToString("./result/combineInfo/" + dir + "_unpurify"), PatchJson.class);
         List<PatchJson> patchJsons =
                 JSON.parseArray(FileIO.readFileToString("./result/combineInfo/" + dir + "_tmp_unpurify"), PatchJson
                         .class);
@@ -97,7 +97,7 @@ public class checkPrefix {
                 patchJsons.stream().filter(Objects::nonNull).collect(Collectors.toMap(PatchJson::getPatchName,
                         Function.identity(), (v1, v2) -> v2));
         for (PatchJson patchJson : patches) {
-            if (replaceMap.containsKey(patchJson.getPatchName())) {
+            if (patchJson.getPatchName().equals("Chart5b_Patch7") && replaceMap.containsKey(patchJson.getPatchName())) {
                 patchJson.setCombinedMethod(replaceMap.get(patchJson.getPatchName()).getCombinedMethod());
             }
             //            if (checkedPatches.contains(patchJson.getPatchName())) {
@@ -116,11 +116,11 @@ public class checkPrefix {
             //            }
         }
         log.info("Dir {} size {}", dir, patches.size());
-        //FileIO.writeStringToFile("./result/" + dir + "_purify_simple", JSON.toJSONString(patches));
+        FileIO.writeStringToFile("./result/" + dir + "_unpurify1", JSON.toJSONString(patches));
     }
 
     public static void main(String[] args) {
-        String[] dirs = {"testSet", "trainSet"};
+        String[] dirs = {"testSet"};
         for (String dir : dirs) {
             mainProcess(dir);
         }

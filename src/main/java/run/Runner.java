@@ -85,6 +85,31 @@ public class Runner {
         //                .anyMatch(element -> element.contains(SUCCESSTEST));
     }
 
+    /*
+ run randoop test
+  */
+    public static List<String> runTestSuite(Subject subject, String testSuite) {
+        List<String> message = Collections.emptyList();
+        try {
+            log.info("TESTING Randoop: " + subject.get_name() + "_" + subject.get_id());
+            message = Executor.execute(CmdFactory.createTestSuiteCmd(subject, testSuite, 30 * 60));
+            //System.out.println(message);
+        } catch (Exception e) {
+            // LevelLogger.fatal(__name__ + "#buildSubject run test single test case failed !", e);
+        }
+        return message;
+        //log.info(String.join(" ", message));
+        /*if(CollectionUtils.isNotEmpty(message)
+                && message.stream().filter(Objects::nonNull).anyMatch(element -> element.contains(SUCCESSTEST))) {
+                // true
+            log.info("Failing test Pass .....");
+
+        }else {
+            log.info("Failing test Failed .....");
+        }*/
+    }
+
+
     public static boolean downloadSubject(Subject subject) {
         log.info("Downloading {} ...", subject.toString());
         File file = new File(subject.getHome());
@@ -460,28 +485,6 @@ public class Runner {
         log.info(String.join(" ", message));
     }
 
-    /*
-    run randoop test
-     */
-    public static void runTestSuite(Subject subject, String testSuite) {
-        List<String> message = Collections.emptyList();
-        try {
-            log.info("TESTING : " + subject.get_name() + "_" + subject.get_id());
-            message = Executor.execute(CmdFactory.createTestSuiteCmd(subject, testSuite));
-            //System.out.println(message);
-        } catch (Exception e) {
-            // LevelLogger.fatal(__name__ + "#buildSubject run test single test case failed !", e);
-        }
-        log.info(String.join(" ", message));
-        /*if(CollectionUtils.isNotEmpty(message)
-                && message.stream().filter(Objects::nonNull).anyMatch(element -> element.contains(SUCCESSTEST))) {
-                // true
-            log.info("Failing test Pass .....");
-
-        }else {
-            log.info("Failing test Failed .....");
-        }*/
-    }
 
     public static void runSootJimple(String classPath, Subject subject) {
         List<String> message = Collections.emptyList();

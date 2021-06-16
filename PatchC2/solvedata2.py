@@ -600,13 +600,13 @@ def most_change(plinecover):
 
 for x in lst:
     data = json.loads(open('../result/combineInfo/%s' % x, 'r').read())
-    wf = open('../result/pkldir/%s_5.pkl' % x, 'wb')
+    wf = open('../result/pkldir/%s.pkl' % x, 'wb')
     # infofile = open('../result/pkldir/%s.info' % x, 'w')
     newdata = {}
     # infodata = {}
     for datas in tqdm(data):
-        # if datas['patchName'] != 'Lang58b_Patch26':
-        #     continue
+        if datas['patchName'] != 'Lang58b_Patch26':
+            continue
         # datas = data[patchid]
         # if key1 != '642':
         #    continue
@@ -782,7 +782,7 @@ for x in lst:
 
             pcover_score = most_change(plinecover)
             pcover_limit = {}
-            num = 5
+            num = 50
             if len(pcover_score) <= num:
                 pcover_limit = pcover
             else:
@@ -810,7 +810,6 @@ for x in lst:
             if datas['patchName'] == 'Closure_65.src.patch':
                 continue
             assert (0)
-
             pass
             errors.setdefault(x, []).append(patchid)
     print('%s  Size %s : ' % (x, len(newdata)))
