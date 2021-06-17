@@ -284,6 +284,10 @@ public class BuildJsonResult {
     }
 
     private static String checkTest(Set<String> testSet, String testLine) {
+        // for randoop case which does not have testSet
+        if (testSet.isEmpty()) {
+            return testLine;
+        }
         if (testSet.contains(testLine)) {
             return testLine;
         }

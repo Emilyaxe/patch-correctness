@@ -27,5 +27,5 @@ public class PatchJson {
     private Set<String> failingTests;
     private Map<String, Set<String>> buggyTraceInfo;
     private Map<String, Set<String>> fixedTraceInfo;
-    
+
 }

@@ -159,23 +159,23 @@ public class ObtainTraceInfo {
                 instrument(fixedLine, writeFile, oneFixedFile);
                 instrumentRandoopTests(subject, writeFile, testSuite);
                 TimeUnit.SECONDS.sleep(2);
-                //                String testDir = subject.getHome() + subject.get_tsrc();
-                //                for (File f : new File(testSuite).listFiles()) {
-                //                    if (!f.getName().endsWith(".java")) {
-                //                        continue;
-                //                    }
-                //                    try {
-                //                        FileUtils.copyFile(f, new File(testDir + "/" + f.getName()));
-                //                    } catch (IOException e) {
-                //                        log.error("Copy file {} Failed !", f.getName());
-                //                    }
-                //                }
-
-                if (!compile(subject)) {
-                    log.error("Patch {}, Compile Error on buggy version!", patch.getPatchName());
+                String testDir = subject.getHome() + subject.get_tsrc();
+                for (File f : new File(testSuite).listFiles()) {
+                    if (!f.getName().endsWith(".java")) {
+                        continue;
+                    }
+                    try {
+                        FileUtils.copyFile(f, new File(testDir + "/" + f.getName()));
+                    } catch (IOException e) {
+                        log.error("Copy file {} Failed !", f.getName());
+                    }
                 }
+                log.info("start run by eclipse");
+                //                if (!compile(subject)) {
+                //                    log.error("Patch {}, Compile Error on buggy version!", patch.getPatchName());
+                //                }
                 //Runner.runTestFile(subject, testSuite, true);
-                Runner.runTestSuite(subject, testSuite + ".tar.bz2");
+                //Runner.runTestSuite(subject, testSuite + ".tar.bz2");
             } catch (Exception e) {
                 log.error("process  test on buggy version failed! subject {} patch {} ",
                         subject.get_name() + subject.get_id(), patch.getPatchName(), e);
@@ -189,22 +189,23 @@ public class ObtainTraceInfo {
                 instrument(fixedLine, writeFile, oneFixedFile);
                 instrumentRandoopTests(subject, writeFile, testSuite);
                 TimeUnit.SECONDS.sleep(2);
-                //                String testDir = subject.getHome() + subject.get_tsrc();
-                //                for (File f : new File(testSuite).listFiles()) {
-                //                    if (!f.getName().endsWith(".java")) {
-                //                        continue;
-                //                    }
-                //                    try {
-                //                        FileUtils.copyFile(f, new File(testDir + "/" + f.getName()));
-                //                    } catch (IOException e) {
-                //                        log.error("Copy file {} Failed !", f.getName());
-                //                    }
-                //                }
-
-                if (!compile(subject)) {
-                    log.error("Patch {}, Compile Error on fixed version!", patch.getPatchName());
+                String testDir = subject.getHome() + subject.get_tsrc();
+                for (File f : new File(testSuite).listFiles()) {
+                    if (!f.getName().endsWith(".java")) {
+                        continue;
+                    }
+                    try {
+                        FileUtils.copyFile(f, new File(testDir + "/" + f.getName()));
+                    } catch (IOException e) {
+                        log.error("Copy file {} Failed !", f.getName());
+                    }
                 }
-                Runner.runTestSuite(subject, testSuite + ".tar.bz2");
+                log.info("start run by eclipse");
+
+                //                if (!compile(subject)) {
+                //                    log.error("Patch {}, Compile Error on fixed version!", patch.getPatchName());
+                //                }
+                //Runner.runTestSuite(subject, testSuite + ".tar.bz2");
                 //Runner.runTestFile(subject, testSuite, true);
 
             } catch (Exception e) {
@@ -220,6 +221,7 @@ public class ObtainTraceInfo {
             // unzip testSuite
             //Runner.unZipTest(testSuite);
             //String testDir = testSuite.split(".tar.bz2")[0];
+            FileIO.backupDir(subject.getHome() + subject.get_tsrc());
             FileIO.backupDir(testSuite);
 
             List<File> allTestFiles = new LinkedList<>();
@@ -236,7 +238,7 @@ public class ObtainTraceInfo {
                 compilationUnit.accept(instruTestFileVisitor);
                 FileIO.writeStringToFile(testFile, compilationUnit.toString());
             }
-            Runner.zipTest(testSuite);
+            //Runner.zipTest(testSuite);
         }
     }
 

@@ -4,19 +4,19 @@ import org.junit.runners.MethodSorters;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) public class RegressionTest14 {
   public static boolean debug=false;
   @Test public void test01() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test01#10");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test01#10");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test01");
     java.lang.String str1=org.apache.commons.lang.StringUtils.stripToEmpty("Hi!");
     org.junit.Assert.assertTrue("'" + str1 + "' != '"+ "Hi!"+ "'",str1.equals("Hi!"));
   }
   @Test public void test02() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test02#18");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test02#18");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test02");
     boolean boolean1=org.apache.commons.lang.StringUtils.isNumericSpace("                                                                                           ");
     org.junit.Assert.assertTrue("'" + boolean1 + "' != '"+ true+ "'",boolean1 == true);
   }
   @Test public void test03() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test03#26");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test03#26");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test03");
     double[] doubleArray4=new double[]{(-1.0f),'#',1.0f,35L};
     double[] doubleArray5=new double[]{};
@@ -48,31 +48,31 @@ import org.junit.runners.MethodSorters;
     org.junit.Assert.assertTrue("'" + double25 + "' != '"+ 35.0d+ "'",double25 == 35.0d);
   }
   @Test public void test04() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test04#60");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test04#60");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test04");
     long long3=org.apache.commons.lang.math.NumberUtils.min((long)28,(long)(byte)100,(-1L));
     org.junit.Assert.assertTrue("'" + long3 + "' != '"+ (-1L)+ "'",long3 == (-1L));
   }
   @Test public void test05() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test05#68");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test05#68");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test05");
     java.lang.String str2=org.apache.commons.lang.StringUtils.left("",(int)(byte)1);
     org.junit.Assert.assertTrue("'" + str2 + "' != '"+ ""+ "'",str2.equals(""));
   }
   @Test public void test06() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test06#76");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test06#76");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test06");
     int int2=org.apache.commons.lang.StringUtils.indexOf("","                       AAAAAAAAA");
     org.junit.Assert.assertTrue("'" + int2 + "' != '"+ (-1)+ "'",int2 == (-1));
   }
   @Test public void test07() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test07#84");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test07#84");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test07");
     java.lang.String str2=org.apache.commons.lang.StringUtils.removeEnd("            hi!            ","                                                   ");
     org.junit.Assert.assertTrue("'" + str2 + "' != '"+ "            hi!            "+ "'",str2.equals("            hi!            "));
   }
   @Test public void test08() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test08#92");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test08#92");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test08");
     java.lang.String[] strArray3=org.apache.commons.lang.StringUtils.split("","hi!",(int)(byte)100);
     java.lang.String str4=org.apache.commons.lang.StringUtils.join((java.lang.Object[])strArray3);
@@ -84,13 +84,13 @@ import org.junit.runners.MethodSorters;
     org.junit.Assert.assertTrue("'" + str7 + "' != '"+ ""+ "'",str7.equals(""));
   }
   @Test public void test09() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test09#106");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test09#106");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test09");
     int int2=org.apache.commons.lang.math.NumberUtils.stringToInt("                                                      ",0);
     org.junit.Assert.assertTrue("'" + int2 + "' != '"+ 0+ "'",int2 == 0);
   }
   @Test public void test10() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test10#114");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test10#114");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test10");
     try {
       java.lang.Float float1=org.apache.commons.lang.math.NumberUtils.createFloat("                                                                                              !Ih                                                                                              !Ih                                                                                              !Ih                                                                                              !Ih                                                                                              !Ih                                                                                              !Ih                                                                                              !Ih                                                                                              !Ih                                                                                              !Ih");
@@ -100,43 +100,43 @@ import org.junit.runners.MethodSorters;
     }
   }
   @Test public void test11() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test11#125");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test11#125");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test11");
     java.lang.String[] strArray3=org.apache.commons.lang.StringUtils.split("hA         A         A         A         A         A         A         A         A         A       i!##a##a","i",(int)(short)-1);
     org.junit.Assert.assertNotNull(strArray3);
   }
   @Test public void test12() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test12#133");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test12#133");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test12");
     long long1=org.apache.commons.lang.math.NumberUtils.toLong("                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ");
     org.junit.Assert.assertTrue("'" + long1 + "' != '"+ 0L+ "'",long1 == 0L);
   }
   @Test public void test13() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test13#141");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test13#141");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test13");
     java.lang.String[] strArray1=org.apache.commons.lang.StringUtils.splitPreserveAllTokens("4444444444444444444444444444444444                            ...");
     org.junit.Assert.assertNotNull(strArray1);
   }
   @Test public void test14() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test14#149");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test14#149");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test14");
     java.lang.String str2=org.apache.commons.lang.StringUtils.repeat("4ahi!",(int)'4');
     org.junit.Assert.assertTrue("'" + str2 + "' != '"+ "4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!"+ "'",str2.equals("4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!4ahi!"));
   }
   @Test public void test15() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test15#157");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test15#157");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test15");
     long long2=org.apache.commons.lang.math.NumberUtils.toLong("",(long)4);
     org.junit.Assert.assertTrue("'" + long2 + "' != '"+ 4L+ "'",long2 == 4L);
   }
   @Test public void test16() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test16#165");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test16#165");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test16");
     java.lang.String[] strArray2=org.apache.commons.lang.StringUtils.splitPreserveAllTokens("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","");
     org.junit.Assert.assertNotNull(strArray2);
   }
   @Test public void test17() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test17#173");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test17#173");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test17");
     char[] charArray6=new char[]{};
     int int7=org.apache.commons.lang.StringUtils.indexOfAnyBut("",charArray6);
@@ -154,7 +154,7 @@ import org.junit.runners.MethodSorters;
     org.junit.Assert.assertTrue("'" + int12 + "' != '"+ (-1)+ "'",int12 == (-1));
   }
   @Test public void test18() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test18#193");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test18#193");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test18");
     java.lang.String[] strArray2=org.apache.commons.lang.StringUtils.split("4444444444444444444444444444444444                                4444444444444444444444444444444444","444444444444444444444444444444444444444444444          444444444444444444444444444444444444444444444");
     java.lang.String str6=org.apache.commons.lang.StringUtils.join((java.lang.Object[])strArray2,'a',96,13);
@@ -162,73 +162,73 @@ import org.junit.runners.MethodSorters;
     org.junit.Assert.assertTrue("'" + str6 + "' != '"+ ""+ "'",str6.equals(""));
   }
   @Test public void test19() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test19#203");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test19#203");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test19");
     int int2=org.apache.commons.lang.math.NumberUtils.compare((double)87,134.0d);
     org.junit.Assert.assertTrue("'" + int2 + "' != '"+ (-1)+ "'",int2 == (-1));
   }
   @Test public void test20() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test20#211");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test20#211");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test20");
     short short3=org.apache.commons.lang.math.NumberUtils.min((short)100,(short)(byte)-1,(short)0);
     org.junit.Assert.assertTrue("'" + short3 + "' != '"+ (short)-1+ "'",short3 == (short)-1);
   }
   @Test public void test21() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test21#219");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test21#219");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test21");
     java.lang.String str1=org.apache.commons.lang.StringUtils.uncapitalize("4444444hi!aaaaaaaaa                        ");
     org.junit.Assert.assertTrue("'" + str1 + "' != '"+ "4444444hi!aaaaaaaaa                        "+ "'",str1.equals("4444444hi!aaaaaaaaa                        "));
   }
   @Test public void test22() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test22#227");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test22#227");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test22");
     boolean boolean2=org.apache.commons.lang.StringUtils.containsIgnoreCase("           HI!            ","                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ");
     org.junit.Assert.assertTrue("'" + boolean2 + "' != '"+ false+ "'",boolean2 == false);
   }
   @Test public void test23() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test23#235");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test23#235");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test23");
     java.lang.String str3=org.apache.commons.lang.StringUtils.leftPad("                     4444444Hi!                     ",47,"");
     org.junit.Assert.assertTrue("'" + str3 + "' != '"+ "                     4444444Hi!                     "+ "'",str3.equals("                     4444444Hi!                     "));
   }
   @Test public void test24() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test24#243");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test24#243");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test24");
     java.lang.String str1=org.apache.commons.lang.StringUtils.capitaliseAllWords("Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa AaaaaaaaiAaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa AaaaaaaaiAaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa AaaaaaaaiAaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa AaaaaaaaiAaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa AaaaaaaaiAaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa AaaaaaaaiAaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa AaaaaaaaiAaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa AaaaaaaaiAaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaai");
     org.junit.Assert.assertTrue("'" + str1 + "' != '"+ "Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa AaaaaaaaiAaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa AaaaaaaaiAaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa AaaaaaaaiAaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa AaaaaaaaiAaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa AaaaaaaaiAaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa AaaaaaaaiAaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa AaaaaaaaiAaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa AaaaaaaaiAaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaai"+ "'",str1.equals("Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa AaaaaaaaiAaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa AaaaaaaaiAaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa AaaaaaaaiAaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa AaaaaaaaiAaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa AaaaaaaaiAaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa AaaaaaaaiAaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa AaaaaaaaiAaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa AaaaaaaaiAaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaaa Aaaaaaaai"));
   }
   @Test public void test25() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test25#251");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test25#251");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test25");
     boolean boolean2=org.apache.commons.lang.StringUtils.equalsIgnoreCase("...aaaa","                                                 !ih                                                ");
     org.junit.Assert.assertTrue("'" + boolean2 + "' != '"+ false+ "'",boolean2 == false);
   }
   @Test public void test26() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test26#259");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test26#259");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test26");
     java.lang.String str2=org.apache.commons.lang.StringUtils.substringBeforeLast("########         A#########","");
     org.junit.Assert.assertTrue("'" + str2 + "' != '"+ "########         A#########"+ "'",str2.equals("########         A#########"));
   }
   @Test public void test27() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test27#267");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test27#267");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test27");
     java.lang.String str1=org.apache.commons.lang.StringUtils.chompLast("aaaaaaaaaaaaaaaaaaaa  Aaaaaaaaa ");
     org.junit.Assert.assertTrue("'" + str1 + "' != '"+ "aaaaaaaaaaaaaaaaaaaa  Aaaaaaaaa "+ "'",str1.equals("aaaaaaaaaaaaaaaaaaaa  Aaaaaaaaa "));
   }
   @Test public void test28() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test28#275");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test28#275");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test28");
     java.lang.String[] strArray1=org.apache.commons.lang.StringUtils.split("aaaaaaaaaaaaaaaaaaaaaaaaaaa");
     org.junit.Assert.assertNotNull(strArray1);
   }
   @Test public void test29() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test29#283");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test29#283");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test29");
     java.lang.String str3=org.apache.commons.lang.StringUtils.replaceChars("aaaaaaaaAaaaaaaaaAaaaaaaaaAaaaaaa#############################################################aaaaaaaA##aaaaaaaaaaaaaaaaaaaa#############################","hi!   #######################################################################################       a","AAAAAAAAAAAAAAAAAAAA");
     org.junit.Assert.assertTrue("'" + str3 + "' != '"+ "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"+ "'",str3.equals("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
   }
   @Test public void test30() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test30#291");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test30#291");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test30");
     double[] doubleArray4=new double[]{(-1.0f),'#',1.0f,35L};
     double[] doubleArray5=new double[]{};
@@ -335,19 +335,19 @@ import org.junit.runners.MethodSorters;
     org.junit.Assert.assertTrue("'" + boolean97 + "' != '"+ false+ "'",boolean97 == false);
   }
   @Test public void test31() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test31#400");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test31#400");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test31");
     boolean boolean2=org.apache.commons.lang.StringUtils.containsNone("","    ...");
     org.junit.Assert.assertTrue("'" + boolean2 + "' != '"+ true+ "'",boolean2 == true);
   }
   @Test public void test32() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test32#408");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test32#408");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test32");
     int int2=org.apache.commons.lang.StringUtils.indexOfAny("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","               ...                          ...               ...                          ...               ...                          ...               ...                          ...               ...                          ...               ...                          ...               ...                          ...               ...                          ...               ...                          ...               ...                          ...               ...                          ...               ...                          ...               ...                          ...               ...                          ...               ...                          ...               ...                          ...               ...                          ...               ...                          ...               ...                          ...               ...                          ...               ...                          ...               ...                          ...               ...                          ...               ...                          ...               ...                          ...               ...                          ...               ...                          ...");
     org.junit.Assert.assertTrue("'" + int2 + "' != '"+ (-1)+ "'",int2 == (-1));
   }
   @Test public void test33() throws Throwable {
-    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/buggy",this,"\n.RegressionTest14::test33#416");
+    auxiliary.Dumper.write("/Users/liangjingjing/WorkSpace/Project/PatchCorrectness/patch-correctness/result/randoop/testSet/Lang58b_Patch26/fixed",this,"\n.RegressionTest14::test33#416");
     if (debug)     System.out.format("%n%s%n","RegressionTest14.test33");
     java.lang.String[] strArray2=org.apache.commons.lang.StringUtils.splitByWholeSeparator("aaaaaaaaaaaaaaaaaaaa##Aaaaaaaa","                                    AAAAAAAAAAAAAAAAAAAA  aAAAAAAAA                                       HI!                                                 ");
     org.junit.Assert.assertNotNull(strArray2);
