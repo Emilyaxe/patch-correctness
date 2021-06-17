@@ -3,15 +3,15 @@ import org.junit.runner.Request;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
-public class JUnitTestRunner4Trace {
+public class JUnitTestRunner {
 
     public static void main(String... args) throws ClassNotFoundException {
         // String[] classAndMethod = args[0].split("::");
         String project = args[0];
         String bugid = args[1];
-        String failingTest = args[2];
-        String[] classAndMethod = failingTest.split("::");
-        Request request = Request.method(Class.forName(classAndMethod[0]), classAndMethod[1]);
+
+        Request request = Request.classWithoutSuiteMethod(Class.forName(args[2]));
+        //Request.method(Class.forName(classAndMethod[0]), classAndMethod[1]);
         // String writeFilePath = "/home/emily/WorkSpace/Data/traceIfResult/" + project + "/" + bugid + ".txt";
         Result result = new JUnitCore().run(request);
         if (result.wasSuccessful()) {

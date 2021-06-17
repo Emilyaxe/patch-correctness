@@ -148,7 +148,8 @@ public class ObtainTraceInfo {
                 continue;
             }
             String testSuite = Constant.HOME + "/RandoopTest/" +
-                    subject.get_name() + '-' + subject.get_id() + "b-randoop." + subject.get_id() + ".tar.bz2";
+                    subject.get_name() + '-' + subject.get_id() + "b-randoop." + subject.get_id();
+
 
             try {
                 String writeFile = BuildPath.buildRandoopFile(reDir, patch.getPatchName(), true);
@@ -158,23 +159,23 @@ public class ObtainTraceInfo {
                 instrument(fixedLine, writeFile, oneFixedFile);
                 instrumentRandoopTests(subject, writeFile, testSuite);
                 TimeUnit.SECONDS.sleep(2);
+                //                String testDir = subject.getHome() + subject.get_tsrc();
+                //                for (File f : new File(testSuite).listFiles()) {
+                //                    if (!f.getName().endsWith(".java")) {
+                //                        continue;
+                //                    }
+                //                    try {
+                //                        FileUtils.copyFile(f, new File(testDir + "/" + f.getName()));
+                //                    } catch (IOException e) {
+                //                        log.error("Copy file {} Failed !", f.getName());
+                //                    }
+                //                }
 
                 if (!compile(subject)) {
                     log.error("Patch {}, Compile Error on buggy version!", patch.getPatchName());
                 }
-                List<String> message = Runner.runTestSuite(subject, testSuite);
-                if (message.size() <= 3) {
-                    log.error("Patch {}, Should Fail! \n {} ", patch.getPatchName(),
-                            StringUtils.join(message, "\n"));
-                    //shouldFail.add(patch.getPatchName());
-                    shouldFail.putIfAbsent(patch.getPatchName(), "");
-                } else {
-                    String failingTest = message.stream()
-                            .filter(line -> line.trim().startsWith("-"))
-                            .map(line -> line.split("-", 2)[1].trim())
-                            .collect(Collectors.joining("\n"));
-                    FileIO.writeStringToFile(writeFile + ".failing", failingTest);
-                }
+                //Runner.runTestFile(subject, testSuite, true);
+                Runner.runTestSuite(subject, testSuite + ".tar.bz2");
             } catch (Exception e) {
                 log.error("process  test on buggy version failed! subject {} patch {} ",
                         subject.get_name() + subject.get_id(), patch.getPatchName(), e);
@@ -188,17 +189,24 @@ public class ObtainTraceInfo {
                 instrument(fixedLine, writeFile, oneFixedFile);
                 instrumentRandoopTests(subject, writeFile, testSuite);
                 TimeUnit.SECONDS.sleep(2);
+                //                String testDir = subject.getHome() + subject.get_tsrc();
+                //                for (File f : new File(testSuite).listFiles()) {
+                //                    if (!f.getName().endsWith(".java")) {
+                //                        continue;
+                //                    }
+                //                    try {
+                //                        FileUtils.copyFile(f, new File(testDir + "/" + f.getName()));
+                //                    } catch (IOException e) {
+                //                        log.error("Copy file {} Failed !", f.getName());
+                //                    }
+                //                }
 
                 if (!compile(subject)) {
                     log.error("Patch {}, Compile Error on fixed version!", patch.getPatchName());
                 }
-                List<String> message = Runner.runTestSuite(subject, testSuite);
-                if (CollectionUtils.isEmpty(message) || message.stream().filter(Objects::nonNull)
-                        .noneMatch(element -> element.contains(Runner.SUCCESSTEST))) {
-                    shoulPass.putIfAbsent(patch.getPatchName(), "");
-                    log.error("Patch {}, Should Pass! \n {} ", patch.getPatchName(),
-                            StringUtils.join(message, "\n"));
-                }
+                Runner.runTestSuite(subject, testSuite + ".tar.bz2");
+                //Runner.runTestFile(subject, testSuite, true);
+
             } catch (Exception e) {
                 log.error("process test on fixed version failed! subject {} patch {} ",
                         subject.get_name() + subject.get_id(), patch.getPatchName(), e);
@@ -211,11 +219,11 @@ public class ObtainTraceInfo {
         synchronized (lock) {
             // unzip testSuite
             //Runner.unZipTest(testSuite);
-            String testDir = testSuite.split(".tar.bz2")[0];
-            FileIO.backupDir(testDir);
+            //String testDir = testSuite.split(".tar.bz2")[0];
+            FileIO.backupDir(testSuite);
 
             List<File> allTestFiles = new LinkedList<>();
-            FileIO.getAllFile(new File(testDir), allTestFiles);
+            FileIO.getAllFile(new File(testSuite), allTestFiles);
             for (File testFile : allTestFiles) {
                 if (!testFile.getName().endsWith(".java")) {
                     continue;
@@ -228,8 +236,7 @@ public class ObtainTraceInfo {
                 compilationUnit.accept(instruTestFileVisitor);
                 FileIO.writeStringToFile(testFile, compilationUnit.toString());
             }
-            Runner.zipTest(testDir);
-
+            Runner.zipTest(testSuite);
         }
     }
 
@@ -572,7 +579,8 @@ public class ObtainTraceInfo {
         log.info("finish obtain trace!");
 
 
-        log.info("failingTestProblemList: {}", StringUtils.join(BuildJsonResult.failingTestProblemList.keySet(), ","));
+        log.info("failingTestProblemList: {}",
+                StringUtils.join(BuildJsonResult.failingTestProblemList.keySet(), ","));
         log.info("traceProblemList: {}", StringUtils.join(BuildJsonResult.traceProblemList.keySet(), ","));
 
     }

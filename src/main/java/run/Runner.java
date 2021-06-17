@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import config.Constant;
 import entity.Subject;
@@ -99,6 +100,7 @@ public class Runner {
         } catch (Exception e) {
             // LevelLogger.fatal(__name__ + "#buildSubject run test single test case failed !", e);
         }
+        log.info(StringUtils.join(message));
         return message;
         //log.info(String.join(" ", message));
         /*if(CollectionUtils.isNotEmpty(message)
@@ -543,5 +545,36 @@ public class Runner {
         } catch (Exception ignored) {
 
         }
+    }
+
+    public static void runTestFile(Subject subject, String testSuite, boolean isTimeout) {
+        log.info("----- Begin Run Test And Get Trace ----- " + testSuite);
+        // cp test to subject test dir
+        //String testDir = subject.getHome() + subject.get_tsrc();
+        for (File f : new File(testSuite).listFiles()) {
+            if (!f.getName().endsWith(".java")) {
+                continue;
+            }
+            List<String> message = Collections.emptyList();
+            try {
+                StringBuilder junitArg = new StringBuilder();
+                junitArg.append(Constant.COMMAND_CD + subject.getHome() + " && ");
+                if (isTimeout) {
+                    junitArg.append(Constant.COMMAND_TIMEOUT).append(Constant.TEST_TIMEOUT).append(" ");
+                }
+                junitArg.append(Constant.COMMAND_JAVA_HOME).append("/bin/java -Xms2g -Xmx4g -cp \"")
+                        // .append(subject.get_dependency()).append(":").append(HOME).append("/lib\" JUnitTestRunner ")
+                        .append(subject.get_dependency()).append(":").append(HOME).append("/lib\" ")
+                        .append("JUnitTestRunner").append(" ")     // get only trace
+                        .append(subject.get_name()).append(" ").append(subject.get_id()).append(" ")
+                        .append(f.getName().split(".java")[0]);
+                // log.info(junitArg.toString());
+                message = Executor.execute(new String[] {"/bin/bash", "-c", junitArg.toString()});
+            } catch (Exception e) {
+                log.error(__name__ + "#buildSubject run build subject failed !", e);
+            }
+            log.info(CollectionUtils.isEmpty(message) ? "" : String.join(" ", message));
+        }
+        //return String.join("\n", message);
     }
 }

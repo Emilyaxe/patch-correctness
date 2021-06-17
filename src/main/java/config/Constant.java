@@ -28,7 +28,7 @@ public class Constant {
     public static final String COMMAND_PATCH = "patch -u -p0 ";
     public static final String COMMAND_TIMEOUT = "timeout ";
     public static final int COMPILE_TIMEOUT = 200;
-    public static final int TEST_TIMEOUT = 100;
+    public static final int TEST_TIMEOUT = 30 * 60;
     public static final int DAIKON_TIMEOUT = 3600;
 
 
