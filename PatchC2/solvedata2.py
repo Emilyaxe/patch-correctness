@@ -811,6 +811,7 @@ for x in lst:
                 continue
             print(datas['patchName'])
             print(datas['combinedMethod'])
+            errors.setdefault(x, []).append(datas['patchName'])
             assert (0)
             pass
             errors.setdefault(x, []).append(patchid)
