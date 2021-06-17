@@ -802,16 +802,19 @@ for x in lst:
             #    assert(0)
             print('PatchName %s, pcover %s, fcover %s' % (datas['patchName'], len(pcover), len(fcover)))
         except:
-            print(datas['patchName'])
-            print(datas['combinedMethod'])
+            # print(datas['patchName'])
+            # print(datas['combinedMethod'])
             traceback.print_exc()
             if 'Closure-92' in datas['patchName'] or 'Closure-93' in datas['patchName']:
                 continue
             if datas['patchName'] == 'Closure_65.src.patch':
                 continue
+            print(datas['patchName'])
+            print(datas['combinedMethod'])
             assert (0)
             pass
             errors.setdefault(x, []).append(patchid)
+
     print('%s  Size %s : ' % (x, len(newdata)))
     wf.write(pickle.dumps(newdata, protocol=1))
 # infofile.write(json.dumps(infodata))
