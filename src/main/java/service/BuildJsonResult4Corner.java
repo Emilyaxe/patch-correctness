@@ -25,7 +25,8 @@ import util.FileIO;
 public class BuildJsonResult4Corner {
     public static void BuildPatchJson(String dir) {
         List<PatchJson> patches =
-                JSON.parseArray(FileIO.readFileToString("./result/combineInfo/" + dir + "_unpurify"), PatchJson.class);
+                JSON.parseArray(FileIO.readFileToString("./result/combineInfo/" + dir + "_unpurify.bak"),
+                        PatchJson.class);
         log.info("Obtain Dynamic Info ...");
 
 
