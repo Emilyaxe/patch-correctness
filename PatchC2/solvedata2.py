@@ -605,8 +605,8 @@ for x in lst:
     newdata = {}
     # infodata = {}
     for datas in tqdm(data):
-        if datas['patchName'] != 'Lang58b_Patch26':
-            continue
+        # if datas['patchName'] != 'Lang58b_Patch26':
+        #     continue
         # datas = data[patchid]
         # if key1 != '642':
         #    continue
