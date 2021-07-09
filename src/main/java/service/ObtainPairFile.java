@@ -26,9 +26,9 @@ import util.FileIO;
 
 
 @Slf4j
-public class ObtainPatchedFile {
+public class ObtainPairFile {
 
-    public static String[] allData = {"correctSet", "testSet", "trainSet"};
+    public static String[] allData = {"validateSet", "testSet", "trainSet"};
 
 
     public static void mainProcess() {
@@ -51,7 +51,6 @@ public class ObtainPatchedFile {
         for (Entry<String, List<PatchJson>> entry : subjectPatchMap.entrySet()) {
             futureList.add(CompletableFuture.runAsync(() -> {
                 try {
-
                     processFile(entry, resDir);
                 } catch (Exception e) {
                     log.error("obtain trace failed! subject {}", entry.getKey(), e);
