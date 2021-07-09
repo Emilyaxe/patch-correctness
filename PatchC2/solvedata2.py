@@ -5,7 +5,7 @@ import javalang
 
 from Searchnode import Node
 
-lst = ['trainSet_unpurify', 'testSet_unpurify', 'correctSet_unpurify']
+lst = ['trainSet', 'testSet', 'validateSet']
 line_node_name = ['Statement_ter', 'BreakStatement_ter', 'ReturnStatement_ter', 'ContinueStatement',
                   'ContinueStatement_ter', 'LocalVariableDeclaration', 'condition', 'control', 'BreakStatement',
                   'ContinueStatement', 'ReturnStatement', "parameters", 'StatementExpression', 'return_type']
@@ -599,14 +599,14 @@ def most_change(plinecover):
 
 
 for x in lst:
-    data = json.loads(open('../result/combineInfo/%s' % x, 'r').read())
+    data = json.loads(open('../result/dataSetPartition/%s' % x, 'r').read())
     wf = open('../result/pkldir/%s.pkl' % x, 'wb')
     # infofile = open('../result/pkldir/%s.info' % x, 'w')
     newdata = {}
     # infodata = {}
     for datas in tqdm(data):
-        # if datas['patchName'] != 'Lang58b_Patch26':
-        #     continue
+        if datas['patchName'] != 'Lang58b_Patch26':
+            continue
         # datas = data[patchid]
         # if key1 != '642':
         #    continue
@@ -795,7 +795,7 @@ for x in lst:
 
             newdata[datas['patchName']] = (
                 {'tree': root.printTreeWithVar(root, vardic), 'label': datas['label'], 'prob': root.getTreeProb(root),
-                 'pcover': pcover_limit, 'fcover': fcover})
+                 'pcover': pcover, 'fcover': fcover})
             # infodata[datas['patchName']] = ({'label': datas['label'], 'psame': psame, 'pdiff': pdiff})
             # assert(0)
             # if patchid == 'Math93b_Patch207':

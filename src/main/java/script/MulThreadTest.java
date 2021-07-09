@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import config.Constant;
@@ -23,7 +22,6 @@ import entity.Subject;
 import lombok.extern.slf4j.Slf4j;
 import run.Executor;
 import run.Runner;
-import util.FileIO;
 
 @Slf4j
 public class MulThreadTest {
@@ -50,7 +48,7 @@ public class MulThreadTest {
             }
         }
         CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0])).join();
-        FileIO.writeStringToFile("./fixedVersion", JSON.toJSONString(jsonObject));
+        //FileIO.writeStringToFile("./fixedVersion", JSON.toJSONString(jsonObject));
         log.info("finish all subject!");
     }
 

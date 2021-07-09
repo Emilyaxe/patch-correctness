@@ -58,6 +58,8 @@ public class Constant {
     public static String dynamicResult = HOME + "/result/dynamic";
     public static String randoopResult = HOME + "/result/randoop";
 
+    public static String patchesPartitionResult = HOME + "/result/dataSetPartition";
+
 
     public static String FIXED = ".fixed";
     public static String BUGGY = ".buggy";
