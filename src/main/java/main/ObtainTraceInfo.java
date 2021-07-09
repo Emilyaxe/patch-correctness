@@ -114,8 +114,8 @@ public class ObtainTraceInfo {
         for (Entry<String, List<Patch>> entry : subjectPatchMap.entrySet()) {
             futureList.add(CompletableFuture.runAsync(() -> {
                 try {
-                    //processAllTrace(reverse, reDir, entry);
-                    processRandoopTrace(reverse, reDir, entry);
+                    processAllTrace(reverse, reDir, entry);
+                    //processRandoopTrace(reverse, reDir, entry);
                 } catch (Exception e) {
                     log.error("obtain trace failed! subject {}", entry.getKey(), e);
                 }
