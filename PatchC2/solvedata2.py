@@ -381,7 +381,6 @@ def generateAST(tree):
     return sub
 
 
-import pickle
 import traceback
 from tqdm import tqdm
 
@@ -598,9 +597,11 @@ def most_change(plinecover):
     return pcover_score
 
 
+max_test = 0
+min_test = 10000
 for x in lst:
     data = json.loads(open('../result/dataSetPartition/%s' % x, 'r').read())
-    wf = open('../result/pkldir/%s_50.pkl' % x, 'wb')
+    wf = open('../result/pkldir/%s.pkl' % x, 'wb')
     # infofile = open('../result/pkldir/%s.info' % x, 'w')
     newdata = {}
     # infodata = {}
@@ -795,7 +796,11 @@ for x in lst:
 
             newdata[datas['patchName']] = (
                 {'tree': root.printTreeWithVar(root, vardic), 'label': datas['label'], 'prob': root.getTreeProb(root),
-                 'pcover': pcover_limit, 'fcover': fcover})
+                 'pcover': pcover, 'fcover': fcover})
+            if len(pcover) + len(fcover) > max_test:
+                max_test = len(pcover) + len(fcover)
+            if len(pcover) + len(fcover) < min_test:
+                min_test = len(pcover) + len(fcover)
             # infodata[datas['patchName']] = ({'label': datas['label'], 'psame': psame, 'pdiff': pdiff})
             # assert(0)
             # if patchid == 'Math93b_Patch207':
@@ -817,7 +822,10 @@ for x in lst:
             errors.setdefault(x, []).append(patchid)
 
     print('%s  Size %s : ' % (x, len(newdata)))
-    wf.write(pickle.dumps(newdata, protocol=1))
+    # wf.write(pickle.dumps(newdata, protocol=1))
 # infofile.write(json.dumps(infodata))
 print(errors)
 print(fnames)
+
+print('max_text %s: ' % max_test)
+print('min_test %s:' % min_test)
