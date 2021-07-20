@@ -173,7 +173,8 @@ class Node:
 
     def printTree(self, r):
         # print(r.name)
-        s = r.name + "-" + str(r.id) + '-' + str(r.position) + '-' + str(r.position2) + " "  # print(r.name)
+        # s = r.name + "-" + str(r.id) + '-' + str(r.position) + '-' + str(r.position2) + " "  # print(r.name)
+        s = r.name + " "
         if len(r.child) == 0:
             s += "^ "
             return s
