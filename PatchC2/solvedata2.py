@@ -381,6 +381,7 @@ def generateAST(tree):
     return sub
 
 
+import pickle
 import traceback
 from tqdm import tqdm
 
@@ -801,9 +802,6 @@ for x in lst:
             #     max_test = len(pcover) + len(fcover)
             # if len(pcover) + len(fcover) < min_test:
             #     min_test = len(pcover) + len(fcover)
-            # assert(0)
-            # if patchid == 'Math93b_Patch207':
-            #    assert(0)
             # n = 0
             # setid(root)
             print('PatchName %s, treewithid %s' % (datas['patchName'], root.printTree(root)))
@@ -822,10 +820,8 @@ for x in lst:
             assert (0)
             pass
             errors.setdefault(x, []).append(patchid)
-
-    print('%s  Size %s : ' % (x, len(newdata)))
+    # print('%s  Size %s : ' % (x, len(newdata)))
     wf.write(pickle.dumps(newdata, protocol=1))
-
 print(errors)
 print(fnames)
 
