@@ -606,8 +606,8 @@ for x in lst:
     newdata = {}
     # infodata = {}
     for datas in tqdm(data):
-        if datas['patchName'] != 'Lang58b_Patch26':
-            continue
+        # if datas['patchName'] != 'Lang58b_Patch26':
+        #     continue
         # datas = data[patchid]
         # if key1 != '642':
         #    continue
@@ -807,7 +807,7 @@ for x in lst:
             n = 0
             setid(root)
             print('PatchName %s, treewithid %s' % (datas['patchName'], root.printTree(root)))
-            print('PatchName %s, pcover %s, fcover %s' % (datas['patchName'], len(pcover), len(fcover)))
+            # print('PatchName %s, pcover %s, fcover %s' % (datas['patchName'], len(pcover), len(fcover)))
         except:
             # print(datas['patchName'])
             # print(datas['combinedMethod'])
@@ -829,5 +829,5 @@ for x in lst:
 print(errors)
 print(fnames)
 
-print('max_text %s: ' % max_test)
-print('min_test %s:' % min_test)
+# print('max_text %s: ' % max_test)
+# print('min_test %s:' % min_test)

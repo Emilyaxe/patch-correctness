@@ -39,7 +39,7 @@ public class DataPartition {
         Map<String, List<PatchJson>> bugPatchMap =
                 allPatches.stream().collect(Collectors.groupingBy(PatchJson::getBugId));
         List<String> bugIdList = new ArrayList<>(bugPatchMap.keySet());
-        Collections.shuffle(bugIdList, new Random(123456789L));
+        Collections.shuffle(bugIdList, new Random(12345798L));
         int total = allPatches.size();
         int most = total * 8 / 10;
         int last1 = total / 10;
@@ -76,8 +76,41 @@ public class DataPartition {
         log.info("validateSet: {}", last2PatchList.size());
     }
 
+    public static void calculateRatio() {
+        //List<PatchJson> allPatches = new LinkedList<>();
+        String patchInfoPath = "./result/dataSetPartition/";
+        String[] allData = {"trainSet", "testSet", "validateSet"};
+
+        for (String file : allData) {
+            String content = FileIO.readFileToString(patchInfoPath + file);
+            List<PatchJson> patchJsonList = JSON.parseArray(content, PatchJson.class);
+            if (CollectionUtils.isEmpty(patchJsonList)) {
+                continue;
+            }
+            long corNumber = patchJsonList.stream().filter(patchJson -> patchJson.getLabel().equals("1")).count();
+            long inCorNumber = patchJsonList.stream().filter(patchJson -> patchJson.getLabel().equals("0")).count();
+            log.info("{}, cor {}, inCor {}", file, corNumber, inCorNumber);
+        }
+        //        patchInfoPath = "./result/combineInfo/";
+        //        String[] initData = {"correctSet_unpurify", "testSet_unpurify", "trainSet_unpurify"};
+        //        for (String file : initData) {
+        //            String content = FileIO.readFileToString(patchInfoPath + file);
+        //            List<PatchJson> patchJsonList = JSON.parseArray(content, PatchJson.class);
+        //            if (CollectionUtils.isEmpty(patchJsonList)) {
+        //                continue;
+        //            }
+        //            long corNumber = patchJsonList.stream().filter(patchJson -> patchJson.getLabel().equals("1"))
+        //            .count();
+        //            long inCorNumber = patchJsonList.stream().filter(patchJson -> patchJson.getLabel().equals("0"))
+        //            .count();
+        //            log.info("{}, cor {}, inCor {}", file, corNumber, inCorNumber);
+        //        }
+
+    }
+
     public static void main(String[] args) {
         mianProcess();
+        calculateRatio();
     }
 
 }
