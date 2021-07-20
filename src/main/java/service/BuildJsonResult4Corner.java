@@ -57,7 +57,7 @@ public class BuildJsonResult4Corner {
             Set<String> testSet = new LinkedHashSet<>(Arrays.asList(passingTest.split("\n")));
             testSet.addAll(patchJson.getFailingTests());
 
-            Map<String, Set<String>> buggyMap = Collections.emptyMap(),
+            Map<String, List<String>> buggyMap = Collections.emptyMap(),
                     fixedMap = Collections.emptyMap();
             if (new File(buggyLine).length() / 1024.0 / 1024.0 / 1024.0 > 3.0) {
                 try {

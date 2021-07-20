@@ -34,7 +34,7 @@ public class BuildJsonResult4Randoop {
                     false);
 
             Set<String> testSet = new LinkedHashSet<>();
-            Map<String, Set<String>> buggyMap = Collections.emptyMap(),
+            Map<String, List<String>> buggyMap = Collections.emptyMap(),
                     fixedMap = Collections.emptyMap();
             if (new File(buggyLine).length() / 1024.0 / 1024.0 / 1024.0 > 3.0) {
                 try {

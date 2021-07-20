@@ -1,5 +1,6 @@
 package entity;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,7 +26,7 @@ public class PatchJson {
     @JSONField(serialize = false)
     private String patchPath;
     private Set<String> failingTests;
-    private Map<String, Set<String>> buggyTraceInfo;
-    private Map<String, Set<String>> fixedTraceInfo;
+    private Map<String, List<String>> buggyTraceInfo;
+    private Map<String, List<String>> fixedTraceInfo;
 
 }

@@ -606,8 +606,8 @@ for x in lst:
     newdata = {}
     # infodata = {}
     for datas in tqdm(data):
-        # if datas['patchName'] != 'Lang58b_Patch26':
-        #     continue
+        if datas['patchName'] != 'Lang58b_Patch26':
+            continue
         # datas = data[patchid]
         # if key1 != '642':
         #    continue
@@ -797,14 +797,16 @@ for x in lst:
             newdata[datas['patchName']] = (
                 {'tree': root.printTreeWithVar(root, vardic), 'label': datas['label'], 'prob': root.getTreeProb(root),
                  'pcover': pcover, 'fcover': fcover})
-            if len(pcover) + len(fcover) > max_test:
-                max_test = len(pcover) + len(fcover)
-            if len(pcover) + len(fcover) < min_test:
-                min_test = len(pcover) + len(fcover)
-            # infodata[datas['patchName']] = ({'label': datas['label'], 'psame': psame, 'pdiff': pdiff})
+            # if len(pcover) + len(fcover) > max_test:
+            #     max_test = len(pcover) + len(fcover)
+            # if len(pcover) + len(fcover) < min_test:
+            #     min_test = len(pcover) + len(fcover)
             # assert(0)
             # if patchid == 'Math93b_Patch207':
             #    assert(0)
+            n = 0
+            setid(root)
+            print('PatchName %s, treewithid %s' % (datas['patchName'], root.printTree(root)))
             print('PatchName %s, pcover %s, fcover %s' % (datas['patchName'], len(pcover), len(fcover)))
         except:
             # print(datas['patchName'])
@@ -822,8 +824,8 @@ for x in lst:
             errors.setdefault(x, []).append(patchid)
 
     print('%s  Size %s : ' % (x, len(newdata)))
-    # wf.write(pickle.dumps(newdata, protocol=1))
-# infofile.write(json.dumps(infodata))
+    wf.write(pickle.dumps(newdata, protocol=1))
+
 print(errors)
 print(fnames)
 

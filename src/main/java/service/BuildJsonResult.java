@@ -78,7 +78,7 @@ public class BuildJsonResult {
                 Set<String> testSet = new LinkedHashSet<>(Arrays.asList(passingTest.split("\n")));
                 testSet.addAll(patchJson.getFailingTests());
 
-                Map<String, Set<String>> buggyMap = Collections.emptyMap(),
+                Map<String, List<String>> buggyMap = Collections.emptyMap(),
                         fixedMap = Collections.emptyMap();
                 if (new File(buggyLine).length() / 1024.0 / 1024.0 / 1024.0 > 3.0) {
                     try {
@@ -111,15 +111,15 @@ public class BuildJsonResult {
             }, EXECUTOR));
             CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).join();
         }
-        FileIO.writeStringToFile("../result/" + dir + "_unpurify", JSON.toJSONString(patches));
+        FileIO.writeStringToFile("../result/combineInfo/" + dir + "_unpurify_list", JSON.toJSONString(patches));
         log.info("Build Patch Set: {} for Dir {}", patches.size(), dir);
         log.info("Out of Memory: {}", StringUtils.join("\n", traceProblemList.keySet()));
         //multiPcoessCheck(patches);
     }
 
-    public static Map<String, Set<String>> obtainTraceByFile(String file, Set<String> testSet)
+    public static Map<String, List<String>> obtainTraceByFile(String file, Set<String> testSet)
             throws OutOfMemoryError {
-        Map<String, Set<String>> map = new LinkedHashMap<>();
+        Map<String, List<String>> map = new LinkedHashMap<>();
         try (FileInputStream inputStream = new FileInputStream(file);
                 BufferedReader bufferedReader = new BufferedReader(
                         new InputStreamReader(inputStream))) {
@@ -149,17 +149,17 @@ public class BuildJsonResult {
                         }
                     }
                     if (find) {
-                        Set<String> values = Arrays.stream(line.split("\t", 2)[1].split("\t"))
+                        List<String> values = Arrays.stream(line.split("\t", 2)[1].split("\t"))
                                 .filter(Objects::nonNull).filter(StringUtils::isNotBlank)
-                                .collect(Collectors.toSet());
+                                .collect(Collectors.toList());
                         if (values.size() > 0) {
                             map.put(checkTest(testSet, key), values);
                         }
                     }
                 } else {
-                    Set<String> values = Arrays.stream(line.split("\t", 2)[1].split("\t"))
+                    List<String> values = Arrays.stream(line.split("\t", 2)[1].split("\t"))
                             .filter(Objects::nonNull).filter(StringUtils::isNotBlank)
-                            .collect(Collectors.toSet());
+                            .collect(Collectors.toList());
                     if (values.size() > 0) {
                         map.put(checkTest(testSet, key), values);
                     }
@@ -191,8 +191,8 @@ public class BuildJsonResult {
             // check all failing tests have traces
             log.info("Check Patch {}", patchJson.getPatchName());
             Set<String> failingTest = patchJson.getFailingTests();
-            Map<String, Set<String>> buggyMap = patchJson.getBuggyTraceInfo();
-            Map<String, Set<String>> fixedMap = patchJson.getFixedTraceInfo();
+            Map<String, List<String>> buggyMap = patchJson.getBuggyTraceInfo();
+            Map<String, List<String>> fixedMap = patchJson.getFixedTraceInfo();
 
             //            if (!failingTest.stream().allMatch(line -> buggyMap.containsKey(line) && fixedMap
             //            .containsKey(line))) {
@@ -201,9 +201,9 @@ public class BuildJsonResult {
             //            }
             String combineMethod = patchJson.getCombinedMethod();
             if (!(checkMapTrace(combineMethod,
-                    buggyMap.values().stream().flatMap(Set::stream).collect(Collectors.toSet()),
+                    buggyMap.values().stream().flatMap(List::stream).collect(Collectors.toSet()),
                     true)
-                    && checkMapTrace(combineMethod, fixedMap.values().stream().flatMap(Set::stream)
+                    && checkMapTrace(combineMethod, fixedMap.values().stream().flatMap(List::stream)
                     .collect(Collectors.toSet()), false))) {
                 log.error("Patch {} has a wrong map", patchJson.getPatchName());
                 traceProblemList.put(patchJson.getPatchName(), "");
@@ -225,8 +225,8 @@ public class BuildJsonResult {
         return true;
     }
 
-    public static Map<String, Set<String>> obtainTrace(String content, Set<String> testSet) {
-        Map<String, Set<String>> map = new LinkedHashMap<>();
+    public static Map<String, List<String>> obtainTrace(String content, Set<String> testSet) {
+        Map<String, List<String>> map = new LinkedHashMap<>();
         if (StringUtils.isEmpty(content)) {
             return map;
         }
@@ -263,17 +263,17 @@ public class BuildJsonResult {
                     }
                 }
                 if (find) {
-                    Set<String> values = Arrays.stream(line.split("\t", 2)[1].split("\t"))
+                    List<String> values = Arrays.stream(line.split("\t", 2)[1].split("\t"))
                             .filter(Objects::nonNull).filter(StringUtils::isNotBlank)
-                            .collect(Collectors.toSet());
+                            .collect(Collectors.toList());
                     if (values.size() > 0) {
                         map.put(checkTest(testSet, key), values);
                     }
                 }
             } else {
-                Set<String> values = Arrays.stream(line.split("\t", 2)[1].split("\t"))
+                List<String> values = Arrays.stream(line.split("\t", 2)[1].split("\t"))
                         .filter(Objects::nonNull).filter(StringUtils::isNotBlank)
-                        .collect(Collectors.toSet());
+                        .collect(Collectors.toList());
                 if (values.size() > 0) {
                     map.put(checkTest(testSet, key), values);
                 }
@@ -311,23 +311,24 @@ public class BuildJsonResult {
         //        String correctStatic = FileIO.readFileToString(BuildPath.buildMethodReFile("correctSet"));
     }
 
-    private static Map<String, Set<String>> updateLineNumber(Map<String, Set<String>> map) {
+    private static Map<String, List<String>> updateLineNumber(Map<String, List<String>> map) {
         return map.entrySet().stream().peek(entry -> entry.setValue(entry.getValue().stream()
                 .map(line -> line.split("#")[0] + "#" + (Integer.parseInt(line.split("#")[1]) + 1))
-                .collect(Collectors.toSet())))
+                .collect(Collectors.toList())))
                 .collect(Collectors.toMap(Entry::getKey, Entry::getValue, (v1, v2) -> v2));
     }
 
     private static void processCornerCase() {
         List<PatchJson> patchJsons =
-                JSON.parseArray(FileIO.readFileToString(Constant.HOME + "/result/correctSet_purify"),
+                JSON.parseArray(FileIO.readFileToString(Constant.HOME + "/result/combineInfo/correctSet_unpurify_list"),
                         PatchJson.class);
         patchJsons.stream().filter(patchJson -> patchJson.getPatchName().equals("Closure_16.src.patch"))
                 .forEach(patchJson -> {
                     patchJson.setBuggyTraceInfo(updateLineNumber(patchJson.getBuggyTraceInfo()));
                     patchJson.setFixedTraceInfo(updateLineNumber(patchJson.getFixedTraceInfo()));
                 });
-        FileIO.writeStringToFile(Constant.HOME + "/result/correctSet_purify", JSON.toJSONString(patchJsons));
+        FileIO.writeStringToFile(Constant.HOME + "/result/combineInfo/correctSet_unpurify_list",
+                JSON.toJSONString(patchJsons));
 
         log.info("finish process corner case");
     }

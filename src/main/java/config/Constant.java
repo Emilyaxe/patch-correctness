@@ -55,7 +55,7 @@ public class Constant {
     public static String patchesICSE = HOME + "/Patches/Patches_ICSE";
     public static String patchesOther = HOME + "/Patches/Patches_others";
     public static String staticResult = HOME + "/result/static";
-    public static String dynamicResult = HOME + "/result/dynamic";
+    public static String dynamicResult = HOME + "/result/dynamic_unpurify";
     public static String randoopResult = HOME + "/result/randoop";
 
     public static String patchesPartitionResult = HOME + "/result/dataSetPartition";
