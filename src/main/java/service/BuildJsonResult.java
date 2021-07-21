@@ -324,9 +324,11 @@ public class BuildJsonResult {
                 "/result/combineInfo/correctSet_unpurify_list");
 
         List<PatchJson> patchJsons =
-                Arrays.stream(content.split("\n")).map(line -> JSON.parseObject(line, PatchJson.class))
-                        .collect(
-                                Collectors.toList());
+                Arrays.stream(content.split("\n"))
+                        .filter(Objects::nonNull)
+                        .filter(StringUtils::isNotBlank)
+                        .map(line -> JSON.parseObject(line, PatchJson.class))
+                        .collect(Collectors.toList());
         //        List<PatchJson> patchJsons =
         //                JSON.parseArray(FileIO.readFileToString(Constant.HOME +
         //                "/result/combineInfo/correctSet_unpurify_list"),
