@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -58,9 +57,9 @@ public class BuildJsonResult {
         log.info("Obtain Dynamic Info ...");
         List<CompletableFuture<Void>> completableFutures = new LinkedList<>();
         for (PatchJson patchJson : patches) {
-            //            if (!patchJson.getPatchName().equals("patch1-Math-31-Kali-plausible.patch")) {
-            //                continue;
-            //            }
+            if (!patchJson.getPatchName().equals("patch1-Closure-38-SequenceR-plausible.patch")) {
+                continue;
+            }
             completableFutures.add(CompletableFuture.runAsync(() -> {
                 log.info("Patch {} dynamic info collecting ...", patchJson.getPatchName());
                 String buggyLine = BuildPath.buildDymicAllFile(dir, patchJson.getPatchName(), true);
@@ -77,37 +76,23 @@ public class BuildJsonResult {
                                 + "/" + patchJson.getBugId().split("-")[1]);
                 Set<String> testSet = new LinkedHashSet<>(Arrays.asList(passingTest.split("\n")));
                 testSet.addAll(patchJson.getFailingTests());
-
-                Map<String, List<String>> buggyMap = Collections.emptyMap(),
-                        fixedMap = Collections.emptyMap();
-                if (new File(buggyLine).length() / 1024.0 / 1024.0 / 1024.0 > 3.0) {
-                    try {
+                Map<String, List<String>> buggyMap, fixedMap;
+                try {
+                    if (new File(buggyLine).length() / 1024.0 / 1024.0 / 1024.0 > 3.0) {
                         buggyMap = obtainTraceByFile(buggyLine, testSet);
-                    } catch (OutOfMemoryError e) {
-                        traceProblemList.put(patchJson.getPatchName(), "");
-                    }
-                } else {
-                    try {
+                    } else {
                         buggyMap = obtainTrace(FileIO.readFileToString(buggyLine), testSet);
-                    } catch (OutOfMemoryError e) {
-                        traceProblemList.put(patchJson.getPatchName(), "");
                     }
-                }
-                if (new File(fixedLine).length() / 1024.0 / 1024.0 / 1024.0 > 3.0) {
-                    try {
+                    if (new File(fixedLine).length() / 1024.0 / 1024.0 / 1024.0 > 3.0) {
                         fixedMap = obtainTraceByFile(fixedLine, testSet);
-                    } catch (OutOfMemoryError e) {
-                        traceProblemList.put(patchJson.getPatchName(), "");
-                    }
-                } else {
-                    try {
+                    } else {
                         fixedMap = obtainTrace(FileIO.readFileToString(fixedLine), testSet);
-                    } catch (OutOfMemoryError e) {
-                        traceProblemList.put(patchJson.getPatchName(), "");
                     }
+                    patchJson.setBuggyTraceInfo(buggyMap);
+                    patchJson.setFixedTraceInfo(fixedMap);
+                } catch (OutOfMemoryError error) {
+                    traceProblemList.put(patchJson.getPatchName(), "");
                 }
-                patchJson.setBuggyTraceInfo(buggyMap);
-                patchJson.setFixedTraceInfo(fixedMap);
             }, EXECUTOR));
             CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).join();
         }
