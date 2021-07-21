@@ -91,6 +91,7 @@ public class BuildJsonResult {
                     patchJson.setBuggyTraceInfo(buggyMap);
                     patchJson.setFixedTraceInfo(fixedMap);
                 } catch (OutOfMemoryError error) {
+                    log.error("out of memory error!", error);
                     traceProblemList.put(patchJson.getPatchName(), "");
                 }
             }, EXECUTOR));
