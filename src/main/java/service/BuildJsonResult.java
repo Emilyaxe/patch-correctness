@@ -57,9 +57,9 @@ public class BuildJsonResult {
         log.info("Obtain Dynamic Info ...");
         List<CompletableFuture<Void>> completableFutures = new LinkedList<>();
         for (PatchJson patchJson : patches) {
-            if (!patchJson.getPatchName().equals("patch1-Closure-38-SequenceR-plausible.patch")) {
-                continue;
-            }
+            //            if (!patchJson.getPatchName().equals("patch1-Closure-38-SequenceR-plausible.patch")) {
+            //                continue;
+            //            }
             completableFutures.add(CompletableFuture.runAsync(() -> {
                 log.info("Patch {} dynamic info collecting ...", patchJson.getPatchName());
                 String buggyLine = BuildPath.buildDymicAllFile(dir, patchJson.getPatchName(), true);
