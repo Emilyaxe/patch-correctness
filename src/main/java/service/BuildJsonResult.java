@@ -171,9 +171,9 @@ public class BuildJsonResult {
     private static void checkPatches(List<PatchJson> patchJsons) {
 
         for (PatchJson patchJson : patchJsons) {
-            if (!patchJson.getPatchName().equals("patch1-Math-31-Kali-plausible.patch")) {
-                continue;
-            }
+            //            if (!patchJson.getPatchName().equals("patch1-Math-31-Kali-plausible.patch")) {
+            //                continue;
+            //            }
             // check all failing tests have traces
             log.info("Check Patch {}", patchJson.getPatchName());
             Set<String> failingTest = patchJson.getFailingTests();
