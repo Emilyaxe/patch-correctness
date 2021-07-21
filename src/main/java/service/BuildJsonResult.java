@@ -36,6 +36,7 @@ public class BuildJsonResult {
 
     public static Map<String, String> failingTestProblemList = new ConcurrentHashMap<>();
     public static Map<String, String> traceProblemList = new ConcurrentHashMap<>();
+    //public static Map<String, String> skipPatches = new ConcurrentHashMap<>();
 
     private static Gson gson = new Gson();
 
@@ -100,7 +101,11 @@ public class BuildJsonResult {
             }, EXECUTOR));
         }
         CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).join();
-        FileIO.writeStringToFile("../result/combineInfo/" + dir + "_unpurify_list", gson.toJson(patches));
+        
+        for (PatchJson patchJson : patches) {
+            FileIO.writeStringToFile("../result/combineInfo/" + dir + "_unpurify_list", gson.toJson(patchJson),
+                    true);
+        }
 
         log.info("Build Patch Set: {} for Dir {}", patches.size(), dir);
         log.info("Out of Memory: {}", StringUtils.join("\n", traceProblemList.keySet()));
