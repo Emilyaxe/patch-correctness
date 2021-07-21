@@ -101,7 +101,7 @@ public class BuildJsonResult {
             }, EXECUTOR));
         }
         CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).join();
-        
+
         for (PatchJson patchJson : patches) {
             FileIO.writeStringToFile("../result/combineInfo/" + dir + "_unpurify_list", gson.toJson(patchJson),
                     true);

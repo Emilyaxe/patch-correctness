@@ -24,7 +24,7 @@ public class PatchJson {
     private String bugId;
     private String combinedMethod;
     @JSONField(serialize = false)
-    private String patchPath;
+    private transient String patchPath;
     private Set<String> failingTests;
     private Map<String, List<String>> buggyTraceInfo;
     private Map<String, List<String>> fixedTraceInfo;
