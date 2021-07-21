@@ -95,9 +95,13 @@ public class BuildJsonResult {
                     traceProblemList.put(patchJson.getPatchName(), "");
                 }
             }, EXECUTOR));
-            CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).join();
         }
-        FileIO.writeStringToFile("../result/combineInfo/" + dir + "_unpurify_list", JSON.toJSONString(patches));
+        CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).join();
+        for (PatchJson patchJson : patches) {
+            FileIO.writeStringToFile("../result/combineInfo/" + dir + "_unpurify_list", JSON.toJSONString(patchJson),
+                    true);
+        }
+
         log.info("Build Patch Set: {} for Dir {}", patches.size(), dir);
         log.info("Out of Memory: {}", StringUtils.join("\n", traceProblemList.keySet()));
         //multiPcoessCheck(patches);
