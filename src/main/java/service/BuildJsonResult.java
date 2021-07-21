@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
 
 import config.Constant;
 import entity.PatchJson;
@@ -35,6 +36,8 @@ public class BuildJsonResult {
 
     public static Map<String, String> failingTestProblemList = new ConcurrentHashMap<>();
     public static Map<String, String> traceProblemList = new ConcurrentHashMap<>();
+
+    private static Gson gson = new Gson();
 
     public static void BuildPatchJson(String dir) {
         List<PatchJson> patches = new LinkedList<>();
@@ -98,7 +101,7 @@ public class BuildJsonResult {
         }
         CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).join();
         for (PatchJson patchJson : patches) {
-            FileIO.writeStringToFile("../result/combineInfo/" + dir + "_unpurify_list", JSON.toJSONString(patchJson),
+            FileIO.writeStringToFile("../result/combineInfo/" + dir + "_unpurify_list", gson.toJson(patchJson),
                     true);
         }
 
