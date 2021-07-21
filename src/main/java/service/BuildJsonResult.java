@@ -5,6 +5,7 @@ import static util.AsyExecutor.EXECUTOR;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -19,6 +20,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.fastjson.JSON;
@@ -104,9 +106,7 @@ public class BuildJsonResult {
         // FileIO.writeStringToFile("../result/combineInfo/" + dir + "_unpurify_list", gson.toJson(patches));
 
         for (PatchJson patchJson : patches) {
-            FileIO.writeStringToFile("../result/combineInfo/" + dir + "_unpurify_list", gson.toJson
-                            (patchJson),
-                    true);
+            FileIO.writeStringToFile("../result/combineInfo/" + dir + "_unpurify_list", gson.toJson(patchJson), true);
         }
 
         log.info("Build Patch Set: {} for Dir {}", patches.size(), dir);
@@ -300,9 +300,9 @@ public class BuildJsonResult {
     }
 
     public static void main(String[] args) {
-        BuildPatchJson("trainSet");
-        BuildPatchJson("testSet");
-        BuildPatchJson("correctSet");
+        //        BuildPatchJson("trainSet");
+        //        BuildPatchJson("testSet");
+        //        BuildPatchJson("correctSet");
         processCornerCase();
 
         log.info("failingTestProblemList: {}",
@@ -337,6 +337,13 @@ public class BuildJsonResult {
                     patchJson.setFixedTraceInfo(updateLineNumber(patchJson.getFixedTraceInfo()));
                 });
 
+        if (new File(Constant.HOME + "/result/combineInfo/correctSet_unpurify_list").exists()) {
+            try {
+                FileUtils.forceDelete(new File(Constant.HOME + "/result/combineInfo/correctSet_unpurify_list"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         for (PatchJson patchJson : patchJsons) {
             FileIO.writeStringToFile(Constant.HOME + "/result/combineInfo/correctSet_unpurify_list",
                     gson.toJson(patchJson), true);
