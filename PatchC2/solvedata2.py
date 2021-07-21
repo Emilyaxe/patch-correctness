@@ -601,6 +601,7 @@ def most_change(plinecover):
 max_test = 0
 min_test = 10000
 for x in lst:
+    
     data = json.loads(open('../result/dataSetPartition/%s' % x, 'r').read())
     wf = open('../result/pkldir/%s.pkl' % x, 'wb')
     # infofile = open('../result/pkldir/%s.info' % x, 'w')

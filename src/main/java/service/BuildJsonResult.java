@@ -101,11 +101,13 @@ public class BuildJsonResult {
             }, EXECUTOR));
         }
         CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).join();
+        FileIO.writeStringToFile("../result/combineInfo/" + dir + "_unpurify_list", gson.toJson(patches));
 
-        for (PatchJson patchJson : patches) {
-            FileIO.writeStringToFile("../result/combineInfo/" + dir + "_unpurify_list", gson.toJson(patchJson),
-                    true);
-        }
+        //        for (PatchJson patchJson : patches) {
+        //            FileIO.writeStringToFile("../result/combineInfo/" + dir + "_unpurify_list", gson.toJson
+        //            (patchJson),
+        //                    true);
+        //        }
 
         log.info("Build Patch Set: {} for Dir {}", patches.size(), dir);
         log.info("Out of Memory: {}", StringUtils.join("\n", traceProblemList.keySet()));
@@ -318,6 +320,13 @@ public class BuildJsonResult {
     }
 
     private static void processCornerCase() {
+        //        String content = FileIO.readFileToString(Constant.HOME +
+        //        "/result/combineInfo/correctSet_unpurify_list");
+        //
+        //        List<PatchJson> patchJsons =
+        //                Arrays.stream(content.split("\n")).map(line -> JSON.parseObject(line, PatchJson.class))
+        //                .collect(
+        //                        Collectors.toList());
         List<PatchJson> patchJsons =
                 JSON.parseArray(FileIO.readFileToString(Constant.HOME + "/result/combineInfo/correctSet_unpurify_list"),
                         PatchJson.class);
