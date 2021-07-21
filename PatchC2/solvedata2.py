@@ -691,8 +691,8 @@ for x in lst:
                 tmp = []
                 commonline = []
                 for line in buggyTraceInfo[key]:
-                    lst = line.split('#')
-                    lineid = int(lst[1])
+                    # lst = line.split('#')
+                    lineid = int(line)
                     if lineid in normallines:
                         commonline.append(lineid)
                         lineid = normallines[lineid]
@@ -734,8 +734,8 @@ for x in lst:
                 commonline = []
                 tmp = []
                 for line in fixedTraceInfo[key]:
-                    lst = line.split('#')
-                    lineid = int(lst[1])
+                    # lst = line.split('#')
+                    lineid = int(line)
                     if lineid in normallines:
                         commonline.append(lineid)
                         lineid = normallines[lineid]

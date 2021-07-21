@@ -61,9 +61,9 @@ public class BuildJsonResult {
         log.info("Obtain Dynamic Info ...");
         List<CompletableFuture<Void>> completableFutures = new LinkedList<>();
         for (PatchJson patchJson : patches) {
-            //            if (!patchJson.getPatchName().equals("patch1-Closure-38-SequenceR-plausible.patch")) {
-            //                continue;
-            //            }
+            if (!patchJson.getPatchName().equals("Math93b_Patch207")) {
+                continue;
+            }
             completableFutures.add(CompletableFuture.runAsync(() -> {
                 log.info("Patch {} dynamic info collecting ...", patchJson.getPatchName());
                 String buggyLine = BuildPath.buildDymicAllFile(dir, patchJson.getPatchName(), true);
@@ -146,6 +146,7 @@ public class BuildJsonResult {
                     if (find) {
                         List<String> values = Arrays.stream(line.split("\t", 2)[1].split("\t"))
                                 .filter(Objects::nonNull).filter(StringUtils::isNotBlank)
+                                .map(lineNumber -> lineNumber.split("#")[1])
                                 .collect(Collectors.toList());
                         if (values.size() > 0) {
                             map.put(checkTest(testSet, key), values);
@@ -154,6 +155,7 @@ public class BuildJsonResult {
                 } else {
                     List<String> values = Arrays.stream(line.split("\t", 2)[1].split("\t"))
                             .filter(Objects::nonNull).filter(StringUtils::isNotBlank)
+                            .map(lineNumber -> lineNumber.split("#")[1])
                             .collect(Collectors.toList());
                     if (values.size() > 0) {
                         map.put(checkTest(testSet, key), values);
@@ -260,6 +262,7 @@ public class BuildJsonResult {
                 if (find) {
                     List<String> values = Arrays.stream(line.split("\t", 2)[1].split("\t"))
                             .filter(Objects::nonNull).filter(StringUtils::isNotBlank)
+                            .map(lineNumber -> lineNumber.split("#")[1])
                             .collect(Collectors.toList());
                     if (values.size() > 0) {
                         map.put(checkTest(testSet, key), values);
@@ -268,6 +271,7 @@ public class BuildJsonResult {
             } else {
                 List<String> values = Arrays.stream(line.split("\t", 2)[1].split("\t"))
                         .filter(Objects::nonNull).filter(StringUtils::isNotBlank)
+                        .map(lineNumber -> lineNumber.split("#")[1])
                         .collect(Collectors.toList());
                 if (values.size() > 0) {
                     map.put(checkTest(testSet, key), values);
