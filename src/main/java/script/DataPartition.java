@@ -1,6 +1,7 @@
 package script;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -12,6 +13,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.fastjson.JSON;
 
@@ -21,15 +23,19 @@ import util.FileIO;
 
 @Slf4j
 public class DataPartition {
-    public static String[] allData = {"correctSet_unpurify", "testSet_unpurify", "trainSet_unpurify"};
+    public static String[] allData = {"correctSet_unpurify_list", "testSet_unpurify_list", "trainSet_unpurify_list"};
 
 
     public static void mianProcess() {
         List<PatchJson> allPatches = new LinkedList<>();
         String patchInfoPath = "./result/combineInfo/";
         for (String file : allData) {
-            String content = FileIO.readFileToString(patchInfoPath + file);
-            List<PatchJson> patchJsonList = JSON.parseArray(content, PatchJson.class);
+            //            String content = FileIO.readFileToString(patchInfoPath + file);
+            //            List<PatchJson> patchJsonList = JSON.parseArray(content, PatchJson.class);
+            List<PatchJson> patchJsonList = Arrays.stream(FileIO.readFileToString(patchInfoPath + file).split("\n"))
+                    .filter(Objects::nonNull).filter(StringUtils::isNotBlank)
+                    .map(line -> JSON.parseObject(line, PatchJson.class)).collect(
+                            Collectors.toList());
             if (CollectionUtils.isEmpty(patchJsonList)) {
                 continue;
             }
@@ -68,9 +74,9 @@ public class DataPartition {
             log.info("remain patch {}",
                     bugIdList.stream().filter(id -> !processBudIdSet.contains(id)).collect(Collectors.joining(",")));
         }
-        FileIO.writeStringToFile("./result/dataSetPartition/trainSet", JSON.toJSONString(mostPatchList));
-        FileIO.writeStringToFile("./result/dataSetPartition/testSet", JSON.toJSONString(last1PatchList));
-        FileIO.writeStringToFile("./result/dataSetPartition/validateSet", JSON.toJSONString(last2PatchList));
+        FileIO.writeStringToFile("./result/dataSetPartition/trainSet_list", JSON.toJSONString(mostPatchList));
+        FileIO.writeStringToFile("./result/dataSetPartition/testSet_list", JSON.toJSONString(last1PatchList));
+        FileIO.writeStringToFile("./result/dataSetPartition/validateSet_list", JSON.toJSONString(last2PatchList));
         log.info("trainSet : {}", mostPatchList.size());
         log.info("testSet : {}", last1PatchList.size());
         log.info("validateSet: {}", last2PatchList.size());
@@ -79,11 +85,16 @@ public class DataPartition {
     public static void calculateRatio() {
         //List<PatchJson> allPatches = new LinkedList<>();
         String patchInfoPath = "./result/dataSetPartition/";
-        String[] allData = {"trainSet", "testSet", "validateSet"};
+        String[] allData = {"trainSet_list", "testSet_list", "validateSet_list"};
 
         for (String file : allData) {
-            String content = FileIO.readFileToString(patchInfoPath + file);
-            List<PatchJson> patchJsonList = JSON.parseArray(content, PatchJson.class);
+            //            String content = FileIO.readFileToString(patchInfoPath + file);
+            //            List<PatchJson> patchJsonList = JSON.parseArray(content, PatchJson.class);
+            List<PatchJson> patchJsonList = Arrays.stream(FileIO.readFileToString(patchInfoPath + file).split("\n"))
+                    .filter(Objects::nonNull).filter(StringUtils::isNotBlank)
+                    .map(line -> JSON.parseObject(line, PatchJson.class)).collect(
+                            Collectors.toList());
+            
             if (CollectionUtils.isEmpty(patchJsonList)) {
                 continue;
             }
