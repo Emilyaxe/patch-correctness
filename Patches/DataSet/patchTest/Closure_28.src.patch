@@ -1,8 +1,7 @@
-diff --git a/src/com/google/javascript/jscomp/InlineCostEstimator.java b/src/com/google/javascript/jscomp/InlineCostEstimator.java
-index 65694ab..76a5d0a 100644
---- a/src/com/google/javascript/jscomp/InlineCostEstimator.java
-+++ b/src/com/google/javascript/jscomp/InlineCostEstimator.java
-@@ -99,9 +99,5 @@ class InlineCostEstimator {
+diff -w -r -u Closure28b/src/com/google/javascript/jscomp/InlineCostEstimator.java Closure_28.src.patch/src/com/google/javascript/jscomp/InlineCostEstimator.java
+--- Closure28b/src/com/google/javascript/jscomp/InlineCostEstimator.java
++++ Closure_28.src.patch/src/com/google/javascript/jscomp/InlineCostEstimator.java
+@@ -99,9 +99,5 @@
       * Constants (true, false, null) are considered basically free,
       * because it's likely that they will get folded when we're done.
       */

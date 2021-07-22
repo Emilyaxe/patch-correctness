@@ -1,8 +1,7 @@
-diff --git a/src/main/java/org/apache/commons/lang3/StringUtils.java b/src/main/java/org/apache/commons/lang3/StringUtils.java
-index 4aac02d..a90b067 100644
---- a/src/main/java/org/apache/commons/lang3/StringUtils.java
-+++ b/src/main/java/org/apache/commons/lang3/StringUtils.java
-@@ -1443,21 +1443,13 @@ public class StringUtils {
+diff -w -r -u Lang31b/src/main/java/org/apache/commons/lang3/StringUtils.java Lang_31.src.patch/src/main/java/org/apache/commons/lang3/StringUtils.java
+--- Lang31b/src/main/java/org/apache/commons/lang3/StringUtils.java
++++ Lang_31.src.patch/src/main/java/org/apache/commons/lang3/StringUtils.java
+@@ -1443,21 +1443,13 @@
  		}
  		int csLength = cs.length();
  		int searchLength = searchChars.length;

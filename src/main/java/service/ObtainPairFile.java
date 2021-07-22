@@ -58,7 +58,6 @@ public class ObtainPairFile {
             }, EXECUTOR));
         }
         CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0])).join();
-
     }
 
 

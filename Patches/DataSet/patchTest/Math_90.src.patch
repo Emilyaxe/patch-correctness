@@ -1,8 +1,7 @@
-diff --git a/src/java/org/apache/commons/math/stat/Frequency.java b/src/java/org/apache/commons/math/stat/Frequency.java
-index 237c2f6..75914d7 100644
---- a/src/java/org/apache/commons/math/stat/Frequency.java
-+++ b/src/java/org/apache/commons/math/stat/Frequency.java
-@@ -107,8 +107,6 @@ public class Frequency implements Serializable {
+diff -w -r -u Math90b/src/java/org/apache/commons/math/stat/Frequency.java Math_90.src.patch/src/java/org/apache/commons/math/stat/Frequency.java
+--- Math90b/src/java/org/apache/commons/math/stat/Frequency.java
++++ Math_90.src.patch/src/java/org/apache/commons/math/stat/Frequency.java
+@@ -107,8 +107,6 @@
       */
      @Deprecated
      public void addValue(Object v) {
@@ -11,7 +10,7 @@ index 237c2f6..75914d7 100644
      
      /**
       * Adds 1 to the frequency count for v.
-@@ -120,7 +118,6 @@ public class Frequency implements Serializable {
+@@ -120,7 +118,6 @@
       * @param v the value to add.
       * @throws IllegalArgumentException if <code>v</code> is not comparable with previous entries
       */

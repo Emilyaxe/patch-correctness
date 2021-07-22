@@ -1,8 +1,7 @@
-diff --git a/src/java/org/apache/commons/lang/time/StopWatch.java b/src/java/org/apache/commons/lang/time/StopWatch.java
-index 0f0786a..8f39421 100644
---- a/src/java/org/apache/commons/lang/time/StopWatch.java
-+++ b/src/java/org/apache/commons/lang/time/StopWatch.java
-@@ -115,9 +115,7 @@ public class StopWatch {
+diff -w -r -u Lang55b/src/java/org/apache/commons/lang/time/StopWatch.java Lang_55.src.patch/src/java/org/apache/commons/lang/time/StopWatch.java
+--- Lang55b/src/java/org/apache/commons/lang/time/StopWatch.java
++++ Lang_55.src.patch/src/java/org/apache/commons/lang/time/StopWatch.java
+@@ -115,9 +115,7 @@
          if(this.runningState != STATE_RUNNING && this.runningState != STATE_SUSPENDED) {
              throw new IllegalStateException("Stopwatch is not running. ");
          }

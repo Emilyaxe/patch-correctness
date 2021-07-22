@@ -1,8 +1,7 @@
-diff --git a/src/main/java/org/apache/commons/math/geometry/euclidean/threed/Rotation.java b/src/main/java/org/apache/commons/math/geometry/euclidean/threed/Rotation.java
-index ada0a8f..20f5b34 100644
---- a/src/main/java/org/apache/commons/math/geometry/euclidean/threed/Rotation.java
-+++ b/src/main/java/org/apache/commons/math/geometry/euclidean/threed/Rotation.java
-@@ -341,8 +341,7 @@ public class Rotation implements Serializable {
+diff -w -r -u Math52b/src/main/java/org/apache/commons/math/geometry/euclidean/threed/Rotation.java Math_52.src.patch/src/main/java/org/apache/commons/math/geometry/euclidean/threed/Rotation.java
+--- Math52b/src/main/java/org/apache/commons/math/geometry/euclidean/threed/Rotation.java
++++ Math_52.src.patch/src/main/java/org/apache/commons/math/geometry/euclidean/threed/Rotation.java
+@@ -341,8 +341,7 @@
    Vector3D k     = v1Su1.crossProduct(v2Su2);
    Vector3D u3    = u1.crossProduct(u2);
    double c       = k.dotProduct(u3);
@@ -12,7 +11,7 @@ index ada0a8f..20f5b34 100644
      // the (q1, q2, q3) vector is close to the (u1, u2) plane
      // we try other vectors
      Vector3D v3 = Vector3D.crossProduct(v1, v2);
-@@ -351,13 +350,13 @@ public class Rotation implements Serializable {
+@@ -351,13 +350,13 @@
      Vector3D u2Prime = u1.crossProduct(u3);
      c = k.dotProduct(u2Prime);
  

@@ -1,8 +1,7 @@
-diff --git a/src/com/google/javascript/jscomp/CodeGenerator.java b/src/com/google/javascript/jscomp/CodeGenerator.java
-index 8d268b6..54eb5cf 100644
---- a/src/com/google/javascript/jscomp/CodeGenerator.java
-+++ b/src/com/google/javascript/jscomp/CodeGenerator.java
-@@ -282,7 +282,7 @@ class CodeGenerator {
+diff -w -r -u Closure123b/src/com/google/javascript/jscomp/CodeGenerator.java Closure_123.src.patch/src/com/google/javascript/jscomp/CodeGenerator.java
+--- Closure123b/src/com/google/javascript/jscomp/CodeGenerator.java
++++ Closure_123.src.patch/src/com/google/javascript/jscomp/CodeGenerator.java
+@@ -282,7 +282,7 @@
        case Token.HOOK: {
          Preconditions.checkState(childCount == 3);
          int p = NodeUtil.precedence(type);

@@ -1,8 +1,7 @@
-diff --git a/src/java/org/apache/commons/math/util/MathUtils.java b/src/java/org/apache/commons/math/util/MathUtils.java
-index 806c888..d51ec7a 100644
---- a/src/java/org/apache/commons/math/util/MathUtils.java
-+++ b/src/java/org/apache/commons/math/util/MathUtils.java
-@@ -540,11 +540,6 @@ public final class MathUtils {
+diff -w -r -u Math99b/src/java/org/apache/commons/math/util/MathUtils.java Math_99.src.patch/src/java/org/apache/commons/math/util/MathUtils.java
+--- Math99b/src/java/org/apache/commons/math/util/MathUtils.java
++++ Math_99.src.patch/src/java/org/apache/commons/math/util/MathUtils.java
+@@ -540,11 +540,6 @@
          int u = p;
          int v = q;
          if ((u == 0) || (v == 0)) {
@@ -14,7 +13,7 @@ index 806c888..d51ec7a 100644
              return (Math.abs(u) + Math.abs(v));
          }
          // keep u and v negative, as negative integers range down to
-@@ -716,9 +711,6 @@ public final class MathUtils {
+@@ -716,9 +711,6 @@
              return 0;
          }
          int lcm = Math.abs(mulAndCheck(a / gcd(a, b), b));

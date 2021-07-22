@@ -1,8 +1,7 @@
-diff --git a/src/com/google/javascript/jscomp/CodeConsumer.java b/src/com/google/javascript/jscomp/CodeConsumer.java
-index 8023324..4755665 100644
---- a/src/com/google/javascript/jscomp/CodeConsumer.java
-+++ b/src/com/google/javascript/jscomp/CodeConsumer.java
-@@ -191,13 +191,11 @@ abstract class CodeConsumer {
+diff -w -r -u Closure44b/src/com/google/javascript/jscomp/CodeConsumer.java Closure_44.src.patch/src/com/google/javascript/jscomp/CodeConsumer.java
+--- Closure44b/src/com/google/javascript/jscomp/CodeConsumer.java
++++ Closure_44.src.patch/src/com/google/javascript/jscomp/CodeConsumer.java
+@@ -191,13 +191,11 @@
        // need space to separate. This is not pretty printing.
        // For example: "return foo;"
        append(" ");
