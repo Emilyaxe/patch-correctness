@@ -1,7 +1,7 @@
 diff -w -r -u Closure28b/src/com/google/javascript/jscomp/InlineCostEstimator.java Closure_28.src.patch/src/com/google/javascript/jscomp/InlineCostEstimator.java
 --- Closure28b/src/com/google/javascript/jscomp/InlineCostEstimator.java
 +++ Closure_28.src.patch/src/com/google/javascript/jscomp/InlineCostEstimator.java
-@@ -5,5 +99,9 @@
+@@ -99,5 +99,9 @@
       * Constants (true, false, null) are considered basically free,
       * because it's likely that they will get folded when we're done.
       */

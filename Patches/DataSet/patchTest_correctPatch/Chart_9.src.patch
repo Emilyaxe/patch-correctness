@@ -1,7 +1,7 @@
 diff -w -r -u Chart9b/source/org/jfree/data/time/TimeSeries.java Chart_9.src.patch/source/org/jfree/data/time/TimeSeries.java
 --- Chart9b/source/org/jfree/data/time/TimeSeries.java
 +++ Chart_9.src.patch/source/org/jfree/data/time/TimeSeries.java
-@@ -7,7 +941,7 @@
+@@ -941,7 +941,7 @@
              endIndex = -(endIndex + 1); // this is first item AFTER end period
              endIndex = endIndex - 1;    // so this is last item BEFORE end
          }

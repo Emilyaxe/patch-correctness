@@ -1,7 +1,7 @@
 diff -w -r -u Closure123b/src/com/google/javascript/jscomp/CodeGenerator.java Closure_123.src.patch/src/com/google/javascript/jscomp/CodeGenerator.java
 --- Closure123b/src/com/google/javascript/jscomp/CodeGenerator.java
 +++ Closure_123.src.patch/src/com/google/javascript/jscomp/CodeGenerator.java
-@@ -7,7 +282,7 @@
+@@ -282,7 +282,7 @@
        case Token.HOOK: {
          Preconditions.checkState(childCount == 3);
          int p = NodeUtil.precedence(type);

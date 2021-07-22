@@ -1,7 +1,7 @@
 diff -w -r -u Closure67b/src/com/google/javascript/jscomp/AnalyzePrototypeProperties.java Closure_67.src.patch/src/com/google/javascript/jscomp/AnalyzePrototypeProperties.java
 --- Closure67b/src/com/google/javascript/jscomp/AnalyzePrototypeProperties.java
 +++ Closure_67.src.patch/src/com/google/javascript/jscomp/AnalyzePrototypeProperties.java
-@@ -7,7 +315,7 @@
+@@ -315,7 +315,7 @@
        Node n = assign.getFirstChild();
        if (n != null && NodeUtil.isVarOrSimpleAssignLhs(n, assign)
            && n.getType() == Token.GETPROP

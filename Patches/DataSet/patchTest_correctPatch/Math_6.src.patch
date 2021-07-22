@@ -1,7 +1,7 @@
 diff -w -r -u Math6b/src/main/java/org/apache/commons/math3/optim/BaseOptimizer.java Math_6.src.patch/src/main/java/org/apache/commons/math3/optim/BaseOptimizer.java
 --- Math6b/src/main/java/org/apache/commons/math3/optim/BaseOptimizer.java
 +++ Math_6.src.patch/src/main/java/org/apache/commons/math3/optim/BaseOptimizer.java
-@@ -7,7 +48,7 @@
+@@ -48,7 +48,7 @@
          this.checker = checker;
  
          evaluations = new Incrementor(0, new MaxEvalCallback());
@@ -13,7 +13,7 @@ diff -w -r -u Math6b/src/main/java/org/apache/commons/math3/optim/BaseOptimizer.
 diff -w -r -u Math6b/src/main/java/org/apache/commons/math3/optim/nonlinear/scalar/gradient/NonLinearConjugateGradientOptimizer.java Math_6.src.patch/src/main/java/org/apache/commons/math3/optim/nonlinear/scalar/gradient/NonLinearConjugateGradientOptimizer.java
 --- Math6b/src/main/java/org/apache/commons/math3/optim/nonlinear/scalar/gradient/NonLinearConjugateGradientOptimizer.java
 +++ Math_6.src.patch/src/main/java/org/apache/commons/math3/optim/nonlinear/scalar/gradient/NonLinearConjugateGradientOptimizer.java
-@@ -16,16 +211,15 @@
+@@ -211,16 +211,15 @@
          }
  
          PointValuePair current = null;
@@ -32,7 +32,7 @@ diff -w -r -u Math6b/src/main/java/org/apache/commons/math3/optim/nonlinear/scal
                      // We have found an optimum.
                      return current;
                  }
-@@ -7,7 +273,7 @@
+@@ -274,7 +273,7 @@
              steepestDescent = newSteepestDescent;
  
              // Compute conjugate search direction.
@@ -44,7 +44,7 @@ diff -w -r -u Math6b/src/main/java/org/apache/commons/math3/optim/nonlinear/scal
 diff -w -r -u Math6b/src/main/java/org/apache/commons/math3/optim/nonlinear/scalar/noderiv/CMAESOptimizer.java Math_6.src.patch/src/main/java/org/apache/commons/math3/optim/nonlinear/scalar/noderiv/CMAESOptimizer.java
 --- Math6b/src/main/java/org/apache/commons/math3/optim/nonlinear/scalar/noderiv/CMAESOptimizer.java
 +++ Math_6.src.patch/src/main/java/org/apache/commons/math3/optim/nonlinear/scalar/noderiv/CMAESOptimizer.java
-@@ -6,6 +385,7 @@
+@@ -385,6 +385,7 @@
  
          generationLoop:
          for (iterations = 1; iterations <= maxIterations; iterations++) {
@@ -55,7 +55,7 @@ diff -w -r -u Math6b/src/main/java/org/apache/commons/math3/optim/nonlinear/scal
 diff -w -r -u Math6b/src/main/java/org/apache/commons/math3/optim/nonlinear/scalar/noderiv/PowellOptimizer.java Math_6.src.patch/src/main/java/org/apache/commons/math3/optim/nonlinear/scalar/noderiv/PowellOptimizer.java
 --- Math6b/src/main/java/org/apache/commons/math3/optim/nonlinear/scalar/noderiv/PowellOptimizer.java
 +++ Math_6.src.patch/src/main/java/org/apache/commons/math3/optim/nonlinear/scalar/noderiv/PowellOptimizer.java
-@@ -9,9 +188,8 @@
+@@ -188,9 +188,8 @@
          double[] x = guess;
          double fVal = computeObjectiveValue(x);
          double[] x1 = x.clone();
@@ -66,7 +66,7 @@ diff -w -r -u Math6b/src/main/java/org/apache/commons/math3/optim/nonlinear/scal
  
              double fX = fVal;
              double fX2 = 0;
-@@ -7,7 +223,7 @@
+@@ -224,7 +223,7 @@
              final PointValuePair current = new PointValuePair(x, fVal);
              if (!stop) { // User-defined stopping criteria.
                  if (checker != null) {
@@ -78,7 +78,7 @@ diff -w -r -u Math6b/src/main/java/org/apache/commons/math3/optim/nonlinear/scal
 diff -w -r -u Math6b/src/main/java/org/apache/commons/math3/optim/nonlinear/scalar/noderiv/SimplexOptimizer.java Math_6.src.patch/src/main/java/org/apache/commons/math3/optim/nonlinear/scalar/noderiv/SimplexOptimizer.java
 --- Math6b/src/main/java/org/apache/commons/math3/optim/nonlinear/scalar/noderiv/SimplexOptimizer.java
 +++ Math_6.src.patch/src/main/java/org/apache/commons/math3/optim/nonlinear/scalar/noderiv/SimplexOptimizer.java
-@@ -7,7 +155,7 @@
+@@ -155,7 +155,7 @@
          int iteration = 0;
          final ConvergenceChecker<PointValuePair> checker = getConvergenceChecker();
          while (true) {
@@ -87,7 +87,7 @@ diff -w -r -u Math6b/src/main/java/org/apache/commons/math3/optim/nonlinear/scal
                  boolean converged = true;
                  for (int i = 0; i < simplex.getSize(); i++) {
                      PointValuePair prev = previous[i];
-@@ -7,7 +172,7 @@
+@@ -172,7 +172,7 @@
              previous = simplex.getPoints();
              simplex.iterate(evalFunc, comparator);
  
@@ -99,7 +99,7 @@ diff -w -r -u Math6b/src/main/java/org/apache/commons/math3/optim/nonlinear/scal
 diff -w -r -u Math6b/src/main/java/org/apache/commons/math3/optim/nonlinear/vector/jacobian/GaussNewtonOptimizer.java Math_6.src.patch/src/main/java/org/apache/commons/math3/optim/nonlinear/vector/jacobian/GaussNewtonOptimizer.java
 --- Math6b/src/main/java/org/apache/commons/math3/optim/nonlinear/vector/jacobian/GaussNewtonOptimizer.java
 +++ Math_6.src.patch/src/main/java/org/apache/commons/math3/optim/nonlinear/vector/jacobian/GaussNewtonOptimizer.java
-@@ -9,9 +103,8 @@
+@@ -103,9 +103,8 @@
  
          // iterate until convergence is reached
          PointVectorValuePair current = null;
@@ -110,7 +110,7 @@ diff -w -r -u Math6b/src/main/java/org/apache/commons/math3/optim/nonlinear/vect
  
              // evaluate the objective function and its jacobian
              PointVectorValuePair previous = current;
-@@ -7,7 +156,7 @@
+@@ -157,7 +156,7 @@
  
              // Check convergence.
              if (previous != null) {
@@ -122,7 +122,7 @@ diff -w -r -u Math6b/src/main/java/org/apache/commons/math3/optim/nonlinear/vect
 diff -w -r -u Math6b/src/main/java/org/apache/commons/math3/optim/nonlinear/vector/jacobian/LevenbergMarquardtOptimizer.java Math_6.src.patch/src/main/java/org/apache/commons/math3/optim/nonlinear/vector/jacobian/LevenbergMarquardtOptimizer.java
 --- Math6b/src/main/java/org/apache/commons/math3/optim/nonlinear/vector/jacobian/LevenbergMarquardtOptimizer.java
 +++ Math_6.src.patch/src/main/java/org/apache/commons/math3/optim/nonlinear/vector/jacobian/LevenbergMarquardtOptimizer.java
-@@ -10,10 +319,10 @@
+@@ -319,10 +319,10 @@
          // Outer loop.
          lmPar = 0;
          boolean firstIteration = true;
@@ -135,7 +135,7 @@ diff -w -r -u Math6b/src/main/java/org/apache/commons/math3/optim/nonlinear/vect
              final PointVectorValuePair previous = current;
  
              // QR decomposition of the jacobian matrix
-@@ -7,7 +486,7 @@
+@@ -486,7 +486,7 @@
                      // tests for convergence.
                      if (checker != null) {
                          // we use the vectorial convergence checker

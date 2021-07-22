@@ -1,7 +1,7 @@
 diff -w -r -u Lang20b/src/main/java/org/apache/commons/lang3/StringUtils.java Lang_20.src.patch/src/main/java/org/apache/commons/lang3/StringUtils.java
 --- Lang20b/src/main/java/org/apache/commons/lang3/StringUtils.java
 +++ Lang_20.src.patch/src/main/java/org/apache/commons/lang3/StringUtils.java
-@@ -7,7 +3295,7 @@
+@@ -3295,7 +3295,7 @@
              return EMPTY;
          }
          
@@ -10,7 +10,7 @@ diff -w -r -u Lang20b/src/main/java/org/apache/commons/lang3/StringUtils.java La
  
          for (int i = startIndex; i < endIndex; i++) {
              if (i > startIndex) {
-@@ -7,7 +3380,7 @@
+@@ -3380,7 +3380,7 @@
              return EMPTY;
          }
  

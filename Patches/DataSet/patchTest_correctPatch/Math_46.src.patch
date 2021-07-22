@@ -1,7 +1,7 @@
 diff -w -r -u Math46b/src/main/java/org/apache/commons/math/complex/Complex.java Math_46.src.patch/src/main/java/org/apache/commons/math/complex/Complex.java
 --- Math46b/src/main/java/org/apache/commons/math/complex/Complex.java
 +++ Math_46.src.patch/src/main/java/org/apache/commons/math/complex/Complex.java
-@@ -7,7 +257,7 @@
+@@ -257,7 +257,7 @@
  
          if (divisor.isZero) {
              // return isZero ? NaN : INF; // See MATH-657
@@ -10,7 +10,7 @@ diff -w -r -u Math46b/src/main/java/org/apache/commons/math/complex/Complex.java
          }
  
          if (divisor.isInfinite() && !isInfinite()) {
-@@ -7,7 +294,7 @@
+@@ -294,7 +294,7 @@
          }
          if (divisor == 0d) {
              // return isZero ? NaN : INF; // See MATH-657

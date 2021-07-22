@@ -1,7 +1,7 @@
 diff -w -r -u Closure10b/src/com/google/javascript/jscomp/NodeUtil.java Closure_10.src.patch/src/com/google/javascript/jscomp/NodeUtil.java
 --- Closure10b/src/com/google/javascript/jscomp/NodeUtil.java
 +++ Closure_10.src.patch/src/com/google/javascript/jscomp/NodeUtil.java
-@@ -7,7 +1414,7 @@
+@@ -1414,7 +1414,7 @@
  
    static boolean mayBeString(Node n, boolean recurse) {
      if (recurse) {

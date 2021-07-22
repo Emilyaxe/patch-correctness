@@ -1,7 +1,7 @@
 diff -w -r -u Time21b/src/main/java/org/joda/time/tz/DefaultNameProvider.java Time_21.src.patch/src/main/java/org/joda/time/tz/DefaultNameProvider.java
 --- Time21b/src/main/java/org/joda/time/tz/DefaultNameProvider.java
 +++ Time_21.src.patch/src/main/java/org/joda/time/tz/DefaultNameProvider.java
-@@ -22,22 +63,32 @@
+@@ -63,22 +63,32 @@
          if (byNameKeyCache == null) {
              byIdCache.put(id, byNameKeyCache = createCache());
              

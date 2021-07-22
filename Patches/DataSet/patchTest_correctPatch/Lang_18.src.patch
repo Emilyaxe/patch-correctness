@@ -1,7 +1,7 @@
 diff -w -r -u Lang18b/src/main/java/org/apache/commons/lang3/time/FastDateFormat.java Lang_18.src.patch/src/main/java/org/apache/commons/lang3/time/FastDateFormat.java
 --- Lang18b/src/main/java/org/apache/commons/lang3/time/FastDateFormat.java
 +++ Lang_18.src.patch/src/main/java/org/apache/commons/lang3/time/FastDateFormat.java
-@@ -10,10 +492,10 @@
+@@ -492,10 +492,10 @@
                  rule = new TextField(Calendar.ERA, ERAs);
                  break;
              case 'y': // year (number)

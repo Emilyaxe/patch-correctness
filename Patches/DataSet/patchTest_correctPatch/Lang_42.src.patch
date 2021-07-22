@@ -1,7 +1,7 @@
 diff -w -r -u Lang42b/src/java/org/apache/commons/lang/Entities.java Lang_42.src.patch/src/java/org/apache/commons/lang/Entities.java
 --- Lang42b/src/java/org/apache/commons/lang/Entities.java
 +++ Lang_42.src.patch/src/java/org/apache/commons/lang/Entities.java
-@@ -10,10 +825,15 @@
+@@ -825,10 +825,15 @@
      public void escape(Writer writer, String str) throws IOException {
          int len = str.length();
          for (int i = 0; i < len; i++) {

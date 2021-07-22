@@ -1,7 +1,7 @@
 diff -w -r -u Closure49b/src/com/google/javascript/jscomp/MakeDeclaredNamesUnique.java Closure_49.src.patch/src/com/google/javascript/jscomp/MakeDeclaredNamesUnique.java
 --- Closure49b/src/com/google/javascript/jscomp/MakeDeclaredNamesUnique.java
 +++ Closure_49.src.patch/src/com/google/javascript/jscomp/MakeDeclaredNamesUnique.java
-@@ -14,14 +88,6 @@
+@@ -88,14 +88,6 @@
        renamer = nameStack.peek().forChildScope();
      }
  
@@ -16,7 +16,7 @@ diff -w -r -u Closure49b/src/com/google/javascript/jscomp/MakeDeclaredNamesUniqu
      if (declarationRoot.getType() != Token.FUNCTION) {
        // Add the block declarations
        findDeclaredNames(declarationRoot, null, renamer);
-@@ -11,11 +119,22 @@
+@@ -127,11 +119,22 @@
              renamer.addDeclaredName(name);
            }
  
@@ -39,7 +39,7 @@ diff -w -r -u Closure49b/src/com/google/javascript/jscomp/MakeDeclaredNamesUniqu
  
            nameStack.push(renamer);
          }
-@@ -13,13 +173,16 @@
+@@ -170,13 +173,16 @@
  
        case Token.FUNCTION:
          // Remove the function body scope

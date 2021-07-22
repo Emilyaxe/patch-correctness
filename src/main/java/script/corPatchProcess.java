@@ -20,7 +20,7 @@ public class corPatchProcess {
         String tmp2 = line.split(" ")[2];
         a = tmp1.split("-")[1].split(",")[0];
         b = tmp1.split(",")[1];
-        c = tmp2.split("\\+")[1].split(",")[1];
+        c = tmp2.split("\\+")[1].split(",")[0];
         d = tmp2.split(",")[1];
 
         return "@@ -" + c + "," + d + " +" + a + "," + b + " @@";

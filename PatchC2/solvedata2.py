@@ -600,6 +600,7 @@ def most_change(plinecover):
 
 max_test = 0
 min_test = 10000
+max_list = 0
 for x in lst:
     for data_line in open('../result/dataSetPartition/%s' % x, 'r').read().split('\n'):
         data = json.loads(data_line)
@@ -716,6 +717,9 @@ for x in lst:
                         # print(root.printTreeWithLine(root))
                         tmp.append(linenode.id)
 
+                    if max_list < len(tmp):
+                        max_list = len(tmp)
+
                     if key in failingTests:
                         if key in fcover:
                             fcover[key]['buggy'] = tmp
@@ -757,6 +761,9 @@ for x in lst:
                             continue
                         tmp.append(linenode.id)
                     # cover['fixed'] = tmp
+
+                    if max_list < len(tmp):
+                        max_list = len(tmp)
                     if key in failingTests:
                         if key in fcover:
                             fcover[key]['fixed'] = tmp
@@ -828,5 +835,6 @@ for x in lst:
 print(errors)
 print(fnames)
 
+print('max_list %s: ' % max_list)
 # print('max_text %s: ' % max_test)
 # print('min_test %s:' % min_test)

@@ -1,7 +1,7 @@
 diff -w -r -u Math95b/src/java/org/apache/commons/math/distribution/FDistributionImpl.java Math_95.src.patch/src/java/org/apache/commons/math/distribution/FDistributionImpl.java
 --- Math95b/src/java/org/apache/commons/math/distribution/FDistributionImpl.java
 +++ Math_95.src.patch/src/java/org/apache/commons/math/distribution/FDistributionImpl.java
-@@ -10,10 +141,12 @@
+@@ -141,10 +141,12 @@
       * @return initial domain value
       */
      protected double getInitialDomain(double p) {

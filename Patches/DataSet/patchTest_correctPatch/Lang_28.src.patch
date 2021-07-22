@@ -1,7 +1,7 @@
 diff -w -r -u Lang28b/src/main/java/org/apache/commons/lang3/text/translate/NumericEntityUnescaper.java Lang_28.src.patch/src/main/java/org/apache/commons/lang3/text/translate/NumericEntityUnescaper.java
 --- Lang28b/src/main/java/org/apache/commons/lang3/text/translate/NumericEntityUnescaper.java
 +++ Lang_28.src.patch/src/main/java/org/apache/commons/lang3/text/translate/NumericEntityUnescaper.java
-@@ -7,7 +60,13 @@
+@@ -60,7 +60,13 @@
                  return 0;
              }
  
