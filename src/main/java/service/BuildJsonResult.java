@@ -113,7 +113,7 @@ public class BuildJsonResult {
 
         for (PatchJson patchJson : patches) {
             FileIO.writeStringToFile("../result/combineInfo/" + dir + "_unpurify_list",
-                    JSON.toJSONString(patchJson), true);
+                    JSON.toJSONString(patchJson) + "\n", true);
         }
 
         log.info("Build Patch Set: {} for Dir {}", patches.size(), dir);
@@ -319,10 +319,10 @@ public class BuildJsonResult {
 
     public static void main(String[] args) {
 
-        //        BuildPatchJson("trainSet");
-        //        BuildPatchJson("testSet");
-        //        BuildPatchJson("correctSet");
-        processCornerCase();
+        BuildPatchJson("trainSet");
+        BuildPatchJson("testSet");
+        BuildPatchJson("correctSet");
+        //processCornerCase();
 
         log.info("failingTestProblemList: {}",
                 StringUtils.join(failingTestProblemList.keySet(), ","));
@@ -342,9 +342,9 @@ public class BuildJsonResult {
         String content = FileIO.readFileToString(Constant.HOME +
                 "/result/combineInfo/correctSet_unpurify_list");
 
-        for (String line : content.split("\n")) {
-            log.info(line);
-        }
+        //        for (String line : content.split("\n")) {
+        //            log.info(line);
+        //        }
 
         List<PatchJson> patchJsons =
                 Arrays.stream(content.split("\n"))
