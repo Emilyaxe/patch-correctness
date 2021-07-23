@@ -333,7 +333,7 @@ public class BuildJsonResult {
 
     private static Map<String, List<String>> updateLineNumber(Map<String, List<String>> map) {
         return map.entrySet().stream().peek(entry -> entry.setValue(entry.getValue().stream()
-                .map(line -> line.split("#")[0] + "#" + (Integer.parseInt(line.split("#")[1]) + 1))
+                .map(line -> String.valueOf(Integer.parseInt(line) + 1))
                 .collect(Collectors.toList())))
                 .collect(Collectors.toMap(Entry::getKey, Entry::getValue, (v1, v2) -> v2));
     }
