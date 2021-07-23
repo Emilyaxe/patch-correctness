@@ -329,10 +329,7 @@ public class BuildJsonResult {
                         .filter(StringUtils::isNotBlank)
                         .map(line -> JSON.parseObject(line, PatchJson.class))
                         .collect(Collectors.toList());
-        //        List<PatchJson> patchJsons =
-        //                JSON.parseArray(FileIO.readFileToString(Constant.HOME +
-        //                "/result/combineInfo/correctSet_unpurify_list"),
-        //                        PatchJson.class);
+
         patchJsons.stream().filter(patchJson -> patchJson.getPatchName().equals("Closure_16.src.patch"))
                 .forEach(patchJson -> {
                     patchJson.setBuggyTraceInfo(updateLineNumber(patchJson.getBuggyTraceInfo()));
@@ -341,7 +338,8 @@ public class BuildJsonResult {
 
         if (new File(Constant.HOME + "/result/combineInfo/correctSet_unpurify_list").exists()) {
             try {
-                FileUtils.forceDelete(new File(Constant.HOME + "/result/combineInfo/correctSet_unpurify_list"));
+                FileUtils.forceDelete(new File(Constant.HOME +
+                        "/result/combineInfo/correctSet_unpurify_list"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -350,6 +348,43 @@ public class BuildJsonResult {
             FileIO.writeStringToFile(Constant.HOME + "/result/combineInfo/correctSet_unpurify_list",
                     gson.toJson(patchJson), true);
         }
+
+        //        try {
+        //
+        //            FileInputStream inputStream = null;
+        //            try {
+        //                inputStream = new FileInputStream(Constant.HOME +
+        //                        "/result/combineInfo/correctSet_unpurify_list");
+        //            } catch (FileNotFoundException e) {
+        //                e.printStackTrace();
+        //            }
+        //            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+        //
+        //            String str = null;
+        //            while ((str = bufferedReader.readLine()) != null) {
+        //                //System.out.println(str);
+        //                if (StringUtils.isNotBlank(str)) {
+        //                    PatchJson patchJson = JSON.parseObject(str, PatchJson.class);
+        //                    if (!patchJson.getPatchName().equals("Closure_16.src.patch")) {
+        //                        continue;
+        //                    }
+        //                    patchJson.setBuggyTraceInfo(updateLineNumber(patchJson.getBuggyTraceInfo()));
+        //                }
+        //            }
+        //
+        //            //close
+        //            inputStream.close();
+        //            bufferedReader.close();
+        //        } catch (Exception e) {
+        //            e.printStackTrace();
+        //        }
+
+
+        //        List<PatchJson> patchJsons =
+        //                JSON.parseArray(FileIO.readFileToString(Constant.HOME +
+        //                "/result/combineInfo/correctSet_unpurify_list"),
+        //                        PatchJson.class);
+
         //        FileIO.writeStringToFile(Constant.HOME + "/result/combineInfo/correctSet_unpurify_list",
         //                JSON.toJSONString(patchJsons));
 
