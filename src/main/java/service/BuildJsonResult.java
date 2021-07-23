@@ -327,7 +327,7 @@ public class BuildJsonResult {
                 Arrays.stream(content.split("\n"))
                         .filter(Objects::nonNull)
                         .filter(StringUtils::isNotBlank)
-                        .map(line -> JSON.parseObject(line, PatchJson.class))
+                        .map(line -> gson.fromJson(line, PatchJson.class))
                         .collect(Collectors.toList());
 
         patchJsons.stream().filter(patchJson -> patchJson.getPatchName().equals("Closure_16.src.patch"))
