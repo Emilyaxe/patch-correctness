@@ -327,8 +327,8 @@ public class BuildJsonResult {
 
     public static void main(String[] args) {
         initSkipPatches();
-        BuildPatchJson("trainSet");
-        BuildPatchJson("testSet");
+        //        BuildPatchJson("trainSet");
+        //        BuildPatchJson("testSet");
         BuildPatchJson("correctSet");
         processCornerCase();
 
@@ -374,7 +374,8 @@ public class BuildJsonResult {
         }
         for (PatchJson patchJson : patchJsons) {
             FileIO.writeStringToFile(Constant.HOME + "/result/combineInfo/correctSet_unpurify_list",
-                    JSON.toJSONString(patchJson), true);
+                    JSON.toJSONString(patchJson) + "\n", true);
+
         }
 
         //        try {
