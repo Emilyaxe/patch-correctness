@@ -1,5 +1,7 @@
 package script;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,6 +15,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.fastjson.JSON;
@@ -75,15 +78,36 @@ public class DataPartition {
             log.info("remain patch {}",
                     bugIdList.stream().filter(id -> !processBudIdSet.contains(id)).collect(Collectors.joining(",")));
         }
-        FileIO.writeStringToFile(Constant.HOME + "/result/dataSetPartition/trainSet_list",
-                JSON.toJSONString(mostPatchList));
-        FileIO.writeStringToFile(Constant.HOME + "/result/dataSetPartition/testSet_list",
-                JSON.toJSONString(last1PatchList));
-        FileIO.writeStringToFile(Constant.HOME + "/result/dataSetPartition/validateSet_list",
-                JSON.toJSONString(last2PatchList));
+        write2File("trainSet_list", mostPatchList);
+        write2File("testSet_list", last1PatchList);
+        write2File("validateSet_list", last2PatchList);
+
+        //        FileIO.writeStringToFile(Constant.HOME + "/result/dataSetPartition/trainSet_list",
+        //                JSON.toJSONString(mostPatchList));
+        //        FileIO.writeStringToFile(Constant.HOME + "/result/dataSetPartition/testSet_list",
+        //                JSON.toJSONString(last1PatchList));
+        //        FileIO.writeStringToFile(Constant.HOME + "/result/dataSetPartition/validateSet_list",
+        //                JSON.toJSONString(last2PatchList));
         log.info("trainSet : {}", mostPatchList.size());
         log.info("testSet : {}", last1PatchList.size());
         log.info("validateSet: {}", last2PatchList.size());
+    }
+
+    public static void write2File(String dir, List<PatchJson> patchJsons) {
+
+        if (new File(Constant.HOME + "/result/combineInfo/" + dir).exists()) {
+            try {
+                FileUtils.forceDelete(new File(Constant.HOME +
+                        "/result/combineInfo/" + dir));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        for (PatchJson patchJson : patchJsons) {
+            FileIO.writeStringToFile(Constant.HOME + "/result/combineInfo/" + dir,
+                    JSON.toJSONString(patchJson) + "\n", true);
+
+        }
     }
 
     public static void calculateRatio() {
