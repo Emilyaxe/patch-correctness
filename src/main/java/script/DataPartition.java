@@ -95,16 +95,16 @@ public class DataPartition {
 
     public static void write2File(String dir, List<PatchJson> patchJsons) {
 
-        if (new File(Constant.HOME + "/result/combineInfo/" + dir).exists()) {
+        if (new File(Constant.HOME + "/result/dataSetPartition/" + dir).exists()) {
             try {
                 FileUtils.forceDelete(new File(Constant.HOME +
-                        "/result/combineInfo/" + dir));
+                        "/result/dataSetPartition/" + dir));
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         for (PatchJson patchJson : patchJsons) {
-            FileIO.writeStringToFile(Constant.HOME + "/result/combineInfo/" + dir,
+            FileIO.writeStringToFile(Constant.HOME + "/result/dataSetPartition/" + dir,
                     JSON.toJSONString(patchJson) + "\n", true);
 
         }
