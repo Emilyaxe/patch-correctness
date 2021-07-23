@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.fastjson.JSON;
 
+import config.Constant;
 import entity.PatchJson;
 import lombok.extern.slf4j.Slf4j;
 import util.FileIO;
@@ -28,7 +29,7 @@ public class DataPartition {
 
     public static void mianProcess() {
         List<PatchJson> allPatches = new LinkedList<>();
-        String patchInfoPath = "./result/combineInfo/";
+        String patchInfoPath = Constant.HOME + "/result/combineInfo/";
         for (String file : allData) {
             //            String content = FileIO.readFileToString(patchInfoPath + file);
             //            List<PatchJson> patchJsonList = JSON.parseArray(content, PatchJson.class);
@@ -74,9 +75,12 @@ public class DataPartition {
             log.info("remain patch {}",
                     bugIdList.stream().filter(id -> !processBudIdSet.contains(id)).collect(Collectors.joining(",")));
         }
-        FileIO.writeStringToFile("./result/dataSetPartition/trainSet_list", JSON.toJSONString(mostPatchList));
-        FileIO.writeStringToFile("./result/dataSetPartition/testSet_list", JSON.toJSONString(last1PatchList));
-        FileIO.writeStringToFile("./result/dataSetPartition/validateSet_list", JSON.toJSONString(last2PatchList));
+        FileIO.writeStringToFile(Constant.HOME + "/result/dataSetPartition/trainSet_list",
+                JSON.toJSONString(mostPatchList));
+        FileIO.writeStringToFile(Constant.HOME + "/result/dataSetPartition/testSet_list",
+                JSON.toJSONString(last1PatchList));
+        FileIO.writeStringToFile(Constant.HOME + "/result/dataSetPartition/validateSet_list",
+                JSON.toJSONString(last2PatchList));
         log.info("trainSet : {}", mostPatchList.size());
         log.info("testSet : {}", last1PatchList.size());
         log.info("validateSet: {}", last2PatchList.size());
@@ -94,7 +98,7 @@ public class DataPartition {
                     .filter(Objects::nonNull).filter(StringUtils::isNotBlank)
                     .map(line -> JSON.parseObject(line, PatchJson.class)).collect(
                             Collectors.toList());
-            
+
             if (CollectionUtils.isEmpty(patchJsonList)) {
                 continue;
             }
