@@ -111,6 +111,14 @@ public class BuildJsonResult {
         CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).join();
         // FileIO.writeStringToFile("../result/combineInfo/" + dir + "_unpurify_list", gson.toJson(patches));
 
+        if (new File("../result/combineInfo/" + dir + "_unpurify_list").exists()) {
+            try {
+                FileUtils.forceDelete(new File("../result/combineInfo/" + dir + "_unpurify_list"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         for (PatchJson patchJson : patches) {
             FileIO.writeStringToFile("../result/combineInfo/" + dir + "_unpurify_list",
                     JSON.toJSONString(patchJson) + "\n", true);
@@ -318,10 +326,10 @@ public class BuildJsonResult {
     }
 
     public static void main(String[] args) {
-        //        initSkipPatches();
-        //        BuildPatchJson("trainSet");
-        //        BuildPatchJson("testSet");
-        //        BuildPatchJson("correctSet");
+        initSkipPatches();
+        BuildPatchJson("trainSet");
+        BuildPatchJson("testSet");
+        BuildPatchJson("correctSet");
         processCornerCase();
 
         log.info("failingTestProblemList: {}",
