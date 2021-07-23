@@ -38,7 +38,7 @@ public class FileIO {
             log.error("file does {} not exist", file.toString());
             return "";
         }
-        log.info("file {} size {}G", filePath, file.length() / 1024 / 1024 / 1024);
+        log.info("file {} size {}G", filePath, file.length() / 1024.0d / 1024.0d / 1024.0d);
         return readFileToString(file);
     }
 
