@@ -38,6 +38,7 @@ public class FileIO {
             log.error("file does {} not exist", file.toString());
             return "";
         }
+        log.info("file {} size {}G", filePath, file.length() / 1024 / 1024 / 1024);
         return readFileToString(file);
     }
 
@@ -46,7 +47,7 @@ public class FileIO {
             log.error("file does {} not exist", file.toString());
             return "";
         }
-        StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder stringBuilder = new StringBuilder((int) file.length());
         try (InputStream in = new FileInputStream(file);
                 InputStreamReader inputStreamReader = new InputStreamReader(in,
                         StandardCharsets.UTF_8)) {

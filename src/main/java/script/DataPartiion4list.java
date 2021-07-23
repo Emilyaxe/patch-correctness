@@ -2,7 +2,6 @@ package script;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -39,10 +38,11 @@ public class DataPartiion4list {
         for (String data : allData) {
             String content = FileIO.readFileToString(combineInfo + data);
             List<PatchJson> patchJsons =
-                    Arrays.stream(content.split("\n")).filter(Objects::nonNull).filter(StringUtils::isNotBlank)
+                    Arrays.stream(content.split("\n")).filter(StringUtils::isNotBlank)
                             .map(line -> JSON.parseObject(line, PatchJson.class)).collect(
                             Collectors.toList());
             for (PatchJson patchJson : patchJsons) {
+                log.info(patchJson.getPatchName());
                 if (testSet.contains(patchJson.getPatchName())) {
                     FileIO.writeStringToFile(dir + "testSet_list", JSON.toJSONString(patchJson) + "\n", true);
                 } else if (trainSet.contains(patchJson.getPatchName())) {
