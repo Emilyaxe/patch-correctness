@@ -38,7 +38,8 @@ public class BuildJsonResult {
 
     public static Map<String, String> failingTestProblemList = new ConcurrentHashMap<>();
     public static Map<String, String> traceProblemList = new ConcurrentHashMap<>();
-    //public static Map<String, String> skipPatches = new ConcurrentHashMap<>();
+    public static Map<String, String> skipPatches = new ConcurrentHashMap<>();
+
 
     private static Gson gson = new Gson();
 
@@ -66,7 +67,12 @@ public class BuildJsonResult {
             //            if (!patchJson.getPatchName().equals("Math93b_Patch207")) {
             //                continue;
             //            }
+            if (skipPatches.containsKey(patchJson.getPatchName())) {
+                continue;
+            }
             completableFutures.add(CompletableFuture.runAsync(() -> {
+
+
                 log.info("Patch {} dynamic info collecting ...", patchJson.getPatchName());
                 String buggyLine = BuildPath.buildDymicAllFile(dir, patchJson.getPatchName(), true);
                 String fixedLine = BuildPath.buildDymicAllFile(dir, patchJson.getPatchName(),
@@ -300,11 +306,23 @@ public class BuildJsonResult {
         return testSet.contains(test) ? test : "";
     }
 
+    public static void initSkipPatches() {
+        String patches = "patch1-Lang-43-CapGen-plausible.patch, patch1-Math-60-jGenProg-plausible.patch, "
+                + "patch2-Lang-43-CapGen-plausible.patch, patch1-Math-31-Kali-plausible.patch, patch1-Lang-43-SimFix"
+                + ".patch, patch11-Lang-43-CapGen-plausible.patch, patch1-Lang-43-kPAR-plausible.patch, "
+                + "patch3-Lang-43-CapGen.patch, Math_39.src.patch, Math_31.src.patch, Math_71.src.patch, Lang_43.src"
+                + ".patch";
+        for (String patch : patches.split(", ")) {
+            skipPatches.put(patch, "");
+        }
+    }
+
     public static void main(String[] args) {
-        BuildPatchJson("trainSet");
-        BuildPatchJson("testSet");
-        BuildPatchJson("correctSet");
-        //processCornerCase();
+
+        //        BuildPatchJson("trainSet");
+        //        BuildPatchJson("testSet");
+        //        BuildPatchJson("correctSet");
+        processCornerCase();
 
         log.info("failingTestProblemList: {}",
                 StringUtils.join(failingTestProblemList.keySet(), ","));
@@ -328,7 +346,7 @@ public class BuildJsonResult {
                 Arrays.stream(content.split("\n"))
                         .filter(Objects::nonNull)
                         .filter(StringUtils::isNotBlank)
-                        .map(line -> gson.fromJson(line, PatchJson.class))
+                        .map(line -> JSON.parseObject(line, PatchJson.class))
                         .collect(Collectors.toList());
 
         patchJsons.stream().filter(patchJson -> patchJson.getPatchName().equals("Closure_16.src.patch"))
