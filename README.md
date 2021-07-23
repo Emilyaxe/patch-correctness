@@ -9,3 +9,4 @@
 ## 代码记录
 
 1. service/BuildJsonResult 从dynamic trace 和 static中构造 combineinfo
+2. script/DataPartition 从combineInfo中划分出来trainSet testSet validateSet
