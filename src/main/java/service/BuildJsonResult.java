@@ -106,7 +106,8 @@ public class BuildJsonResult {
         // FileIO.writeStringToFile("../result/combineInfo/" + dir + "_unpurify_list", gson.toJson(patches));
 
         for (PatchJson patchJson : patches) {
-            FileIO.writeStringToFile("../result/combineInfo/" + dir + "_unpurify_list", gson.toJson(patchJson), true);
+            FileIO.writeStringToFile("../result/combineInfo/" + dir + "_unpurify_list",
+                    JSON.toJSONString(patchJson), true);
         }
 
         log.info("Build Patch Set: {} for Dir {}", patches.size(), dir);
@@ -346,7 +347,7 @@ public class BuildJsonResult {
         }
         for (PatchJson patchJson : patchJsons) {
             FileIO.writeStringToFile(Constant.HOME + "/result/combineInfo/correctSet_unpurify_list",
-                    gson.toJson(patchJson), true);
+                    JSON.toJSONString(patchJson), true);
         }
 
         //        try {
