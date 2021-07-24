@@ -686,8 +686,15 @@ for x in lst:
             # failintFiles = []
             # for test in failingTests:
             #     failintFiles.append(test.split('::')[0])
-            buggyTraceInfo = datas['buggyTraceInfo']
-            fixedTraceInfo = datas['fixedTraceInfo']
+            if 'buggyTraceInfo' in datas:
+                buggyTraceInfo = datas['buggyTraceInfo']
+            else:
+                buggyTraceInfo = []
+
+            if 'fixedTraceInfo' in datas:
+                fixedTraceInfo = datas['fixedTraceInfo']
+            else:
+                fixedTraceInfo = []
 
             for key in buggyTraceInfo:
                 # cover = {}
