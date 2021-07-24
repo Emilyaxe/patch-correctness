@@ -609,7 +609,7 @@ def process_long_list(longlist):
             filter[lineid] = filter[lineid] + 1
         else:
             filter[lineid] = 1
-        if filter[lineid] <= 10:
+        if filter[lineid] <= 1:
             result.append(line)
     return result
 
@@ -852,8 +852,9 @@ for x in lst:
                 continue
             if datas['patchName'] == 'Closure_65.src.patch':
                 continue
-            print(datas['patchName'])
+
             print(datas['combinedMethod'])
+            print(datas['patchName'])
             errors.setdefault(x, []).append(datas['patchName'])
             assert (0)
             pass
