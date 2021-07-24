@@ -598,6 +598,22 @@ def most_change(plinecover):
     return pcover_score
 
 
+def process_long_list(longlist):
+    # if len(longlist) < 500:
+    #     return longlist
+    filter = {}
+    result = []
+    for line in longlist:
+        lineid = int(line)
+        if lineid in filter:
+            filter[lineid] = filter[lineid] + 1
+        else:
+            filter[lineid] = 1
+        if filter[lineid] <= 10:
+            result.append(line)
+    return result
+
+
 max_test = 0
 min_test = 10000
 max_list = 0
@@ -703,9 +719,10 @@ for x in lst:
 
             for key in buggyTraceInfo:
                 # cover = {}
+                print('Process BuggyTraceInfo')
                 tmp = []
                 commonline = []
-                for line in buggyTraceInfo[key]:
+                for line in process_long_list(buggyTraceInfo[key]):
                     # lst = line.split('#')
                     lineid = int(line)
                     if lineid in normallines:
@@ -749,9 +766,10 @@ for x in lst:
                         plinecover[key]['buggy'] = commonline
 
             for key in fixedTraceInfo:
+                print('Process FixedTraceInfo')
                 commonline = []
                 tmp = []
-                for line in fixedTraceInfo[key]:
+                for line in process_long_list(fixedTraceInfo[key]):
                     # lst = line.split('#')
                     lineid = int(line)
                     if lineid in normallines:
