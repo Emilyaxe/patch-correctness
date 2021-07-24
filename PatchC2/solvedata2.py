@@ -719,7 +719,6 @@ for x in lst:
 
             for key in buggyTraceInfo:
                 # cover = {}
-                print('Process BuggyTraceInfo')
                 tmp = []
                 commonline = []
                 for line in process_long_list(buggyTraceInfo[key]):
@@ -766,7 +765,6 @@ for x in lst:
                         plinecover[key]['buggy'] = commonline
 
             for key in fixedTraceInfo:
-                print('Process FixedTraceInfo')
                 commonline = []
                 tmp = []
                 for line in process_long_list(fixedTraceInfo[key]):
