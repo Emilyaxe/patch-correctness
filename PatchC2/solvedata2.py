@@ -679,10 +679,13 @@ for x in lst:
             pcover = {}
             fcover = {}
             plinecover = {}
-            failingTests = datas['failingTests']
-            failintFiles = []
-            for test in failingTests:
-                failintFiles.append(test.split('::')[0])
+            if 'failingTests' in datas:
+                failingTests = datas['failingTests']
+            else:
+                failingTests = []
+            # failintFiles = []
+            # for test in failingTests:
+            #     failintFiles.append(test.split('::')[0])
             buggyTraceInfo = datas['buggyTraceInfo']
             fixedTraceInfo = datas['fixedTraceInfo']
 
