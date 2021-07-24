@@ -604,14 +604,14 @@ def process_long_list(longlist):
     filter = {}
     result = []
     for line in longlist:
-        lineid = int(line)
-        if lineid in filter:
-            filter[lineid] = filter[lineid] + 1
+        # lineid = int(line)
+        if line in filter:
+            filter[line] = filter[line] + 1
         else:
-            filter[lineid] = 1
-        if filter[lineid] <= 1:
+            filter[line] = 1
+        if filter[line] <= 10:
             result.append(line)
-    return result
+    return filter
 
 
 max_test = 0
@@ -626,10 +626,10 @@ for x in lst:
         newdata = {}
         # infodata = {}
         # for datas in tqdm(data):
-        if datas['patchName'] != 'patch1-Chart-26-jMutRepair-plausible.patch':
-            continue
+        # if datas['patchName'] != 'patch1-Chart-26-jMutRepair-plausible.patch':
+        #     continue
         codelines = datas['combinedMethod'].splitlines()
-        print(datas['combinedMethod'])
+        # print(datas['combinedMethod'])
         oldcode = []
         addcode = []
         deletelines = {}
@@ -722,7 +722,8 @@ for x in lst:
                 # cover = {}
                 tmp = []
                 commonline = []
-                for line in process_long_list(buggyTraceInfo[key]):
+                line_cover = process_long_list(buggyTraceInfo[key])
+                for line in line_cover:
                     # lst = line.split('#')
                     lineid = int(line)
                     if lineid in normallines:
@@ -744,7 +745,7 @@ for x in lst:
                         continue
                     # print(line, codelines[int(lst[1])])
                     # print(root.printTreeWithLine(root))
-                    tmp.append(linenode.id)
+                    tmp.append(str(linenode.id) + "#" + str(line_cover[line]))
 
                 if max_list < len(tmp):
                     max_list = len(tmp)
@@ -768,7 +769,8 @@ for x in lst:
             for key in fixedTraceInfo:
                 commonline = []
                 tmp = []
-                for line in process_long_list(fixedTraceInfo[key]):
+                line_cover = process_long_list(buggyTraceInfo[key])
+                for line in line_cover:
                     # lst = line.split('#')
                     lineid = int(line)
                     if lineid in normallines:
@@ -788,7 +790,7 @@ for x in lst:
                     linenode, _ = getSubroot(node)
                     if linenode is None:
                         continue
-                    tmp.append(linenode.id)
+                    tmp.append(str(linenode.id) + "#" + str(line_cover[line]))
                 # cover['fixed'] = tmp
 
                 if max_list < len(tmp):
