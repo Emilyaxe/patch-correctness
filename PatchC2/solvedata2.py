@@ -626,9 +626,10 @@ for x in lst:
         newdata = {}
         # infodata = {}
         # for datas in tqdm(data):
-        # if datas['patchName'] != 'Math_76.src.patch':
-        #     continue
+        if datas['patchName'] != 'patch1-Chart-26-jMutRepair-plausible.patch':
+            continue
         codelines = datas['combinedMethod'].splitlines()
+        print(datas['combinedMethod'])
         oldcode = []
         addcode = []
         deletelines = {}
