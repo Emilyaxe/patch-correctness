@@ -626,7 +626,7 @@ for x in lst:
         newdata = {}
         # infodata = {}
         # for datas in tqdm(data):
-        # if datas['patchName'] != 'patch1-Chart-26-jMutRepair-plausible.patch':
+        # if datas['patchName'] != 'Closure_3.src.patch':
         #     continue
         codelines = datas['combinedMethod'].splitlines()
         # print(datas['combinedMethod'])
@@ -769,7 +769,7 @@ for x in lst:
             for key in fixedTraceInfo:
                 commonline = []
                 tmp = []
-                line_cover = process_long_list(buggyTraceInfo[key])
+                line_cover = process_long_list(fixedTraceInfo[key])
                 for line in line_cover:
                     # lst = line.split('#')
                     lineid = int(line)
