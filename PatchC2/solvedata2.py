@@ -683,6 +683,8 @@ for x in lst:
                 failingTests = datas['failingTests']
             else:
                 failingTests = []
+                fcover['1'] = {}
+                pcover['1'] = {}
                 fcover['1']['fixed'] = []
                 fcover['1']['buggy'] = []
                 pcover['1']['fixed'] = []
