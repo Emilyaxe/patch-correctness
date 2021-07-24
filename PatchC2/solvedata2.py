@@ -683,9 +683,12 @@ for x in lst:
                 failingTests = datas['failingTests']
             else:
                 failingTests = []
-            # failintFiles = []
-            # for test in failingTests:
-            #     failintFiles.append(test.split('::')[0])
+                fcover['1']['fixed'] = []
+                fcover['1']['buggy'] = []
+                pcover['1']['fixed'] = []
+                pcover['1']['buggy'] = []
+                continue
+
             if 'buggyTraceInfo' in datas:
                 buggyTraceInfo = datas['buggyTraceInfo']
             else:
