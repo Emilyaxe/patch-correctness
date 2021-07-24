@@ -71,7 +71,7 @@ public class DataPartiion4list {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            
+
             //            String content = FileIO.readFileToString(combineInfo + data);
             //            List<PatchJson> patchJsons =
             //                    Arrays.stream(content.split("\n")).filter(StringUtils::isNotBlank)
@@ -83,7 +83,7 @@ public class DataPartiion4list {
             //                    FileIO.writeStringToFile(dir + "testSet_list", JSON.toJSONString(patchJson) + "\n",
             //                    true);
             //                } else if (trainSet.contains(patchJson.getPatchName())) {
-            //                    FileIO.writeStringToFile(dir + "trainSet_list", JSON.toJSONString(patchJson) +
+            //                    FileIO.writeStringToFile(dir + "trainSet_lis  t", JSON.toJSONString(patchJson) +
             //                    "\n", true);
             //                } else if (validateSet.contains(patchJson.getPatchName())) {
             //                    FileIO.writeStringToFile(dir + "validateSet_list", JSON.toJSONString(patchJson) +
