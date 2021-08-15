@@ -15,7 +15,6 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 
 import config.Constant;
 import entity.PatchJson;
@@ -65,7 +64,9 @@ public class ObtainPairFile {
 
         String[] sub = entry.getKey().split("-");
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
-        JSONArray jsonArray = new JSONArray();
+        //JSONArray jsonArray = new JSONArray();
+        String resultDir = Constant.HOME + "/result/PairFiles/" + resDir;
+        int i = 0;
         for (PatchJson patchJson : entry.getValue()) {
             ObtainTraceInfo.cleanSubject(subject.getHome() + subject.get_ssrc());
             log.info("Process for Patch {}", patchJson.getPatchName());
@@ -79,11 +80,19 @@ public class ObtainPairFile {
             onepatch.put("label", patchJson.getLabel());
             onepatch.put("buggFile", buggyFile);
             onepatch.put("fixedFile", fixedFile);
+            FileIO.writeStringToFile(
+                    resultDir + "/" + entry.getKey() + "/nonum" + i + "/" + entry.getKey() + "_nonum" + i + "_s",
+                    buggyFile);
+            FileIO.writeStringToFile(
+                    resultDir + "/" + entry.getKey() + "/nonum" + i + "/" + entry.getKey() + "_nonum" + i + "_t",
+                    fixedFile);
+            i++;
             //onepatch.put("bugid", patchJson.getBugId());
-            jsonArray.add(onepatch);
+            //jsonArray.add(onepatch);
         }
-        String resultDir = Constant.HOME + "/result/PairFiles/" + resDir;
-        FileIO.writeStringToFile(resultDir + "/" + entry.getKey(), JSON.toJSONString(jsonArray));
+
+
+        // FileIO.writeStringToFile(resultDir + "/" + entry.getKey(), JSON.toJSONString(jsonArray));
     }
 
     private static boolean checkClass(String classFile) {
