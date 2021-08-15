@@ -81,10 +81,10 @@ public class ObtainPairFile {
             onepatch.put("buggFile", buggyFile);
             onepatch.put("fixedFile", fixedFile);
             FileIO.writeStringToFile(
-                    resultDir + "/" + entry.getKey() + "/nonum" + i + "/" + entry.getKey() + "_nonum" + i + "_s",
+                    resultDir + "/" + entry.getKey() + "/nonum" + i + "/" + entry.getKey() + "_nonum" + i + "_s.java",
                     buggyFile);
             FileIO.writeStringToFile(
-                    resultDir + "/" + entry.getKey() + "/nonum" + i + "/" + entry.getKey() + "_nonum" + i + "_t",
+                    resultDir + "/" + entry.getKey() + "/nonum" + i + "/" + entry.getKey() + "_nonum" + i + "_t.java",
                     fixedFile);
             i++;
             //onepatch.put("bugid", patchJson.getBugId());
