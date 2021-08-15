@@ -35,7 +35,7 @@ public class ObtainPairFile {
         //String patchDir = "./result/dataSetPartition/";
         for (String file : allData) {
             log.info("Process {}", file);
-            String content = FileIO.readFileToString(Constant.patchesPartitionResult + "/" + file);
+            String content = FileIO.readFileToString(Constant.HOME + "/result/crosspatch" + "/" + file);
             List<PatchJson> patchJsonList = JSON.parseArray(content, PatchJson.class);
             if (CollectionUtils.isEmpty(patchJsonList)) {
                 continue;
