@@ -66,7 +66,7 @@ public class ObtainPairFile {
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
         //JSONArray jsonArray = new JSONArray();
         String resultDir = Constant.HOME + "/result/PairFiles/" + resDir;
-        int i = 0;
+        //int i = 0;
         for (PatchJson patchJson : entry.getValue()) {
             ObtainTraceInfo.cleanSubject(subject.getHome() + subject.get_ssrc());
             log.info("Process for Patch {}", patchJson.getPatchName());
@@ -81,12 +81,16 @@ public class ObtainPairFile {
             onepatch.put("buggFile", buggyFile);
             onepatch.put("fixedFile", fixedFile);
             FileIO.writeStringToFile(
-                    resultDir + "/" + entry.getKey() + "/nonum" + i + "/" + entry.getKey() + "_nonum" + i + "_s.java",
+                    resultDir + "/" + entry.getKey() + "/" + patchJson.getPatchName() + "/" + entry.getKey() + "_"
+                            + patchJson
+                            .getPatchName() + "_s.java",
                     buggyFile);
             FileIO.writeStringToFile(
-                    resultDir + "/" + entry.getKey() + "/nonum" + i + "/" + entry.getKey() + "_nonum" + i + "_t.java",
+                    resultDir + "/" + entry.getKey() + "/" + patchJson.getPatchName() + "/" + entry.getKey() + "_"
+                            + patchJson
+                            .getPatchName() + "_t.java",
                     fixedFile);
-            i++;
+            //i++;
             //onepatch.put("bugid", patchJson.getBugId());
             //jsonArray.add(onepatch);
         }
