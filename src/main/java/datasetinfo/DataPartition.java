@@ -23,6 +23,10 @@ public class DataPartition {
 
     public static String[] allData = {"correctSet_unpurify", "testSet_unpurify", "trainSet_unpurify"};
 
+    public static void crossPatchInfo() {
+
+    }
+
     public static void crossPatch() {
         String patchInfoPath = Constant.HOME + "/result/combineInfo/";
         List<PatchJson> testSet =
@@ -105,7 +109,7 @@ public class DataPartition {
                     allDatas.stream().filter(patchJson -> datalist.contains(patchJson.getPatchName())).collect(
                             Collectors.toList());
             log.info("{}, Size {}", data, list.size());
-            FileIO.writeStringToFile(Constant.HOME + "/result/crosspatch/" + data, JSON.toJSONString(list));
+            // FileIO.writeStringToFile(Constant.HOME + "/result/crosspatch/" + data, JSON.toJSONString(list));
         }
 
         /*
@@ -116,7 +120,11 @@ public class DataPartition {
     }
 
 
+    // dataSetPartition
     public static void crossBug() {
+        String[] datas = {"testSet", "trainSet", "validateSet"};
+        String patchInfoPath = Constant.HOME + "/result/dataSetPartition/";
+        
 
     }
 
