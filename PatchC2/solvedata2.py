@@ -5,7 +5,7 @@ import javalang
 
 from Searchnode import Node
 
-lst = ['trainSet_list', 'testSet_list', 'validateSet_list']
+lst = ['trainSet', 'testSet', 'validateSet']
 line_node_name = ['Statement_ter', 'BreakStatement_ter', 'ReturnStatement_ter', 'ContinueStatement',
                   'ContinueStatement_ter', 'LocalVariableDeclaration', 'condition', 'control', 'BreakStatement',
                   'ContinueStatement', 'ReturnStatement', "parameters", 'StatementExpression', 'return_type']
@@ -408,6 +408,8 @@ def setProb(root):
         setProb2(root[1], 2)
     else:
         root.possibility = 3
+        for x in root.child:
+            setProb(x)
 
 
 def changetree(root1, root2):
@@ -618,250 +620,254 @@ max_test = 0
 min_test = 10000
 max_list = 0
 for x in lst:
-    for data_line in tqdm(open('../result/dataSetPartition/%s' % x, 'r').read().split('\n')):
+    for data_line in tqdm(open('../result/crosspatch/%s' % x, 'r').read().split('\n')):
         if data_line == "":
             continue
-        datas = json.loads(data_line)
-        wf = open('../result/pkldir/%s.pkl' % x, 'wb')
+        data = json.loads(data_line)
+        wf = open('../result/pkldir/%s_50.pkl' % x, 'wb')
         newdata = {}
         # infodata = {}
-        # for datas in tqdm(data):
-        # if datas['patchName'] != 'Closure_3.src.patch':
-        #     continue
-        codelines = datas['combinedMethod'].splitlines()
-        # print(datas['combinedMethod'])
-        oldcode = []
-        addcode = []
-        deletelines = {}
-        addlines = {}
-        normallines = {}
-        for idx, code in enumerate(codelines):
-            if len(code) == 0:
-                addcode.append('')
-                oldcode.append('')
-                normallines[idx] = len(oldcode)
-            elif code[0] == '+':
-                addcode.append(code[1:])
-                addlines[idx] = len(addcode)
-            # elif '-    }'in code and idx == len(codelines) - 1:
-            #    addcode.append(code[1:])
-
-            elif code[0] == '-':
-                oldcode.append(code[1:])
-                deletelines[idx] = len(oldcode)
-            else:
-                oldcode.append(code)
-                addcode.append(code)
-                normallines[idx] = len(oldcode)
-        # print("\n".join(oldcode), addcode)
-        code = '\n'.join(oldcode)
-        newcode = '\n'.join(addcode)
-        try:
-            tokens = javalang.tokenizer.tokenize(code)
-            parser = javalang.parser.Parser(tokens)
-            tree = parser.parse_member_declaration()
-            result = generateAST(tree)
-            root = getroottree(result)
-            print('---------------\n')
-            tokens = javalang.tokenizer.tokenize(newcode)
-            parser = javalang.parser.Parser(tokens)
-            tree = parser.parse_member_declaration()
-            newroot = getroottree(generateAST(tree))
-            turnposition(newroot)
-            # print(root.printTreeWithLine(root))#print(code, newcode)
-            changetree(root, newroot)
-            # print('test1', root.printTreeWithLine(root))
-            root = getroottreewithLine(root.printTreeWithLine(root).split())
-            subroot = getModify(root)
-            if 'dummyMethod' in root.getTreestr():
-                subroot = root
-            if subroot is None:
-                print(root.printTree(root))
-                assert (0)
-            # print(root.printTreeWithLine(root))
-            root, vardic, _ = solveLongTree(root, subroot, 1000)
-            setProb(root)
-            # print(root.name)
-            # print(root.printTree(root))
-            # assert(0)
-            ##trace info
-            # filepre = '%s/%s/' % (x[:-1], patchid)
-            # if not os.path.exists(filepre):
-            #     continue
-            alineb = collectLine(root)
-            alinef = collectLine2(root)
-            # lst = os.listdir(filepre)
-            # tcover = {}
-
-            pcover = {}
-            fcover = {}
-            plinecover = {}
-            if 'failingTests' in datas:
-                failingTests = datas['failingTests']
-            else:
-                failingTests = []
-                fcover['1'] = {}
-                pcover['1'] = {}
-                fcover['1']['fixed'] = []
-                fcover['1']['buggy'] = []
-                pcover['1']['fixed'] = []
-                pcover['1']['buggy'] = []
+        for datas in tqdm(data):
+            if datas['patchName'] != 'Closure_3.src.patch':
                 continue
-
-            if 'buggyTraceInfo' in datas:
-                buggyTraceInfo = datas['buggyTraceInfo']
-            else:
-                buggyTraceInfo = []
-
-            if 'fixedTraceInfo' in datas:
-                fixedTraceInfo = datas['fixedTraceInfo']
-            else:
-                fixedTraceInfo = []
-
-            for key in buggyTraceInfo:
-                # cover = {}
-                tmp = []
-                commonline = []
-                line_cover = process_long_list(buggyTraceInfo[key])
-                for line in line_cover:
-                    # lst = line.split('#')
-                    lineid = int(line)
-                    if lineid in normallines:
-                        commonline.append(lineid)
-                        lineid = normallines[lineid]
-                        if lineid not in alineb:
-                            continue
-                        node = getNodeById(root, lineid)
-                    elif lineid in addlines:
-                        assert (0)
-                    elif lineid in deletelines:
-                        lineid = deletelines[lineid]
-                        if lineid not in alineb:
-                            continue
-                        node = getNodeById(root, lineid)
-                    # print(lineid)
-                    linenode, _ = getSubroot(node)
-                    if linenode is None:
-                        continue
-                    # print(line, codelines[int(lst[1])])
-                    # print(root.printTreeWithLine(root))
-                    tmp.append(str(linenode.id) + "#" + str(line_cover[line]))
-
-                if max_list < len(tmp):
-                    max_list = len(tmp)
-
-                if key in failingTests:
-                    if key in fcover:
-                        fcover[key]['buggy'] = tmp
-                    else:
-                        fcover[key] = {}
-                        fcover[key]['buggy'] = tmp
-                else:
-                    if key in pcover:
-                        pcover[key]['buggy'] = tmp
-                        plinecover[key]['buggy'] = commonline
-                    else:
-                        pcover[key] = {}
-                        plinecover[key] = {}
-                        pcover[key]['buggy'] = tmp
-                        plinecover[key]['buggy'] = commonline
-
-            for key in fixedTraceInfo:
-                commonline = []
-                tmp = []
-                line_cover = process_long_list(fixedTraceInfo[key])
-                for line in line_cover:
-                    # lst = line.split('#')
-                    lineid = int(line)
-                    if lineid in normallines:
-                        commonline.append(lineid)
-                        lineid = normallines[lineid]
-                        if lineid not in alineb:
-                            continue
-                        node = getNodeById(root, lineid)
-                    elif lineid in addlines:
-                        lineid = addlines[lineid]
-                        if lineid not in alinef:
-                            continue
-                        node = getNodeById2(root, lineid)
-                    elif lineid in deletelines:
-                        assert (0)
-                    # node = getNodeById2(root, lineid)
-                    linenode, _ = getSubroot(node)
-                    if linenode is None:
-                        continue
-                    tmp.append(str(linenode.id) + "#" + str(line_cover[line]))
-                # cover['fixed'] = tmp
-
-                if max_list < len(tmp):
-                    max_list = len(tmp)
-                if key in failingTests:
-                    if key in fcover:
-                        fcover[key]['fixed'] = tmp
-                    else:
-                        fcover[key] = {}
-                        fcover[key]['fixed'] = tmp
-                else:
-                    if key in pcover:
-                        pcover[key]['fixed'] = tmp
-                        plinecover[key]['fixed'] = commonline
-                    else:
-                        pcover[key] = {}
-                        plinecover[key] = {}
-                        pcover[key]['fixed'] = tmp
-                        plinecover[key]['fixed'] = commonline
-
-            for key in fcover:
-                if 'fixed' not in fcover[key]:
-                    fcover[key]['fixed'] = []
-                if 'buggy' not in fcover[key]:
-                    fcover[key]['buggy'] = []
-            for key in pcover:
-                if 'fixed' not in pcover[key]:
-                    pcover[key]['fixed'] = []
-                if 'buggy' not in pcover[key]:
-                    pcover[key]['buggy'] = []
-
-            pcover_score = most_change(plinecover)
-            pcover_limit = {}
-            num = 50
-            if len(pcover_score) <= num:
-                pcover_limit = pcover
-            else:
-                i = 1
-                for key in pcover_score:
-                    if i > num:
-                        break
-                    pcover_limit[key[0]] = pcover[key[0]]
-                    i = i + 1
-
-            newdata[datas['patchName']] = (
-                {'tree': root.printTreeWithVar(root, vardic), 'label': datas['label'],
-                 'prob': root.getTreeProb(root),
-                 'pcover': pcover, 'fcover': fcover})
-            # if len(pcover) + len(fcover) > max_test:
-            #     max_test = len(pcover) + len(fcover)
-            # if len(pcover) + len(fcover) < min_test:
-            #     min_test = len(pcover) + len(fcover)
-            # n = 0
-            # setid(root)
-            print('PatchName %s, treewithid %s' % (datas['patchName'], root.printTree(root)))
-            print('PatchName %s, pcover %s, fcover %s' % (datas['patchName'], len(pcover), len(fcover)))
-        except:
-            # print(datas['patchName'])
+            codelines = datas['combinedMethod'].splitlines()
             # print(datas['combinedMethod'])
-            traceback.print_exc()
-            if 'Closure-92' in datas['patchName'] or 'Closure-93' in datas['patchName']:
-                continue
-            if datas['patchName'] == 'Closure_65.src.patch':
-                continue
+            oldcode = []
+            addcode = []
+            deletelines = {}
+            addlines = {}
+            normallines = {}
+            for idx, code in enumerate(codelines):
+                if len(code) == 0:
+                    addcode.append('')
+                    oldcode.append('')
+                    normallines[idx] = len(oldcode)
+                elif code[0] == '+':
+                    addcode.append(code[1:])
+                    addlines[idx] = len(addcode)
+                # elif '-    }'in code and idx == len(codelines) - 1:
+                #    addcode.append(code[1:])
 
-            print(datas['combinedMethod'])
-            print(datas['patchName'])
-            errors.setdefault(x, []).append(datas['patchName'])
-            assert (0)
-            pass
-            errors.setdefault(x, []).append(patchid)
+                elif code[0] == '-':
+                    oldcode.append(code[1:])
+                    deletelines[idx] = len(oldcode)
+                else:
+                    oldcode.append(code)
+                    addcode.append(code)
+                    normallines[idx] = len(oldcode)
+            # print("\n".join(oldcode), addcode)
+            code = '\n'.join(oldcode)
+            newcode = '\n'.join(addcode)
+            try:
+                tokens = javalang.tokenizer.tokenize(code)
+                parser = javalang.parser.Parser(tokens)
+                tree = parser.parse_member_declaration()
+                result = generateAST(tree)
+                root = getroottree(result)
+                print('---------------\n')
+                tokens = javalang.tokenizer.tokenize(newcode)
+                parser = javalang.parser.Parser(tokens)
+                tree = parser.parse_member_declaration()
+                newroot = getroottree(generateAST(tree))
+                turnposition(newroot)
+                # print(root.printTreeWithLine(root))#print(code, newcode)
+                changetree(root, newroot)
+                # print('test1', root.printTreeWithLine(root))
+                root = getroottreewithLine(root.printTreeWithLine(root).split())
+                subroot = getModify(root)
+                if 'dummyMethod' in root.getTreestr():
+                    subroot = root
+                if subroot is None:
+                    print(root.printTree(root))
+                    assert (0)
+                # print(root.printTreeWithLine(root))
+                root, vardic, _ = solveLongTree(root, subroot, 1000)
+                setProb(root)
+                # print(root.name)
+                # print(root.printTree(root))
+                # assert(0)
+                ##trace info
+                # filepre = '%s/%s/' % (x[:-1], patchid)
+                # if not os.path.exists(filepre):
+                #     continue
+                alineb = collectLine(root)
+                alinef = collectLine2(root)
+                # lst = os.listdir(filepre)
+                # tcover = {}
+
+                pcover = {}
+                fcover = {}
+                plinecover = {}
+                if 'failingTests' in datas:
+                    failingTests = datas['failingTests']
+                else:
+                    failingTests = []
+                    fcover['1'] = {}
+                    pcover['1'] = {}
+                    fcover['1']['fixed'] = []
+                    fcover['1']['buggy'] = []
+                    pcover['1']['fixed'] = []
+                    pcover['1']['buggy'] = []
+                    continue
+
+                if 'buggyTraceInfo' in datas:
+                    buggyTraceInfo = datas['buggyTraceInfo']
+                else:
+                    buggyTraceInfo = []
+
+                if 'fixedTraceInfo' in datas:
+                    fixedTraceInfo = datas['fixedTraceInfo']
+                else:
+                    fixedTraceInfo = []
+
+                for key in buggyTraceInfo:
+                    # cover = {}
+                    tmp = []
+                    commonline = []
+                    # line_cover = process_long_list(buggyTraceInfo[key])
+                    line_cover = buggyTraceInfo[key]
+                    for line in line_cover:
+                        # lst = line.split('#')
+                        lineid = int(line.split('#')[1])
+                        if lineid in normallines:
+                            commonline.append(lineid)
+                            lineid = normallines[lineid]
+                            if lineid not in alineb:
+                                continue
+                            node = getNodeById(root, lineid)
+                        elif lineid in addlines:
+                            assert (0)
+                        elif lineid in deletelines:
+                            lineid = deletelines[lineid]
+                            if lineid not in alineb:
+                                continue
+                            node = getNodeById(root, lineid)
+                        # print(lineid)
+                        linenode, _ = getSubroot(node)
+                        if linenode is None:
+                            continue
+                        # print(line, codelines[int(lst[1])])
+                        # print(root.printTreeWithLine(root))
+                        tmp.append(linenode.id)
+                        # tmp.append(str(linenode.id) + "#" + str(line_cover[line]))
+
+                    if max_list < len(tmp):
+                        max_list = len(tmp)
+
+                    if key in failingTests:
+                        if key in fcover:
+                            fcover[key]['buggy'] = tmp
+                        else:
+                            fcover[key] = {}
+                            fcover[key]['buggy'] = tmp
+                    else:
+                        if key in pcover:
+                            pcover[key]['buggy'] = tmp
+                            plinecover[key]['buggy'] = commonline
+                        else:
+                            pcover[key] = {}
+                            plinecover[key] = {}
+                            pcover[key]['buggy'] = tmp
+                            plinecover[key]['buggy'] = commonline
+
+                for key in fixedTraceInfo:
+                    commonline = []
+                    tmp = []
+                    # line_cover = process_long_list(fixedTraceInfo[key])
+                    line_cover = fixedTraceInfo[key]
+                    for line in line_cover:
+                        # lst = line.split('#')
+                        lineid = int(line.split('#')[1])
+                        if lineid in normallines:
+                            commonline.append(lineid)
+                            lineid = normallines[lineid]
+                            if lineid not in alineb:
+                                continue
+                            node = getNodeById(root, lineid)
+                        elif lineid in addlines:
+                            lineid = addlines[lineid]
+                            if lineid not in alinef:
+                                continue
+                            node = getNodeById2(root, lineid)
+                        elif lineid in deletelines:
+                            assert (0)
+                        # node = getNodeById2(root, lineid)
+                        linenode, _ = getSubroot(node)
+                        if linenode is None:
+                            continue
+                        tmp.append(linenode.id)
+                        # tmp.append(str(linenode.id) + "#" + str(line_cover[line]))
+                    # cover['fixed'] = tmp
+
+                    if max_list < len(tmp):
+                        max_list = len(tmp)
+                    if key in failingTests:
+                        if key in fcover:
+                            fcover[key]['fixed'] = tmp
+                        else:
+                            fcover[key] = {}
+                            fcover[key]['fixed'] = tmp
+                    else:
+                        if key in pcover:
+                            pcover[key]['fixed'] = tmp
+                            plinecover[key]['fixed'] = commonline
+                        else:
+                            pcover[key] = {}
+                            plinecover[key] = {}
+                            pcover[key]['fixed'] = tmp
+                            plinecover[key]['fixed'] = commonline
+
+                for key in fcover:
+                    if 'fixed' not in fcover[key]:
+                        fcover[key]['fixed'] = []
+                    if 'buggy' not in fcover[key]:
+                        fcover[key]['buggy'] = []
+                for key in pcover:
+                    if 'fixed' not in pcover[key]:
+                        pcover[key]['fixed'] = []
+                    if 'buggy' not in pcover[key]:
+                        pcover[key]['buggy'] = []
+
+                pcover_score = most_change(plinecover)
+                pcover_limit = {}
+                num = 50
+                if len(pcover_score) <= num:
+                    pcover_limit = pcover
+                else:
+                    i = 1
+                    for key in pcover_score:
+                        if i > num:
+                            break
+                        pcover_limit[key[0]] = pcover[key[0]]
+                        i = i + 1
+
+                newdata[datas['patchName']] = (
+                    {'tree': root.printTreeWithVar(root, vardic), 'label': datas['label'],
+                     'prob': root.getTreeProb(root),
+                     'pcover': pcover_limit, 'fcover': fcover})
+                # if len(pcover) + len(fcover) > max_test:
+                #     max_test = len(pcover) + len(fcover)
+                # if len(pcover) + len(fcover) < min_test:
+                #     min_test = len(pcover) + len(fcover)
+                # n = 0
+                # setid(root)
+                print('PatchName %s, treewithid %s' % (datas['patchName'], root.printTree(root)))
+                print('PatchName %s, pcover %s, fcover %s' % (datas['patchName'], len(pcover), len(fcover)))
+            except:
+                # print(datas['patchName'])
+                # print(datas['combinedMethod'])
+                traceback.print_exc()
+                if 'Closure-92' in datas['patchName'] or 'Closure-93' in datas['patchName']:
+                    continue
+                if datas['patchName'] == 'Closure_65.src.patch':
+                    continue
+
+                print(datas['combinedMethod'])
+                print(datas['patchName'])
+                errors.setdefault(x, []).append(datas['patchName'])
+                assert (0)
+                pass
+                errors.setdefault(x, []).append(patchid)
         # print('%s  Size %s : ' % (x, len(newdata)))
     wf.write(pickle.dumps(newdata, protocol=1))
 print(errors)
