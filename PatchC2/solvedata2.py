@@ -619,8 +619,9 @@ def process_long_list(longlist):
 max_test = 0
 min_test = 10000
 max_list = 0
+num_count = {}
 for x in lst:
-    for data_line in tqdm(open('../result/crosspatch/%s' % x, 'r').read().split('\n')):
+    for data_line in tqdm(open('../result/crosspatch2/%s' % x, 'r').read().split('\n')):
         if data_line == "":
             continue
         data = json.loads(data_line)
@@ -868,10 +869,12 @@ for x in lst:
                 assert (0)
                 pass
                 errors.setdefault(x, []).append(patchid)
-        # print('%s  Size %s : ' % (x, len(newdata)))
+    num_count[x] = len(newdata)
+    print('%s  Size %s : ' % (x, len(newdata)))
     wf.write(pickle.dumps(newdata, protocol=1))
 print(errors)
 print(fnames)
+print(num_count)
 
 print('max_list %s: ' % max_list)
 # print('max_text %s: ' % max_test)

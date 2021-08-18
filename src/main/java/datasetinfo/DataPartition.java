@@ -55,7 +55,7 @@ public class DataPartition {
                         .collect(Collectors.toList());
         allDatas.addAll(trainSet);
         allDatas.addAll(correctSet);
-        log.info("TestSet {} ", allDatas.size());
+        log.info("TrainSet {} ", allDatas.size());
 
         correcNumber = allDatas.stream().filter(patchJson -> patchJson.getLabel().equals("1")).count();
         InCorrecNumber = allDatas.stream().filter(patchJson -> patchJson.getLabel().equals("0")).count();
