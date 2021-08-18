@@ -27,6 +27,43 @@ public class DataPartition {
 
     }
 
+    public static void crossPatchNoVal() {
+        String patchInfoPath = Constant.HOME + "/result/combineInfo/";
+
+        Long correcNumber, InCorrecNumber;
+        List<PatchJson> testSet =
+                JSON.parseArray(FileIO.readFileToString(patchInfoPath + "testSet_unpurify"), PatchJson.class).stream()
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+        log.info("TestSet {} ", testSet.size());
+
+        //FileIO.writeStringToFile(Constant.HOME + "/result/crosspatch2/testSet", JSON.toJSONString(testSet));
+        correcNumber = testSet.stream().filter(patchJson -> patchJson.getLabel().equals("1")).count();
+        InCorrecNumber = testSet.stream().filter(patchJson -> patchJson.getLabel().equals("0")).count();
+        log.info("correct {}, inCorrect {}", correcNumber, InCorrecNumber);
+
+        List<PatchJson> allDatas = new LinkedList<>();
+        List<PatchJson> correctSet =
+                JSON.parseArray(FileIO.readFileToString(patchInfoPath + "correctSet_unpurify"), PatchJson.class)
+                        .stream()
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+        List<PatchJson> trainSet =
+                JSON.parseArray(FileIO.readFileToString(patchInfoPath + "trainSet_unpurify"), PatchJson.class)
+                        .stream()
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+        allDatas.addAll(trainSet);
+        allDatas.addAll(correctSet);
+        log.info("TestSet {} ", allDatas.size());
+
+        correcNumber = allDatas.stream().filter(patchJson -> patchJson.getLabel().equals("1")).count();
+        InCorrecNumber = allDatas.stream().filter(patchJson -> patchJson.getLabel().equals("0")).count();
+        log.info("correct {}, inCorrect {}", correcNumber, InCorrecNumber);
+        //FileIO.writeStringToFile(Constant.HOME + "/result/crosspatch2/trainSet", JSON.toJSONString(testSet));
+
+    }
+
     public static void crossPatch() {
         String patchInfoPath = Constant.HOME + "/result/combineInfo/";
         List<PatchJson> testSet =
@@ -124,13 +161,14 @@ public class DataPartition {
     public static void crossBug() {
         String[] datas = {"testSet", "trainSet", "validateSet"};
         String patchInfoPath = Constant.HOME + "/result/dataSetPartition/";
-        
+
 
     }
 
 
     public static void main(String[] args) {
         // crossPatch();
-        moveInfo();
+        //moveInfo();
+        crossPatchNoVal();
     }
 }

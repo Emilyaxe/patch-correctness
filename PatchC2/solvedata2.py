@@ -5,7 +5,7 @@ import javalang
 
 from Searchnode import Node
 
-lst = ['trainSet', 'testSet', 'validateSet']
+lst = ['trainSet', 'testSet']
 line_node_name = ['Statement_ter', 'BreakStatement_ter', 'ReturnStatement_ter', 'ContinueStatement',
                   'ContinueStatement_ter', 'LocalVariableDeclaration', 'condition', 'control', 'BreakStatement',
                   'ContinueStatement', 'ReturnStatement', "parameters", 'StatementExpression', 'return_type']
