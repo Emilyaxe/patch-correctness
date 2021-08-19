@@ -443,8 +443,8 @@ def changetree(root1, root2):
                 root1.child[index1].expanded = True
                 idx = -1
                 for j in range(index1 - 1, -1, -1):
-                    idx = j
                     if root1.child[j].expanded:
+                        idx = j
                         break
                     root1.child[j].expanded = True
                 if idx + 1 != index1:
@@ -464,8 +464,8 @@ def changetree(root1, root2):
                     # for k in range(index2, idx2):
                     idx = -1
                     for j in range(index1 - 1, -1, -1):
-                        idx = j
                         if root1.child[j].expanded:
+                            idx = j
                             break
                         root1.child[j].expanded = True
                     # assert(idx != -1)
@@ -495,7 +495,7 @@ def changetree(root1, root2):
                 if root2.child[j].expanded:
                     break
                 root2.child[j].expanded = True
-            if idx <= len(root2.child) - 1:
+            if idx < len(root2.child) - 1:
                 node = Node('Add_S', 1)
                 node.child = root2.child[idx + 1: len(root2.child)]
             child.append(node)
@@ -511,7 +511,7 @@ def changetree(root1, root2):
                 if root1.child[j].expanded:
                     break
                 root1.child[j].expanded = True
-            if idx <= len(root1.child) - 1:
+            if idx < len(root1.child) - 1:
                 node = Node('Delete_S', 1)
                 node.child = root1.child[idx + 1:len(root1.child)]
             child.append(node)
@@ -605,7 +605,7 @@ for x in lst:
         newdata = {}
         # infodata = {}
         for datas in tqdm(data):
-            # if datas['patchName'] != 'Closure_32.src.patch':
+            # if datas['patchName'] != 'patch1-Math-58-kPAR.patch':
             #     continue
             codelines = datas['combinedMethod'].splitlines()
             # print(datas['combinedMethod'])
