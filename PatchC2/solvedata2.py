@@ -596,6 +596,7 @@ max_test = 0
 min_test = 10000
 max_list = 0
 num_count = {}
+potential_long = []
 for x in lst:
     for data_line in tqdm(open('../result/crosspatch2/%s' % x, 'r').read().split('\n')):
         if data_line == "":
@@ -658,7 +659,10 @@ for x in lst:
                     print(root.printTree(root))
                     assert (0)
                 # print(root.printTreeWithLine(root))
-                root, vardic, _ = solveLongTree(root, subroot, 1000)
+                try:
+                    root, vardic, _ = solveLongTree(root, subroot, 1000)
+                except:
+                    potential_long.append(datas['patchName'])
                 setProb(root)
                 # print(root.name)
                 # print(root.printTree(root))
@@ -852,6 +856,7 @@ for x in lst:
 print(errors)
 print(fnames)
 print(num_count)
+print(potential_long)
 
 print('max_list %s: ' % max_list)
 # print('max_text %s: ' % max_test)
