@@ -605,7 +605,7 @@ for x in lst:
         newdata = {}
         # infodata = {}
         for datas in tqdm(data):
-            # if datas['patchName'] != 'patch1-Math-58-kPAR.patch':
+            # if datas['patchName'] != 'Closure_110.src.patch':
             #     continue
             codelines = datas['combinedMethod'].splitlines()
             # print(datas['combinedMethod'])
@@ -837,7 +837,7 @@ for x in lst:
                 if 'Closure-92' in datas['patchName'] or 'Closure-93' in datas['patchName']:
                     continue
                 if datas['patchName'] == 'Closure_65.src.patch' or datas['patchName'] == 'Math_55.src.patch' or datas[
-                    'patchName'] == 'Closure_32.src.patch':
+                    'patchName'] == 'Closure_32.src.patch' or datas['patchName'] == 'Closure_110.src.patch':
                     continue
 
                 print(datas['combinedMethod'])
