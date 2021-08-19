@@ -37,7 +37,7 @@ public class DataPartition {
                         .collect(Collectors.toList());
         log.info("TestSet {} ", testSet.size());
 
-        //FileIO.writeStringToFile(Constant.HOME + "/result/crosspatch2/testSet", JSON.toJSONString(testSet));
+        FileIO.writeStringToFile(Constant.HOME + "/result/crosspatch2/testSet", JSON.toJSONString(testSet));
         correcNumber = testSet.stream().filter(patchJson -> patchJson.getLabel().equals("1")).count();
         InCorrecNumber = testSet.stream().filter(patchJson -> patchJson.getLabel().equals("0")).count();
         log.info("correct {}, inCorrect {}", correcNumber, InCorrecNumber);
@@ -60,7 +60,7 @@ public class DataPartition {
         correcNumber = allDatas.stream().filter(patchJson -> patchJson.getLabel().equals("1")).count();
         InCorrecNumber = allDatas.stream().filter(patchJson -> patchJson.getLabel().equals("0")).count();
         log.info("correct {}, inCorrect {}", correcNumber, InCorrecNumber);
-        //FileIO.writeStringToFile(Constant.HOME + "/result/crosspatch2/trainSet", JSON.toJSONString(testSet));
+        FileIO.writeStringToFile(Constant.HOME + "/result/crosspatch2/trainSet", JSON.toJSONString(allDatas));
 
     }
 
