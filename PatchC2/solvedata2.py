@@ -425,22 +425,11 @@ def changetree(root1, root2):
     elif len(root1.child) == len(root2.child):
         for i in range(len(root1.child)):
             if root1.child[i].getTreestr() != root2.child[i].getTreestr():
-                if False:
-                    idx = root1.father.child.index(root1)
+                a, b = changetree(root1.child[i], root2.child[i])
+                if a is not None:
                     tmpNode = Node('Modify_S', 0)
-                    tmpNode.child = [root1, root2]
-                    root1.father.child[idx] = tmpNode
-                    print('delete3 ' + root1.getTreestr())
-                    print('add3 ' + root2.getTreestr())
-                    break
-                else:
-                    # print('test2 root1', root1.child[i].getTreestr())
-                    # print('test2 root2', root2.child[i].getTreestr())
-                    a, b = changetree(root1.child[i], root2.child[i])
-                    if a is not None:
-                        tmpNode = Node('Modify_S', 0)
-                        tmpNode.child = [a, b]
-                        root1.child[i] = tmpNode
+                    tmpNode.child = [a, b]
+                    root1.child[i] = tmpNode
             else:
                 root1.child[i].position2 = root2.child[i].position
     else:
@@ -484,7 +473,6 @@ def changetree(root1, root2):
                         node = Node('Delete_S', 1)
                         node.child = root1.child[idx + 1: index1]
                         child.append(node)
-
                     if index2 != idx2:
                         node = Node('Add_S', 1)
                         node.child = root2.child[index2:idx2]
@@ -502,44 +490,10 @@ def changetree(root1, root2):
             child.append(node)
         if index2 < len(root2.child):
             node = Node('Add_S', 1)
-            node.child = root1.child[index2:]
+            # node.child = root1.child[index2:]  # root2.child[index2:]
+            node.child = root2.child[index2:]
             child.append(node)
         root1.child = child
-        '''deletenodes = []
-        addnodes = []
-        for i in range(len(root1.child)):
-            hasSame = False
-            for j in range(len(root2.child)):
-                if root1.child[i].getTreestr() == root2.child[j].getTreestr() and not root2.child[j].expanded:
-                    hasSame = True
-                    root2.child[j].expanded = True
-                    break
-            if not hasSame:
-                deletenodes.append(root1.child[i])
-                print('delete2 ' + root1.child[i].getTreestr())
-        for i in range(len(root2.child)):
-            hasSame = False
-            for j in range(len(root1.child)):
-                if root2.child[i].getTreestr() == root1.child[j].getTreestr() and not root1.child[j].expanded:
-                    hasSame = True
-                    root1.child[j].expanded = True
-                    break
-            if not hasSame:
-                addnodes.append(root2.child[i])
-                print('add2 ' + root2.child[i].getTreestr())
-        child = []
-        for x in root1.child:
-            if x not in deletenodes:
-                child.append(x)
-        root1.child = child
-        if len(deletenodes) != 0:
-            node = Node('Delete_S', 1)
-            node.child = deletenodes
-            root1.child.append(node)
-        if len(addnodes) != 0:
-            node = Node('Add_S', 1)
-            node.child = addnodes
-            root1.child.append(node)'''
     return None, None
 
 
@@ -625,11 +579,11 @@ for x in lst:
         if data_line == "":
             continue
         data = json.loads(data_line)
-        wf = open('../result/pkldir/%s_10.pkl' % x, 'wb')
+        wf = open('../result/pkldir/%s_50.pkl' % x, 'wb')
         newdata = {}
         # infodata = {}
         for datas in tqdm(data):
-            # if datas['patchName'] != 'Closure_3.src.patch':
+            # if datas['patchName'] != 'Chart5b_Patch7':
             #     continue
             codelines = datas['combinedMethod'].splitlines()
             # print(datas['combinedMethod'])
@@ -831,7 +785,7 @@ for x in lst:
 
                 pcover_score = most_change(plinecover)
                 pcover_limit = {}
-                num = 10
+                num = 50
                 if len(pcover_score) <= num:
                     pcover_limit = pcover
                 else:
