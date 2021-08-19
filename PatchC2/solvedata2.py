@@ -442,7 +442,7 @@ def changetree(root1, root2):
                 child.append(root1.child[index1])
                 root1.child[index1].expanded = True
                 idx = -1
-                for j in range(index1 - 1, 0, -1):
+                for j in range(index1 - 1, -1, -1):
                     if root1.child[j].expanded:
                         idx = j
                         break
@@ -484,14 +484,36 @@ def changetree(root1, root2):
                 else:
                     # print('test', root1.child[index1].getTreestr())
                     index1 += 1
+
         if index1 < len(root1.child):
             node = Node('Delete_S', 1)
             node.child = root1.child[index1:]
             child.append(node)
+            idx = -1
+            for j in range(len(root2.child) - 1, -1, -1):
+                if root2.child[j].expanded:
+                    idx = j
+                    break
+                root2.child[j].expanded = True
+            if idx <= len(root2.child) - 1:
+                node = Node('Add_S', 1)
+                node.child = root2.child[idx + 1: len(root2.child)]
+            child.append(node)
+
         if index2 < len(root2.child):
             node = Node('Add_S', 1)
             # node.child = root1.child[index2:]  # root2.child[index2:]
             node.child = root2.child[index2:]
+            child.append(node)
+            idx = -1
+            for j in range(len(root1.child) - 1, -1, -1):
+                if root1.child[j].expanded:
+                    idx = j
+                    break
+                root1.child[j].expanded = True
+            if idx <= len(root1.child) - 1:
+                node = Node('Delete_S', 1)
+                node.child = root1.child[idx + 1:len(root1.child)]
             child.append(node)
         root1.child = child
     return None, None
@@ -814,7 +836,7 @@ for x in lst:
                 traceback.print_exc()
                 if 'Closure-92' in datas['patchName'] or 'Closure-93' in datas['patchName']:
                     continue
-                if datas['patchName'] == 'Closure_65.src.patch':
+                if datas['patchName'] == 'Closure_65.src.patch' or datas['patchName'] == 'Math_55.src.patch':
                     continue
 
                 print(datas['combinedMethod'])
