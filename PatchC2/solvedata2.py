@@ -443,8 +443,8 @@ def changetree(root1, root2):
                 root1.child[index1].expanded = True
                 idx = -1
                 for j in range(index1 - 1, -1, -1):
+                    idx = j
                     if root1.child[j].expanded:
-                        idx = j
                         break
                     root1.child[j].expanded = True
                 if idx + 1 != index1:
@@ -463,9 +463,9 @@ def changetree(root1, root2):
                 if idx2 != -1:
                     # for k in range(index2, idx2):
                     idx = -1
-                    for j in range(index1 - 1, 0, -1):
+                    for j in range(index1 - 1, -1, -1):
+                        idx = j
                         if root1.child[j].expanded:
-                            idx = j
                             break
                         root1.child[j].expanded = True
                     # assert(idx != -1)
@@ -489,10 +489,10 @@ def changetree(root1, root2):
             node = Node('Delete_S', 1)
             node.child = root1.child[index1:]
             child.append(node)
-            idx = -1
+            idx = len(root2.child)
             for j in range(len(root2.child) - 1, -1, -1):
+                idx = j
                 if root2.child[j].expanded:
-                    idx = j
                     break
                 root2.child[j].expanded = True
             if idx <= len(root2.child) - 1:
@@ -505,10 +505,10 @@ def changetree(root1, root2):
             # node.child = root1.child[index2:]  # root2.child[index2:]
             node.child = root2.child[index2:]
             child.append(node)
-            idx = -1
+            idx = len(root1.child)
             for j in range(len(root1.child) - 1, -1, -1):
+                idx = j
                 if root1.child[j].expanded:
-                    idx = j
                     break
                 root1.child[j].expanded = True
             if idx <= len(root1.child) - 1:
@@ -605,7 +605,7 @@ for x in lst:
         newdata = {}
         # infodata = {}
         for datas in tqdm(data):
-            # if datas['patchName'] != 'Chart5b_Patch7':
+            # if datas['patchName'] != 'Closure_32.src.patch':
             #     continue
             codelines = datas['combinedMethod'].splitlines()
             # print(datas['combinedMethod'])
@@ -836,7 +836,8 @@ for x in lst:
                 traceback.print_exc()
                 if 'Closure-92' in datas['patchName'] or 'Closure-93' in datas['patchName']:
                     continue
-                if datas['patchName'] == 'Closure_65.src.patch' or datas['patchName'] == 'Math_55.src.patch':
+                if datas['patchName'] == 'Closure_65.src.patch' or datas['patchName'] == 'Math_55.src.patch' or datas[
+                    'patchName'] == 'Closure_32.src.patch':
                     continue
 
                 print(datas['combinedMethod'])
