@@ -27,14 +27,14 @@ import util.FileIO;
 @Slf4j
 public class ObtainPairFile {
 
-    public static String[] allData = {"validateSet", "testSet", "trainSet"};
+    public static String[] allData = {"testSet", "trainSet"};
 
 
     public static void mainProcess() {
         //String patchDir = "./result/dataSetPartition/";
         for (String file : allData) {
             log.info("Process {}", file);
-            String content = FileIO.readFileToString(Constant.HOME + "/result/dataSetPartition" + "/" + file);
+            String content = FileIO.readFileToString(Constant.HOME + "/result/crosspatch2" + "/" + file);
             List<PatchJson> patchJsonList = JSON.parseArray(content, PatchJson.class);
             if (CollectionUtils.isEmpty(patchJsonList)) {
                 continue;
@@ -65,7 +65,7 @@ public class ObtainPairFile {
         String[] sub = entry.getKey().split("-");
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
         //JSONArray jsonArray = new JSONArray();
-        String resultDir = Constant.HOME + "/result/PairFiles_crossbug/" + resDir;
+        String resultDir = Constant.HOME + "/result/PairFiles_crosspatch/" + resDir;
         //int i = 0;
         for (PatchJson patchJson : entry.getValue()) {
             ObtainTraceInfo.cleanSubject(subject.getHome() + subject.get_ssrc());
