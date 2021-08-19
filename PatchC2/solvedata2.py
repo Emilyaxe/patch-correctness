@@ -596,7 +596,8 @@ max_test = 0
 min_test = 10000
 max_list = 0
 num_count = {}
-potential_long = []
+potential_long = ['Closure_32.src.patch', 'Closure_110.src.patch', 'Math_55.src.patch', 'Lang_5.src.patch',
+                  'Math_29.src.patch']
 for x in lst:
     for data_line in tqdm(open('../result/crosspatch2/%s' % x, 'r').read().split('\n')):
         if data_line == "":
@@ -659,10 +660,8 @@ for x in lst:
                     print(root.printTree(root))
                     assert (0)
                 # print(root.printTreeWithLine(root))
-                try:
-                    root, vardic, _ = solveLongTree(root, subroot, 1000)
-                except:
-                    potential_long.append(datas['patchName'])
+
+                root, vardic, _ = solveLongTree(root, subroot, 1000)
                 setProb(root)
                 # print(root.name)
                 # print(root.printTree(root))
@@ -840,8 +839,9 @@ for x in lst:
                 traceback.print_exc()
                 if 'Closure-92' in datas['patchName'] or 'Closure-93' in datas['patchName']:
                     continue
-                if datas['patchName'] == 'Closure_65.src.patch' or datas['patchName'] == 'Math_55.src.patch' or datas[
-                    'patchName'] == 'Closure_32.src.patch' or datas['patchName'] == 'Closure_110.src.patch':
+                if datas['patchName'] == 'Closure_65.src.patch':
+                    continue
+                if datas['patchName'] in potential_long:
                     continue
 
                 print(datas['combinedMethod'])
