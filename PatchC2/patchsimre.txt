@@ -1,0 +1,96 @@
+Chart_9.src.patch	0	1
+Chart_15.src.patch	0	1
+Chart1b_Patch1	0	0
+Chart15b_Patch12	0	0
+Chart15b_Patch13	0	0
+Lang_18.src.patch	0	1
+Lang_20.src.patch		1
+Lang_28.src.patch	1	1
+Lang_31.src.patch		1
+Lang_32.src.patch	0	1
+Lang_36.src.patch	0	1
+Lang_37.src.patch		1
+Lang_42.src.patch	0	1
+Lang_48.src.patch	0	1
+Lang_55.src.patch	0	1
+Lang_61.src.patch	0	1
+Lang55b_Patch25	0	1
+Lang57b_PatchHDRepair1	1	1
+Math_6.src.patch		1
+Math_12.src.patch		1
+Math_22.src.patch	1	1
+Math_43.src.patch	0	1
+Math_46.src.patch	1	1
+Math_52.src.patch		1
+Math_90.src.patch	1	1
+Math_95.src.patch	1	1
+Math_99.src.patch		1
+Math58b_Patch49	1	0
+Math58b_Patch168	0	0
+Math90b_Patch206	1	1
+Math95b_Patch75	1	0
+Math95b_Patch76	1	0
+Math99b_Patch209		1
+Time_21.src.patch	0	1
+patch1-Chart-1-Arja-plausible.patch	1	0
+patch1-Chart-1-DynaMoth-plausible.patch	1	0
+patch1-Chart-1-GenProg-plausible.patch		0
+patch1-Chart-1-Jaid.patch	1	1
+patch1-Chart-1-Jaid-plausible.patch	0	0
+patch1-Chart-1-jKali-plausible.patch	1	0
+patch1-Chart-1-Kali-plausible.patch	1	0
+patch1-Chart-1-kPAR.patch	1	1
+patch1-Chart-1-SequenceR.patch	1	1
+patch1-Chart-1-SketchFix-plausible.patch	1	0
+patch1-Chart-9-Jaid.patch	0	1
+patch1-Chart-9-Jaid-plausible.patch	1	0
+patch1-Chart-9-Nopol-plausible.patch	0	0
+patch1-Chart-9-SequenceR.patch	1	1
+patch1-Chart-9-SketchFix.patch	0	1
+patch1-Chart-9-TBar.patch	0	1
+patch1-Chart-15-Arja-plausible.patch	1	0
+patch1-Chart-15-DynaMoth-plausible.patch	0	0
+patch1-Chart-15-FixMiner-plausible.patch	0	0
+patch1-Chart-15-Kali-plausible.patch	0	0
+patch1-Chart-15-TBar-plausible.patch	0	0
+patch1-Lang-18-kPAR-plausible.patch	0	0
+patch1-Lang-20-Arja-plausible.patch		0
+patch1-Lang-55-Jaid.patch		1
+patch1-Lang-55-Jaid-plausible.patch	1	0
+patch1-Lang-55-Nopol-plausible.patch	0	0
+patch1-Lang-57-AVATAR.patch	1	1
+patch1-Lang-57-CapGen.patch		1
+patch1-Lang-57-kPAR-plausible.patch	1	0
+patch1-Lang-57-TBar.patch	1	1
+patch1-Lang-61-Jaid-plausible.patch	0	0
+patch1-Math-6-AVATAR-plausible.patch	1	0
+patch1-Math-6-SimFix-plausible.patch	1	0
+patch1-Math-52-jMutRepair-plausible.patch		0
+patch1-Math-58-CapGen.patch	0	1
+patch1-Math-58-DynaMoth-plausible.patch	1	0
+patch1-Math-58-kPAR.patch	0	1
+patch1-Math-58-Nopol-plausible.patch	1	0
+patch1-Math-90-ACS.patch	1	1
+patch1-Math-95-Arja-plausible.patch	1	0
+patch1-Math-95-AVATAR-plausible.patch	1	0
+patch1-Math-95-Cardumen-plausible.patch	1	0
+patch1-Math-95-GenProg-plausible.patch	1	0
+patch1-Math-95-jGenProg-plausible.patch	1	0
+patch1-Math-95-Kali-plausible.patch	1	0
+patch1-Math-95-RSRepair-plausible.patch	1	0
+patch1-Math-95-TBar-plausible.patch	1	0
+patch1-Math-99-ACS.patch		1
+patch2-Chart-1-Jaid-plausible.patch	1	0
+patch2-Chart-1-SequenceR-plausible.patch	1	0
+patch2-Chart-1-SketchFix-plausible.patch	0	0
+patch2-Chart-9-Jaid.patch	0	1
+patch2-Chart-9-Jaid-plausible.patch	1	0
+patch2-Lang-55-Jaid-plausible.patch	0	0
+patch2-Lang-57-CapGen.patch		1
+patch2-Lang-61-Jaid-plausible.patch	0	0
+patch3-Chart-1-Jaid-plausible.patch	0	0
+patch3-Chart-1-SequenceR-plausible.patch	1	0
+patch3-Chart-9-Jaid-plausible.patch	1	0
+patch3-Lang-55-Jaid-plausible.patch	0	0
+patch3-Lang-57-CapGen.patch		1
+patch4-Chart-1-SequenceR-plausible.patch	1	0
