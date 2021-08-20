@@ -600,7 +600,7 @@ potential_long = ['Closure_32.src.patch', 'Closure_110.src.patch', 'Math_55.src.
                   'Math_29.src.patch']
 test_num = []
 for x in lst:
-    for data_line in tqdm(open('../result/crossbug/%s' % x, 'r').read().split('\n')):
+    for data_line in tqdm(open('../result/crosspatch2/%s' % x, 'r').read().split('\n')):
         if data_line == "":
             continue
         data = json.loads(data_line)
@@ -861,7 +861,7 @@ for x in lst:
                 errors.setdefault(x, []).append(patchid)
     num_count[x] = len(newdata)
     print('%s  Size %s : ' % (x, len(newdata)))
-    # wf.write(pickle.dumps(newdata, protocol=1))
+    wf.write(pickle.dumps(newdata, protocol=1))
 print(errors)
 print(fnames)
 print(num_count)
