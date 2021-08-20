@@ -834,7 +834,7 @@ for x in lst:
                 # setid(root)
                 print('PatchName %s, treewithid %s' % (datas['patchName'], root.printTree(root)))
                 print('PatchName %s, pcover %s, fcover %s' % (datas['patchName'], len(pcover), len(fcover)))
-                test_num.append(datas['patchName'] + ',' + len(pcover) + ',' + len(fcover))
+                test_num.append(datas['patchName'] + ',' + str(len(pcover)) + ',' + str(len(fcover)))
             except:
                 # print(datas['patchName'])
                 # print(datas['combinedMethod'])
