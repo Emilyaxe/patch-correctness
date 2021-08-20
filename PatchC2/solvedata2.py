@@ -572,7 +572,7 @@ def most_change(plinecover):
         else:
             score = 1.0
         pcover_score[key] = score  # score 为修改前后发生变化的大小，若修改前后发生变化越大，分数值越大
-    # pcover_score = sorted(pcover_score.items(), key=lambda d: d[1], reverse=True)
+    pcover_score = sorted(pcover_score.items(), key=lambda d: d[1], reverse=True)
     return pcover_score
 
 
@@ -811,6 +811,7 @@ for x in lst:
 
                 pcover_score = most_change(plinecover)
                 pcover_limit = {}
+                # num = 500 - len(failingTests)
                 num = 100
                 if len(pcover_score) <= num:
                     pcover_limit = pcover
@@ -819,8 +820,8 @@ for x in lst:
                     for key in pcover_score:
                         if i > num:
                             break
-                        # pcover_limit[key[0]] = pcover[key[0]]
-                        pcover_limit[key] = pcover[key]
+                        pcover_limit[key[0]] = pcover[key[0]]
+                        # pcover_limit[key] = pcover[key]
                         i = i + 1
 
                 newdata[datas['patchName']] = (
