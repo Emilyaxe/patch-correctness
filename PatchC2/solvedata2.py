@@ -604,7 +604,7 @@ for x in lst:
         if data_line == "":
             continue
         data = json.loads(data_line)
-        wf = open('../result/pkldir/%s_100.pkl' % x, 'wb')
+        wf = open('../result/pkldir/%s_500.pkl' % x, 'wb')
         newdata = {}
         # infodata = {}
         for datas in tqdm(data):
@@ -811,8 +811,8 @@ for x in lst:
 
                 pcover_score = most_change(plinecover)
                 pcover_limit = {}
-                # num = 500 - len(failingTests)
-                num = 100
+                num = 500 - len(failingTests)
+                # num = 100
                 if len(pcover_score) <= num:
                     pcover_limit = pcover
                 else:
