@@ -604,11 +604,11 @@ for x in lst:
         if data_line == "":
             continue
         data = json.loads(data_line)
-        wf = open('../result/pkldir/%s_200.pkl' % x, 'wb')
+        wf = open('../result/pkldir/%s_100.pkl' % x, 'wb')
         newdata = {}
         # infodata = {}
         for datas in tqdm(data):
-            # if datas['patchName'] != 'Chart5b_Patch7':
+            # if datas['patchName'] != 'patch1-Closure-115-kPAR-plausible.patch':
             #     continue
             codelines = datas['combinedMethod'].splitlines()
             # print(datas['combinedMethod'])
@@ -819,7 +819,8 @@ for x in lst:
                     for key in pcover_score:
                         if i > num:
                             break
-                        pcover_limit[key[0]] = pcover[key[0]]
+                        # pcover_limit[key[0]] = pcover[key[0]]
+                        pcover_limit[key] = pcover[key]
                         i = i + 1
 
                 newdata[datas['patchName']] = (
