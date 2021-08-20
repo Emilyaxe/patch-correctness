@@ -1,4 +1,5 @@
 # coding=utf-8
+import csv
 import json
 
 import javalang
@@ -381,7 +382,6 @@ def generateAST(tree):
     return sub
 
 
-import pickle
 import traceback
 from tqdm import tqdm
 
@@ -608,8 +608,8 @@ for x in lst:
         newdata = {}
         # infodata = {}
         for datas in tqdm(data):
-            # if datas['patchName'] != 'Chart5b_Patch7':
-            #     continue
+            if datas['patchName'] != 'Chart5b_Patch7':
+                continue
             codelines = datas['combinedMethod'].splitlines()
             # print(datas['combinedMethod'])
             oldcode = []
@@ -834,7 +834,15 @@ for x in lst:
                 # setid(root)
                 print('PatchName %s, treewithid %s' % (datas['patchName'], root.printTree(root)))
                 print('PatchName %s, pcover %s, fcover %s' % (datas['patchName'], len(pcover), len(fcover)))
-                test_num.append(datas['patchName'] + ',' + str(len(pcover)) + ',' + str(len(fcover)))
+                tmplist = []
+                tmplist.append(datas['patchName'])
+                tmplist.append(x)
+                tmplist.append(len(pcover))
+                tmplist.append(len(fcover))
+                tmplist.append(datas[
+                                   'label'])
+                test_num.append(tmplist)
+
             except:
                 # print(datas['patchName'])
                 # print(datas['combinedMethod'])
@@ -853,14 +861,15 @@ for x in lst:
                 errors.setdefault(x, []).append(patchid)
     num_count[x] = len(newdata)
     print('%s  Size %s : ' % (x, len(newdata)))
-    wf.write(pickle.dumps(newdata, protocol=1))
+    # wf.write(pickle.dumps(newdata, protocol=1))
 print(errors)
 print(fnames)
 print(num_count)
 print(potential_long)
 
-with open('test_num', 'w') as testnumfile:
-    testnumfile.write('\n'.join(test_num))
+with open('test_num.csv', 'w') as csvfile:
+    writer = csv.writer(csvfile)
+    writer.writerows(test_num)
 
 # print('max_list %s: ' % max_list)
 # print('max_text %s: ' % max_test)
