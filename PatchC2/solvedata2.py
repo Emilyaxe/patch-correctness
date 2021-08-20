@@ -608,7 +608,7 @@ for x in lst:
         newdata = {}
         # infodata = {}
         for datas in tqdm(data):
-            # if datas['patchName'] != 'Closure_110.src.patch':
+            # if datas['patchName'] != 'Chart5b_Patch7':
             #     continue
             codelines = datas['combinedMethod'].splitlines()
             # print(datas['combinedMethod'])
@@ -859,8 +859,8 @@ print(fnames)
 print(num_count)
 print(potential_long)
 
-with open('test_num', 'w', 'utf-8') as testnumfile:
-    testnumfile.write(test_num)
+with open('test_num', 'w') as testnumfile:
+    testnumfile.write('\n'.join(test_num))
 
 # print('max_list %s: ' % max_list)
 # print('max_text %s: ' % max_test)
