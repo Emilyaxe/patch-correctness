@@ -608,8 +608,8 @@ for x in lst:
         newdata = {}
         # infodata = {}
         for datas in tqdm(data):
-            if datas['patchName'] != 'Chart5b_Patch7':
-                continue
+            # if datas['patchName'] != 'Chart5b_Patch7':
+            #     continue
             codelines = datas['combinedMethod'].splitlines()
             # print(datas['combinedMethod'])
             oldcode = []
