@@ -598,12 +598,13 @@ max_list = 0
 num_count = {}
 potential_long = ['Closure_32.src.patch', 'Closure_110.src.patch', 'Math_55.src.patch', 'Lang_5.src.patch',
                   'Math_29.src.patch']
+test_num = []
 for x in lst:
     for data_line in tqdm(open('../result/crosspatch2/%s' % x, 'r').read().split('\n')):
         if data_line == "":
             continue
         data = json.loads(data_line)
-        wf = open('../result/pkldir/%s_10.pkl' % x, 'wb')
+        wf = open('../result/pkldir/%s_5.pkl' % x, 'wb')
         newdata = {}
         # infodata = {}
         for datas in tqdm(data):
@@ -810,7 +811,7 @@ for x in lst:
 
                 pcover_score = most_change(plinecover)
                 pcover_limit = {}
-                num = 10
+                num = 5
                 if len(pcover_score) <= num:
                     pcover_limit = pcover
                 else:
@@ -833,6 +834,7 @@ for x in lst:
                 # setid(root)
                 print('PatchName %s, treewithid %s' % (datas['patchName'], root.printTree(root)))
                 print('PatchName %s, pcover %s, fcover %s' % (datas['patchName'], len(pcover), len(fcover)))
+                test_num.append(datas['patchName'] + ',' + len(pcover) + ',' + len(fcover))
             except:
                 # print(datas['patchName'])
                 # print(datas['combinedMethod'])
@@ -843,7 +845,6 @@ for x in lst:
                     continue
                 if datas['patchName'] in potential_long:
                     continue
-
                 print(datas['combinedMethod'])
                 print(datas['patchName'])
                 errors.setdefault(x, []).append(datas['patchName'])
@@ -858,6 +859,9 @@ print(fnames)
 print(num_count)
 print(potential_long)
 
-print('max_list %s: ' % max_list)
+with open('test_num', 'w', 'utf-8') as testnumfile:
+    testnumfile.write(test_num)
+
+# print('max_list %s: ' % max_list)
 # print('max_text %s: ' % max_test)
 # print('min_test %s:' % min_test)

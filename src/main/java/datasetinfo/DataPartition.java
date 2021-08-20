@@ -23,8 +23,39 @@ public class DataPartition {
 
     public static String[] allData = {"correctSet_unpurify", "testSet_unpurify", "trainSet_unpurify"};
 
-    public static void crossPatchInfo() {
+    public static void crossBugNoVal() {
+        String patchInfoPath = Constant.HOME + "/result/dataSetPartition/";
+        Long correcNumber, InCorrecNumber;
+        List<PatchJson> testSet =
+                JSON.parseArray(FileIO.readFileToString(patchInfoPath + "testSet"), PatchJson.class).stream()
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+        log.info("TestSet {} ", testSet.size());
 
+        FileIO.writeStringToFile(Constant.HOME + "/result/crossbug/testSet", JSON.toJSONString(testSet));
+        correcNumber = testSet.stream().filter(patchJson -> patchJson.getLabel().equals("1")).count();
+        InCorrecNumber = testSet.stream().filter(patchJson -> patchJson.getLabel().equals("0")).count();
+        log.info("correct {}, inCorrect {}", correcNumber, InCorrecNumber);
+
+        List<PatchJson> allDatas = new LinkedList<>();
+        List<PatchJson> correctSet =
+                JSON.parseArray(FileIO.readFileToString(patchInfoPath + "validateSet"), PatchJson.class)
+                        .stream()
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+        List<PatchJson> trainSet =
+                JSON.parseArray(FileIO.readFileToString(patchInfoPath + "trainSet"), PatchJson.class)
+                        .stream()
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+        allDatas.addAll(trainSet);
+        allDatas.addAll(correctSet);
+        log.info("TrainSet {} ", allDatas.size());
+
+        correcNumber = allDatas.stream().filter(patchJson -> patchJson.getLabel().equals("1")).count();
+        InCorrecNumber = allDatas.stream().filter(patchJson -> patchJson.getLabel().equals("0")).count();
+        log.info("correct {}, inCorrect {}", correcNumber, InCorrecNumber);
+        FileIO.writeStringToFile(Constant.HOME + "/result/crossbug/trainSet", JSON.toJSONString(allDatas));
     }
 
     public static void crossPatchNoVal() {
@@ -169,6 +200,7 @@ public class DataPartition {
     public static void main(String[] args) {
         // crossPatch();
         //moveInfo();
-        crossPatchNoVal();
+        //crossPatchNoVal();
+        crossBugNoVal();
     }
 }
