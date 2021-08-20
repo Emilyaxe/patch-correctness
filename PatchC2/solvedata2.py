@@ -1,5 +1,4 @@
 # coding=utf-8
-import csv
 import json
 import pickle
 
@@ -572,8 +571,8 @@ def most_change(plinecover):
                     len(set(plinecover[key]['fixed'])))
         else:
             score = 1.0
-        pcover_score[key] = score
-    pcover_score = sorted(pcover_score.items(), key=lambda d: d[1], reverse=True)
+        pcover_score[key] = score  # score 为修改前后发生变化的大小，若修改前后发生变化越大，分数值越大
+    # pcover_score = sorted(pcover_score.items(), key=lambda d: d[1], reverse=True)
     return pcover_score
 
 
@@ -812,7 +811,7 @@ for x in lst:
 
                 pcover_score = most_change(plinecover)
                 pcover_limit = {}
-                num = 200
+                num = 100
                 if len(pcover_score) <= num:
                     pcover_limit = pcover
                 else:
@@ -868,9 +867,9 @@ print(fnames)
 print(num_count)
 print(potential_long)
 
-with open('test_num.csv', 'w') as csvfile:
-    writer = csv.writer(csvfile)
-    writer.writerows(test_num)
+# with open('test_num.csv', 'w') as csvfile:
+#     writer = csv.writer(csvfile)
+#     writer.writerows(test_num)
 
 # print('max_list %s: ' % max_list)
 # print('max_text %s: ' % max_test)
