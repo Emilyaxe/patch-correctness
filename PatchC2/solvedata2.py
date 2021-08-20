@@ -859,8 +859,8 @@ print(fnames)
 print(num_count)
 print(potential_long)
 
-# with open('test_num', 'w') as testnumfile:
-#     testnumfile.write('\n'.join(test_num))
+with open('test_num', 'w') as testnumfile:
+    testnumfile.write('\n'.join(test_num))
 
 # print('max_list %s: ' % max_list)
 # print('max_text %s: ' % max_test)
