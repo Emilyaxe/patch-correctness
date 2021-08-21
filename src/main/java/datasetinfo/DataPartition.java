@@ -23,9 +23,63 @@ public class DataPartition {
 
     public static String[] allData = {"correctSet_unpurify", "testSet_unpurify", "trainSet_unpurify"};
 
-    public static void crossBug() {
-        String patchInfoPath = Constant.HOME + "/result/crossbug/";
-        
+    public static void crossPatch3() {
+
+
+        String patchInfoPath = Constant.HOME + "/result/combineInfo/";
+        List<PatchJson> allDatas = new LinkedList<>();
+        Long correcNumber, InCorrecNumber;
+        List<PatchJson> testSet =
+                JSON.parseArray(FileIO.readFileToString(patchInfoPath + "testSet_unpurify"), PatchJson.class).stream()
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+
+
+        List<PatchJson> correctSet =
+                JSON.parseArray(FileIO.readFileToString(patchInfoPath + "correctSet_unpurify"), PatchJson.class)
+                        .stream()
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+        List<PatchJson> trainSet =
+                JSON.parseArray(FileIO.readFileToString(patchInfoPath + "trainSet_unpurify"), PatchJson.class)
+                        .stream()
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+        allDatas.addAll(testSet);
+        allDatas.addAll(trainSet);
+        allDatas.addAll(correctSet);
+
+        log.info("All Datas {}", allDatas.size());
+
+        Collections.shuffle(allDatas, new Random(12345798L));
+        testSet = new LinkedList<>();
+        trainSet = new LinkedList<>();
+        int i = 0;
+        for (PatchJson patchJson : allDatas) {
+            if (i < 100) {
+                testSet.add(patchJson);
+            } else {
+                trainSet.add(patchJson);
+            }
+            i++;
+        }
+
+        log.info("TrainSet {} ", trainSet.size());
+
+
+        correcNumber = allDatas.stream().filter(patchJson -> patchJson.getLabel().equals("1")).count();
+        InCorrecNumber = allDatas.stream().filter(patchJson -> patchJson.getLabel().equals("0")).count();
+        log.info("correct {}, inCorrect {}", correcNumber, InCorrecNumber);
+        FileIO.writeStringToFile(Constant.HOME + "/result/crosspatch3/trainSet", JSON.toJSONString(allDatas));
+
+        log.info("TestSet {} ", testSet.size());
+
+        FileIO.writeStringToFile(Constant.HOME + "/result/crosspatch3/testSet", JSON.toJSONString(testSet));
+        correcNumber = testSet.stream().filter(patchJson -> patchJson.getLabel().equals("1")).count();
+        InCorrecNumber = testSet.stream().filter(patchJson -> patchJson.getLabel().equals("0")).count();
+        log.info("correct {}, inCorrect {}", correcNumber, InCorrecNumber);
+
+
     }
 
 
@@ -207,6 +261,7 @@ public class DataPartition {
         // crossPatch();
         //moveInfo();
         //crossPatchNoVal();
-        crossBugNoVal();
+        // crossBugNoVal();
+        crossPatch3();
     }
 }

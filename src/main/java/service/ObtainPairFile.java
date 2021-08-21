@@ -34,7 +34,7 @@ public class ObtainPairFile {
         //String patchDir = "./result/dataSetPartition/";
         for (String file : allData) {
             log.info("Process {}", file);
-            String content = FileIO.readFileToString(Constant.HOME + "/result/crosspatch2" + "/" + file);
+            String content = FileIO.readFileToString(Constant.HOME + "/result/crosspatch3" + "/" + file);
             List<PatchJson> patchJsonList = JSON.parseArray(content, PatchJson.class);
             if (CollectionUtils.isEmpty(patchJsonList)) {
                 continue;
@@ -65,7 +65,7 @@ public class ObtainPairFile {
         String[] sub = entry.getKey().split("-");
         Subject subject = new Subject(sub[0], Integer.parseInt(sub[1]));
         //JSONArray jsonArray = new JSONArray();
-        String resultDir = Constant.HOME + "/result/PairFiles_crosspatch/" + resDir;
+        String resultDir = Constant.HOME + "/result/PairFiles_crosspatch3/" + resDir;
         //int i = 0;
         for (PatchJson patchJson : entry.getValue()) {
             ObtainTraceInfo.cleanSubject(subject.getHome() + subject.get_ssrc());
