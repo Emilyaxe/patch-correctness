@@ -600,7 +600,7 @@ potential_long = ['Closure_32.src.patch', 'Closure_110.src.patch', 'Math_55.src.
                   'Math_29.src.patch']
 test_num = []
 for x in lst:
-    for data_line in tqdm(open('../result/crosspatch2/%s' % x, 'r').read().split('\n')):
+    for data_line in tqdm(open('../result/crossbug/%s' % x, 'r').read().split('\n')):
         if data_line == "":
             continue
         data = json.loads(data_line)
@@ -608,8 +608,8 @@ for x in lst:
         newdata = {}
         # infodata = {}
         for datas in tqdm(data):
-            # if datas['patchName'] != 'patch1-Closure-115-kPAR-plausible.patch':
-            #     continue
+            if datas['patchName'] != 'Math93b_Patch207':
+                continue
             codelines = datas['combinedMethod'].splitlines()
             # print(datas['combinedMethod'])
             oldcode = []
@@ -811,8 +811,8 @@ for x in lst:
 
                 pcover_score = most_change(plinecover)
                 pcover_limit = {}
-                num = 500 - len(failingTests)
-                # num = 100
+                # num = 500 - len(failingTests)
+                num = 10
                 if len(pcover_score) <= num:
                     pcover_limit = pcover
                 else:

@@ -23,6 +23,12 @@ public class DataPartition {
 
     public static String[] allData = {"correctSet_unpurify", "testSet_unpurify", "trainSet_unpurify"};
 
+    public static void crossBug() {
+        String patchInfoPath = Constant.HOME + "/result/crossbug/";
+        
+    }
+
+
     public static void crossBugNoVal() {
         String patchInfoPath = Constant.HOME + "/result/dataSetPartition/";
         Long correcNumber, InCorrecNumber;
@@ -187,14 +193,14 @@ public class DataPartition {
          */
     }
 
-
-    // dataSetPartition
-    public static void crossBug() {
-        String[] datas = {"testSet", "trainSet", "validateSet"};
-        String patchInfoPath = Constant.HOME + "/result/dataSetPartition/";
-
-
-    }
+    //
+    //    // dataSetPartition
+    //    public static void crossBug() {
+    //        String[] datas = {"testSet", "trainSet", "validateSet"};
+    //        String patchInfoPath = Constant.HOME + "/result/dataSetPartition/";
+    //
+    //
+    //    }
 
 
     public static void main(String[] args) {
