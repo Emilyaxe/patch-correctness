@@ -600,11 +600,11 @@ potential_long = ['Closure_32.src.patch', 'Closure_110.src.patch', 'Math_55.src.
                   'Math_29.src.patch']
 test_num = []
 for x in lst:
-    for data_line in tqdm(open('../result/crossbug/%s' % x, 'r').read().split('\n')):
+    for data_line in tqdm(open('../result/crosspatch2/%s' % x, 'r').read().split('\n')):
         if data_line == "":
             continue
         data = json.loads(data_line)
-        wf = open('../result/pkldir/%s.pkl' % x, 'wb')
+        wf = open('../result/pkldir/%s_400.pkl' % x, 'wb')
         newdata = {}
         # infodata = {}
         for datas in tqdm(data):
@@ -812,7 +812,7 @@ for x in lst:
                 pcover_score = most_change(plinecover)
                 pcover_limit = {}
                 # num = 500 - len(failingTests)
-                num = 10
+                num = 400
                 if len(pcover_score) <= num:
                     pcover_limit = pcover
                 else:
@@ -829,7 +829,7 @@ for x in lst:
                 newdata[datas['patchName']] = (
                     {'tree': root.printTreeWithVar(root, vardic), 'label': datas['label'],
                      'prob': root.getTreeProb(root),
-                     'pcover': pcover, 'fcover': fcover})
+                     'pcover': pcover_limit, 'fcover': fcover})
                 # if len(pcover) + len(fcover) > max_test:
                 #     max_test = len(pcover) + len(fcover)
                 # if len(pcover) + len(fcover) < min_test:
