@@ -606,6 +606,8 @@ for x in lst:
         if data_line == "":
             continue
         data = json.loads(data_line)
+        if not os.path.exist('../result/%s_pkldir' % (patchdir)):
+            os.mkdirs('../result/%s_pkldir' % (patchdir))
         wf = open('../result/%s_pkldir/%s_%s.pkl' % (patchdir, x, str(num)), 'wb')
         newdata = {}
         # infodata = {}
