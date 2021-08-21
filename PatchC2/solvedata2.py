@@ -604,12 +604,12 @@ for x in lst:
         if data_line == "":
             continue
         data = json.loads(data_line)
-        wf = open('../result/pkldir/%s_500.pkl' % x, 'wb')
+        wf = open('../result/pkldir/%s_10.pkl' % x, 'wb')
         newdata = {}
         # infodata = {}
         for datas in tqdm(data):
-            if datas['patchName'] != 'Math93b_Patch207':
-                continue
+            # if datas['patchName'] != 'Math93b_Patch207':
+            #     continue
             codelines = datas['combinedMethod'].splitlines()
             # print(datas['combinedMethod'])
             oldcode = []
