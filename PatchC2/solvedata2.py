@@ -599,12 +599,14 @@ num_count = {}
 potential_long = ['Closure_32.src.patch', 'Closure_110.src.patch', 'Math_55.src.patch', 'Lang_5.src.patch',
                   'Math_29.src.patch']
 test_num = []
+patchdir = 'crosspatch2'
+num = 400
 for x in lst:
-    for data_line in tqdm(open('../result/crosspatch2/%s' % x, 'r').read().split('\n')):
+    for data_line in tqdm(open('../result/%s/%s' % (patchdir, x), 'r').read().split('\n')):
         if data_line == "":
             continue
         data = json.loads(data_line)
-        wf = open('../result/pkldir/%s_400.pkl' % x, 'wb')
+        wf = open('../result/%s_pkldir/%s_%f.pkl' % (patchdir, x, num), 'wb')
         newdata = {}
         # infodata = {}
         for datas in tqdm(data):
@@ -812,7 +814,7 @@ for x in lst:
                 pcover_score = most_change(plinecover)
                 pcover_limit = {}
                 # num = 500 - len(failingTests)
-                num = 400
+                # num = 400
                 if len(pcover_score) <= num:
                     pcover_limit = pcover
                 else:
