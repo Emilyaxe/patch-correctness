@@ -604,7 +604,7 @@ for x in lst:
         if data_line == "":
             continue
         data = json.loads(data_line)
-        wf = open('../result/pkldir/%s_10.pkl' % x, 'wb')
+        wf = open('../result/pkldir/%s.pkl' % x, 'wb')
         newdata = {}
         # infodata = {}
         for datas in tqdm(data):
@@ -829,7 +829,7 @@ for x in lst:
                 newdata[datas['patchName']] = (
                     {'tree': root.printTreeWithVar(root, vardic), 'label': datas['label'],
                      'prob': root.getTreeProb(root),
-                     'pcover': pcover_limit, 'fcover': fcover})
+                     'pcover': pcover, 'fcover': fcover})
                 # if len(pcover) + len(fcover) > max_test:
                 #     max_test = len(pcover) + len(fcover)
                 # if len(pcover) + len(fcover) < min_test:
