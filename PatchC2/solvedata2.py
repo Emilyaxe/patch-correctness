@@ -823,6 +823,8 @@ for x in lst:
                         pcover_limit[key[0]] = pcover[key[0]]
                         # pcover_limit[key] = pcover[key]
                         i = i + 1
+                if max_test < len(pcover_limit) + len(fcover):
+                    max_test = len(pcover_limit) + len(fcover)
 
                 newdata[datas['patchName']] = (
                     {'tree': root.printTreeWithVar(root, vardic), 'label': datas['label'],
@@ -837,13 +839,6 @@ for x in lst:
                 print('PatchName %s, treewithid %s' % (datas['patchName'], root.printTree(root)))
                 print('PatchName %s, pcover %s, fcover %s' % (datas['patchName'], len(pcover), len(fcover)))
                 tmplist = []
-                tmplist.append(datas['patchName'])
-                tmplist.append(x)
-                tmplist.append(len(pcover))
-                tmplist.append(len(fcover))
-                tmplist.append(datas[
-                                   'label'])
-                test_num.append(tmplist)
 
             except:
                 # print(datas['patchName'])
@@ -868,6 +863,7 @@ print(errors)
 print(fnames)
 print(num_count)
 print(potential_long)
+print(max_test)
 
 # with open('test_num.csv', 'w') as csvfile:
 #     writer = csv.writer(csvfile)
