@@ -78,7 +78,13 @@ public class ObtainPairFile {
             if (!checkClass(buggyFile) || !checkClass(fixedFile)) {
                 log.error("Patch {} has error in checkfile", patchJson.getPatchName());
             }
+            if (patchJson.getPatchName().equals("patch9-Closure-92-SequenceR-plausible.patch")) {
+                resultDir = Constant.HOME + "/result/PairFiles_crosspatch3/trainSet";
+            }
+
             Map<String, String> onepatch = new LinkedHashMap<>();
+
+
             onepatch.put("patchName", patchJson.getPatchName());
             onepatch.put("label", patchJson.getLabel());
             onepatch.put("buggFile", buggyFile);
@@ -96,6 +102,8 @@ public class ObtainPairFile {
             //i++;
             //onepatch.put("bugid", patchJson.getBugId());
             //jsonArray.add(onepatch);
+
+
         }
 
 
@@ -127,7 +135,7 @@ public class ObtainPairFile {
     }
 
     public static void main(String[] args) {
-        //mainProcess();
+        mainProcess();
         countSize();
     }
 }
