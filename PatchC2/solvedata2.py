@@ -600,8 +600,8 @@ num_count = {}
 potential_long = ['Closure_32.src.patch', 'Closure_110.src.patch', 'Math_55.src.patch', 'Lang_5.src.patch',
                   'Math_29.src.patch']
 test_num = []
-patchdir = 'crosspatch2'
-num = 400
+patchdir = 'crosspatch3'
+num = 10
 for x in lst:
     for data_line in tqdm(open('../result/%s/%s' % (patchdir, x), 'r').read().split('\n')):
         if data_line == "":

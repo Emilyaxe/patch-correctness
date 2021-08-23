@@ -1,6 +1,7 @@
 package datasetinfo;
 
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,6 +23,40 @@ import util.FileIO;
 public class DataPartition {
 
     public static String[] allData = {"correctSet_unpurify", "testSet_unpurify", "trainSet_unpurify"};
+
+    public static void obtainTestSetPatches() {
+        String[] illegalPatch =
+                {"Closure_32.src.patch", "Closure_110.src.patch", "Math_55.src.patch", "Lang_5.src.patch",
+                        "Math_29.src.patch", "Closure_65.src.patch"};
+        String patchdir = Constant.HOME + "/Patches/DataSet/patchTest/";
+        String infodir = Constant.HOME + "/result/crosspatch3/";
+        List<String> testSet = JSON.parseArray(FileIO.readFileToString(infodir + "testSet"), PatchJson.class).stream()
+                .map(PatchJson::getPatchName).filter(patchname -> {
+                    return Arrays.asList(illegalPatch).contains(patchname) || patchname.contains("Closure-92")
+                            || patchname
+                            .contains("Closure-93");
+                }).collect(Collectors.toList());
+        String[] datas = {"correctSet", "testSet", "trainSet"};
+        int num = 0;
+
+        //        for (String data : datas) {
+        //            String dir = Constant.HOME + "/Patches/DataSet/" + data;
+        //            for (File f : new File(dir).listFiles()) {
+        //                if (testSet.contains(f.getName())) {
+        //                    num++;
+        //                    try {
+        //                        FileUtils.copyFile(f, new File(patchdir + data + "/" + f.getName()));
+        //                    } catch (IOException e) {
+        //                        e.printStackTrace();
+        //                    }
+        //                }
+        //
+        //            }
+        //        }
+        log.info("num: " + num);
+        log.info(testSet.toString());
+    }
+
 
     public static void crossPatch3() {
 
@@ -51,12 +86,12 @@ public class DataPartition {
 
         log.info("All Datas {}", allDatas.size());
 
-        Collections.shuffle(allDatas, new Random(12345798L));
+        Collections.shuffle(allDatas, new Random(19940910L));
         testSet = new LinkedList<>();
         trainSet = new LinkedList<>();
         int i = 0;
         for (PatchJson patchJson : allDatas) {
-            if (i < 100) {
+            if (i < 120) {
                 testSet.add(patchJson);
             } else {
                 trainSet.add(patchJson);
@@ -65,16 +100,13 @@ public class DataPartition {
         }
 
         log.info("TrainSet {} ", trainSet.size());
-
-
-        correcNumber = allDatas.stream().filter(patchJson -> patchJson.getLabel().equals("1")).count();
-        InCorrecNumber = allDatas.stream().filter(patchJson -> patchJson.getLabel().equals("0")).count();
+        correcNumber = trainSet.stream().filter(patchJson -> patchJson.getLabel().equals("1")).count();
+        InCorrecNumber = trainSet.stream().filter(patchJson -> patchJson.getLabel().equals("0")).count();
         log.info("correct {}, inCorrect {}", correcNumber, InCorrecNumber);
-        FileIO.writeStringToFile(Constant.HOME + "/result/crosspatch3/trainSet", JSON.toJSONString(allDatas));
+        //FileIO.writeStringToFile(Constant.HOME + "/result/crosspatch3/trainSet", JSON.toJSONString(trainSet));
 
         log.info("TestSet {} ", testSet.size());
-
-        FileIO.writeStringToFile(Constant.HOME + "/result/crosspatch3/testSet", JSON.toJSONString(testSet));
+        //FileIO.writeStringToFile(Constant.HOME + "/result/crosspatch3/testSet", JSON.toJSONString(testSet));
         correcNumber = testSet.stream().filter(patchJson -> patchJson.getLabel().equals("1")).count();
         InCorrecNumber = testSet.stream().filter(patchJson -> patchJson.getLabel().equals("0")).count();
         log.info("correct {}, inCorrect {}", correcNumber, InCorrecNumber);
@@ -262,6 +294,7 @@ public class DataPartition {
         //moveInfo();
         //crossPatchNoVal();
         // crossBugNoVal();
-        crossPatch3();
+        //crossPatch3();
+        obtainTestSetPatches();
     }
 }

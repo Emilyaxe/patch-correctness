@@ -2,11 +2,14 @@ package service;
 
 import static util.AsyExecutor.EXECUTOR;
 
+import java.io.File;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -104,7 +107,27 @@ public class ObtainPairFile {
         return unit.getProblems().length <= 0;
     }
 
+    public static void countSize() {
+        String resultDir = Constant.HOME + "/result/PairFiles_crosspatch3/";
+        int number = 0;
+        for (String data : allData) {
+            number = 0;
+            for (File bugfile : Objects.requireNonNull(new File(resultDir + data).listFiles())) {
+                if (!bugfile.isDirectory()) {
+                    continue;
+                }
+
+                number = number + (int) Arrays.stream(Objects.requireNonNull(bugfile.listFiles()))
+                        .filter(File::isDirectory)
+                        .count();
+            }
+            log.info("{} , number {}", data, number);
+        }
+
+    }
+
     public static void main(String[] args) {
-        mainProcess();
+        //mainProcess();
+        countSize();
     }
 }
