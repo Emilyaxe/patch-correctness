@@ -135,7 +135,7 @@ public class ObtainPairFile {
     }
 
     public static void main(String[] args) {
-        mainProcess();
+        //mainProcess();
         countSize();
     }
 }
